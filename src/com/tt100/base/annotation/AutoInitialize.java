@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Target({java.lang.annotation.ElementType.FIELD})
 public @interface AutoInitialize
 {
-  public abstract String idFormat();
+	String idFormat() ;
 }

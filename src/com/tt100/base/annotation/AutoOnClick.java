@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Target({java.lang.annotation.ElementType.FIELD})
 public @interface AutoOnClick
 {
-  public abstract String clickSelector();
+   String clickSelector();
 }

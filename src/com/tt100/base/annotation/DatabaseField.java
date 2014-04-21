@@ -4,59 +4,120 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 import android.renderscript.Element.DataType;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({java.lang.annotation.ElementType.FIELD})
-public @interface DatabaseField
-{
-  public static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL = 2;
-  public static final String DEFAULT_STRING = "";
-  public static final int NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED = 255;
+@Target({ java.lang.annotation.ElementType.FIELD })
+public @interface DatabaseField {
 
-  public abstract boolean allowGeneratedIdInsert();
+	public static final int DEFAULT_MAX_FOREIGN_AUTO_REFRESH_LEVEL = 2;
+	public static final String DEFAULT_STRING = "";
+	public static final int NO_MAX_FOREIGN_AUTO_REFRESH_LEVEL_SPECIFIED = 255;
 
-  public abstract boolean canBeNull();
+	boolean allowGeneratedIdInsert() default true;
 
-  public abstract String columnDefinition();
+	/**
+	 * 是否可以为空
+	 * 
+	 * @return
+	 */
+	boolean canBeNull() default true;
 
-  public abstract String columnName();
+	String columnDefinition();
 
-  public abstract DataType dataType();
+	/**
+	 * 缺省的 字段名
+	 * 
+	 * @return
+	 */
+	String columnName() default "";
 
-  public abstract String defaultValue();
+	/**
+	 * 数据类型
+	 * 
+	 * @return
+	 */
+	DataType dataType();
 
-  public abstract boolean foreign();
+	/**
+	 * 默认值
+	 * 
+	 * @return
+	 */
+	String defaultValue() default DEFAULT_STRING;
 
-  public abstract boolean foreignAutoCreate();
+	/**
+	 * 是否是外键 
+	 * @return
+	 */
+	boolean foreign() default false;
+	/**
+	 * 建表的时候 是否自动创建
+	 * @return
+	 */
+	boolean foreignAutoCreate() default false;
+	/**
+	 * 级联操作
+	 * @return
+	 */
+	boolean foreignAutoRefresh() default false;
 
-  public abstract boolean foreignAutoRefresh();
+	/**
+	 * 外键 对于属性名 例如 Student.java中 Teacher对象  指向 Teacher的id的属性名
+	 * @return
+	 */
+	String foreignColumnName() default "";
+	
+	/**
+	 * 暂时用在日期的 格式化
+	 * @return
+	 */
+	String format() default "";
 
-  public abstract String foreignColumnName();
+	/**
+	 * Whether the field is an auto-generated id field. Default is false.
+	 */
+	boolean generatedId() default false;
 
-  public abstract String format();
+	public String generatedIdSequence();
 
-  public abstract boolean generatedId();
+	/**
+	 * Whether the field is the id field or not. Default is false. Only one
+	 * field can have this set in a class.
+	 * 支持联合主键
+	 */
+	boolean id() default false;
+	
+	/**
+	 * 是否 创建 索引
+	 * 暂不支持 
+	 * @return
+	 */
+	boolean index() default false;
 
-  public abstract String generatedIdSequence();
+	public String indexName();
 
-  public abstract boolean id();
+	public int maxForeignAutoRefreshLevel();
 
-  public abstract boolean index();
+	public boolean throwIfNull();
 
-  public abstract String indexName();
+	/**
+	 * 是否唯一
+	 * @return
+	 */
+	boolean unique() default false;
 
-  public abstract int maxForeignAutoRefreshLevel();
+	public String unknownEnumName();
 
-  public abstract boolean throwIfNull();
+	/**
+	 * 是否试用 get set方法
+	 * @return
+	 */
+	boolean useGetSet() default false;
 
-  public abstract boolean unique();
+	
+	public boolean version();
 
-  public abstract String unknownEnumName();
-
-  public abstract boolean useGetSet();
-
-  public abstract boolean version();
-
-  public abstract int width();
+	public int width();
 }
