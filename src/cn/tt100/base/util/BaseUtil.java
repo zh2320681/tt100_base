@@ -1,10 +1,15 @@
 package cn.tt100.base.util;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -13,47 +18,54 @@ import android.widget.Toast;
 
 /**
  * 工具类
+ * 
  * @author shrek
- *
+ * 
  */
 public class BaseUtil {
+
+	public static final DecimalFormat df = new DecimalFormat("#.00");
+
 	/**
 	 * 通过给定的 父View 初始化holder里面所有的View
+	 * 
 	 * @param parentView
 	 * @param holderObj
-	 * @param regex  xxx_?
+	 * @param regex
+	 *            xxx_?
 	 */
-	public static void initViews(Context ctx,View parentView,Object holderObj,String regex){
+	public static void initViews(Context ctx, View parentView,
+			Object holderObj, String regex) {
 		Class<?> clazz = holderObj.getClass();
 		Field[] fields = clazz.getDeclaredFields();
-		for(Field f : fields){
-			if(View.class.isAssignableFrom(f.getType())){
+		for (Field f : fields) {
+			if (View.class.isAssignableFrom(f.getType())) {
 				String idName = regex.replace("?", f.getName());
-				//判断修饰
-				int value = getIdValueIntoR(ctx,idName);
+				// 判断修饰
+				int value = getIdValueIntoR(ctx, idName);
 				f.setAccessible(true);
 				try {
 					f.set(holderObj, parentView.findViewById(value));
 				} catch (IllegalArgumentException e) {
-					BaseLog.printLog(BaseUtil.class, f.getName()+"赋值失败!");
+					BaseLog.printLog(BaseUtil.class, f.getName() + "赋值失败!");
 				} catch (IllegalAccessException e) {
-					BaseLog.printLog(BaseUtil.class, f.getName()+"赋值时访问失败!");
+					BaseLog.printLog(BaseUtil.class, f.getName() + "赋值时访问失败!");
 				}
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * 通过名字 得到id的值
+	 * 
 	 * @param idName
 	 * @return
 	 */
-	public static int getIdValueIntoR(Context ctx , String idName){
-		return ctx.getResources().getIdentifier(idName, "id", ctx.getPackageName());
+	public static int getIdValueIntoR(Context ctx, String idName) {
+		return ctx.getResources().getIdentifier(idName, "id",
+				ctx.getPackageName());
 	}
-	
-	
+
 	/**
 	 * 检测网络链接
 	 * 
@@ -77,8 +89,7 @@ public class BaseUtil {
 		}
 		return false;
 	}
-	
-	
+
 	/**
 	 * 打开文件
 	 * 
@@ -191,9 +202,7 @@ public class BaseUtil {
 		}
 		return type;
 	}
-	
-	
-	
+
 	/**
 	 * 将str转化为int 如果出现异常 返回0
 	 * 
@@ -212,21 +221,123 @@ public class BaseUtil {
 		}
 		return i;
 	}
-	
-	
+
 	/**
 	 * 判断 是不是这个类
 	 */
-	public static <T> T judgeContextToActivity(Object obj , Class<? extends Context> activityClass){
-		if(obj != null){
+	public static <T> T judgeContextToActivity(Object obj,
+			Class<? extends Context> activityClass) {
+		if (obj != null) {
 			Class<?> ctxClass = obj.getClass();
-			if(ctxClass.hashCode() == activityClass.hashCode()){
-				T futureObj = (T)obj;
+			if (ctxClass.hashCode() == activityClass.hashCode()) {
+				T futureObj = (T) obj;
 				return futureObj;
 			}
 		}
 		return null;
 	}
-	
-	
+
+	/**
+	 * 通过用户指定的 大小 加载图片
+	 * 
+	 * @param filePath
+	 * @param imgWidth
+	 *            为-1采用原图大小 0 不以宽做等比缩放 其他就是缩放后的图片大小
+	 * @param imgHeight
+	 * @return
+	 * @throws Exception
+	 */
+	public static Bitmap decodeBitmapWithOps(String filePath, int imgWidth,
+			int imgHeight) throws Exception {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		Bitmap localBitmap = BitmapFactory.decodeFile(filePath, options);
+		int orgHeight = options.outHeight;
+		int orgWidth = options.outWidth;
+		if (imgWidth == -1) {
+			imgWidth = orgWidth;
+		}
+
+		if (imgHeight == -1) {
+			imgHeight = orgWidth;
+		}
+
+		int inSampleSize = 1;
+
+		if (imgHeight == 0) {
+			inSampleSize = Math.round((float) orgWidth / (float) imgWidth);
+		} else if (imgWidth == 0) {
+			inSampleSize = Math.round((float) orgHeight / (float) imgHeight);
+		} else {
+			if (orgWidth > orgHeight) {
+				inSampleSize = Math
+						.round((float) orgHeight / (float) imgHeight);
+			} else {
+				inSampleSize = Math.round((float) orgWidth / (float) imgWidth);
+			}
+		}
+		//
+		// for (int i = 0; i < 10; i++) {
+		// if(inSampleSize<=(2^i)){
+		// inSampleSize = 2^i;
+		// break;
+		// }
+		// }
+		options.inSampleSize = inSampleSize;
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+		return bitmap;
+	}
+
+	// public static void downloadFile(Context context, DLTask mDLTask,
+	// DLHandler handler){
+	// if (handler != null ){
+	// if (Downloader.allCallbacks == null){
+	// Downloader.allCallbacks = new WeakHashMap();
+	// }
+	// Downloader.allCallbacks.put(paramDLTask, paramDLHandler);
+	// }
+	// Intent localIntent1 = new Intent(paramContext, DownloadService.class);
+	// Intent localIntent2 = localIntent1.putExtra("d", paramDLTask);
+	// ComponentName localComponentName =
+	// paramContext.startService(localIntent1);
+	// }
+
+	/**
+	 * 通过size 获取文件大小显示字符串
+	 * 
+	 * @param size
+	 * @return
+	 */
+	public static String getFileSize(long size) {
+		String sizeStr = "0B";
+		if (size < 1024L) {
+			sizeStr = size + "B";
+		} else if (size >= 1024L && size < 1024 * 1024) {
+			sizeStr = df.format(size / 1024.0) + "K";
+		} else if (size >= 1024 * 1024 && size < 1024 * 1024 * 1024) {
+			sizeStr = df.format(size / (1024.0 * 1024)) + "M";
+		} else {
+			sizeStr = df.format(size / (1024.0 * 1024 * 1024)) + "G";
+		}
+		return sizeStr;
+	}
+
+	public static void CopyStream(InputStream is, OutputStream os) {
+		final int buffer_size = 1024;
+		try {
+			byte[] bytes = new byte[buffer_size];
+			for (;;) {
+				int count = is.read(bytes, 0, buffer_size);
+				if (count == -1)
+					break;
+				os.write(bytes, 0, count);
+			}
+			os.flush();
+		} catch (Exception ex) {
+		}
+	}
+
 }
