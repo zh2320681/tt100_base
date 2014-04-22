@@ -12,6 +12,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import android.app.Activity;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
@@ -168,7 +169,7 @@ public class ImageLoader {
 			// CommonUtil.decodeFile(f,isShowList?listHeight:detailWidth);
 			bitmap = BaseUtil.decodeBitmapWithOps(f.getPath(),
 					mImageBo.afterLoadWidth, mImageBo.afterLoadHeight);
-			if (mImageBo.mHandler == null){
+			if (mImageBo.mHandler != null){
 				mImageBo.mHandler.handlerDownLoadImg(mImageBo);
 			}
 			return bitmap;
@@ -178,7 +179,7 @@ public class ImageLoader {
 			if (ex.getCause() instanceof OutOfMemoryError){
 				memoryCache.clear();
 			}
-			if (mImageBo.mHandler == null){
+			if (mImageBo.mHandler != null){
 				mImageBo.mHandler.loadLoacImgFail(mImageBo,ex);
 			}
 			return null;
@@ -194,9 +195,9 @@ public class ImageLoader {
 	static boolean imageViewReused(ImageBo mImageBo) {
 		String tag = imageViews.get(mImageBo.mShowView);
 		if (tag != null && tag.equals(mImageBo.url)) {
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	public void clearCache() {
@@ -226,6 +227,7 @@ public class ImageLoader {
 			if (mBo.afterLoadWidth == -1) {
 				mBo.afterLoadWidth = mBitmap.getWidth();
 			}
+			
 			Bitmap newBitmap = ThumbnailUtils.extractThumbnail(mBitmap,
 					mBo.afterLoadWidth, mBo.afterLoadHeight);
 			mBo.mShowView.setImageBitmap(newBitmap);
@@ -281,7 +283,10 @@ public class ImageLoader {
 				}
 				// “Ï≤Ωœ‘ æÕº∆¨
 				BitmapDisplayer bd = new BitmapDisplayer(bo, bmp);
-				bo.ctx.runOnUiThread(bd);
+				Activity act = bo.weakCtx.get();
+				if(act != null){
+					act.runOnUiThread(bd);
+				}
 			} catch (Throwable th) {
 				th.printStackTrace();
 			}

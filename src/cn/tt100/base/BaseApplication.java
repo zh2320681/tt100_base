@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+import cn.tt100.base.imageLoader.ImageLoader;
 import cn.tt100.base.util.BaseLog;
 import cn.tt100.base.util.LogLevel;
 import cn.tt100.base.util.MyActivityManager;
@@ -42,6 +43,7 @@ public class BaseApplication extends Application {
 		screenWidth = dm.widthPixels;
 		screenHight = dm.heightPixels;
 		
+		ImageLoader.getLoader(this);
 	}
 
 	@Override
