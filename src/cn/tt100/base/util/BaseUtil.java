@@ -340,4 +340,15 @@ public class BaseUtil {
 		}
 	}
 
+	
+	/**
+	 * ÅÐ¶Ïsd¿¨ÊÇ·ñ´æÔÚ
+	 */
+	public static boolean isSdCardExist(){
+		boolean isExist = false;
+		if(android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)){
+			isExist = true;
+		}
+		return isExist;
+	}
 }

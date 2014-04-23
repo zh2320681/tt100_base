@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="unfocused">#ffededed</color>
+    <color name="pressed">#ff92a8bd</color>
+    <color name="selected">#ff92a8bd</color>
+    <color name="focused">#ff92a8bd</color>
+    <color name="download_default">#ff000000</color>
+    <color name="download_default_bg">#fff0edf5</color>
+    <color name="download_list_selector">#ffd6efff</color>
+    <color name="download_notify">#ff3d6b9b</color>
+</resources>
