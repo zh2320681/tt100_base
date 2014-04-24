@@ -15,7 +15,7 @@ public interface DLHandler {
 	/**
 	 * 下载时候 文件存在 
 	 * @param task
-	 * @return 是否删除
+	 * @return 是否删除 true 删除 覆盖  false 
 	 */
 	public boolean isDLFileExist(DLTask task);
 
@@ -45,4 +45,11 @@ public interface DLHandler {
 	 * @return  CONFLICT_DEFAULT
 	 */
 	public int threadNumConflict(DLTask task, int oldThreadNum);
+	
+	/**
+	 * 下载完成后 打开文件失败
+	 * @param task
+	 * @param e
+	 */
+	public void openFileError(DLTask task, Exception e);
 }

@@ -351,4 +351,32 @@ public class BaseUtil {
 		}
 		return isExist;
 	}
+	
+	/**
+	 * 返回打开文件的意图
+	 * 
+	 * @param file
+	 */
+	public static Intent getOpenFileIntent(File file, Context context) {
+		Intent intent = new Intent();
+
+		String fName = file.getName();
+		int dotIndex = fName.lastIndexOf(".");
+		if (dotIndex < 0) {
+			//文件没有后缀名
+			Toast.makeText(context, "无法识别的文件类型!", Toast.LENGTH_LONG).show();
+			return null;
+		}
+		/* 获取文件的后缀名 */
+		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			// 设置intent的Action属性
+			intent.setAction(Intent.ACTION_VIEW);
+			// 获取文件file的MIME类型
+			String type = getMIMEType(file);
+			// 设置intent的data和Type属性。
+			intent.setDataAndType(Uri.fromFile(file), type);
+			return intent;
+
+	}
 }

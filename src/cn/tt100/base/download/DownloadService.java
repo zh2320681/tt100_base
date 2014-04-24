@@ -1,6 +1,6 @@
 package cn.tt100.base.download;
 
-import com.wei.util.download.BaseDownLoadActivity;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,7 +18,7 @@ public class DownloadService extends Service {
 
 	private static final String TAG = "UpdateService";
 
-	public static boolean isServiceShutDown = false;
+	public static AtomicBoolean isServiceShutDown;
 	private Downloader mDownloader;
 
 	private NotificationManager mNotificationManager;
@@ -33,7 +33,7 @@ public class DownloadService extends Service {
 		mNotificationManager = (NotificationManager) getSystemService("notification");
 		notification = new Notification(R.drawable.donwload_icon, "下载中...",
 				System.currentTimeMillis());
-		isServiceShutDown = false;
+		isServiceShutDown = new AtomicBoolean(false);
 
 		mDownloader = new Downloader(this, mNotificationManager);
 		;
@@ -46,7 +46,7 @@ public class DownloadService extends Service {
 			mNotificationManager.cancelAll();
 			mNotificationManager = null;
 		}
-		isServiceShutDown = true;
+		isServiceShutDown.set(true);;
 	}
 
 	public int onStartCommand(Intent intent, int paramInt1, int paramInt2) {
@@ -67,7 +67,8 @@ public class DownloadService extends Service {
 				"点击查看详情");
 		notification.flags |= Notification.FLAG_ONGOING_EVENT; // 将此通知放到通知栏的"Ongoing"即"正在运行"组中
 		notification.flags |= Notification.FLAG_NO_CLEAR;
-//		Intent i = new Intent(this, BaseDownLoadActivity.class);
+		Intent i = null;
+//		new Intent(this, BaseDownLoadActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 				| Intent.FLAG_ACTIVITY_NEW_TASK);
 		PendingIntent contentIntent = PendingIntent.getActivity(this,
