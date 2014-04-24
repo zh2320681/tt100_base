@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/download_default_bg"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corners_pop"
+        android:gravity="center"
+        android:paddingBottom="10dip"
+        android:paddingTop="10dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:text="下载详情"
+        android:textColor="@color/download_default"
+        android:textSize="22dip" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+
+            <!-- 文件名 -->
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@drawable/rounded_corners_pop"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="文件名"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+                    <Button
+                        android:id="@+id/dl_info_name_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_margin="5dip"
+                        android:text="复制"
+                        android:textColor="@color/download_default"
+                        android:background="@drawable/dowbload_btn1_bg"
+                        android:textSize="16dip" />
+                </RelativeLayout >
+                <LinearLayout android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="@color/download_list_selector"/>
+                <TextView
+                    	android:id="@+id/dl_info_name"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="xxxxxx.mp3"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+            </LinearLayout>
+            
+            <!-- 文件信息 -->
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@drawable/rounded_corners_pop"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="文件大小:"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+                    <TextView
+                        android:id="@+id/dl_info_size"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="34.8M"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+                </LinearLayout >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="线程数量:"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+                    <TextView
+                        android:id="@+id/dl_info_thread"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="4个"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+                </LinearLayout >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="保存路径:"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+                    <TextView
+                        android:id="@+id/dl_info_save"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="/mnt/sdcard/bankoa/"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+                </LinearLayout >
+            </LinearLayout>
+            
+            <!-- 文件下载地址 -->
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners_pop"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="下载地址"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+                    <Button
+                        android:id="@+id/dl_info_address_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_margin="5dip"
+                        android:text="复制"
+                        android:textColor="@color/download_default"
+                        android:background="@drawable/dowbload_btn1_bg"
+                        android:textSize="16dip" />
+                </RelativeLayout >
+                <LinearLayout android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="@color/download_list_selector"/>
+                <TextView
+                    	android:id="@+id/dl_info_address"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="http://www.baidu.com/mp3/xxxxxx.mp3"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+            </LinearLayout>    
+             
+             <!-- 下载详情 -->
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners_pop"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dip"
+                        android:paddingTop="5dip"
+                        android:text="下载详情"
+                        android:textColor="@color/download_default"
+                        android:textSize="16dip" />
+           				
+                </RelativeLayout >
+                <LinearLayout android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="@color/download_list_selector"/>
+                <LinearLayout
+                    	android:id="@+id/dl_info_layout"
+                        android:layout_width="fill_parent"
+                        android:layout_marginTop="5dip"
+                        android:layout_height="400dip" 
+                        android:orientation="horizontal"/>
+            </LinearLayout>   
+        </LinearLayout>
+        
+    </ScrollView>
+
+</LinearLayout>

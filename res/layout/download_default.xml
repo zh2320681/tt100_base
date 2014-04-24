@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/download_default_bg">
+    <LinearLayout 
+        android:id="@+id/downloding_bottom_layout"
+        android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:background="@drawable/download_btn1_normal"
+    	android:orientation="horizontal"
+    	android:layout_alignParentBottom="true"
+    	>
+        <LinearLayout 
+            android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="1"
+    		android:gravity="center">
+            <Button 
+                android:id="@+id/downloding_clear"
+                android:layout_width="fill_parent"
+    			android:layout_height="fill_parent"
+                android:textSize="15dip"
+                android:textColor="#000000"
+                android:text="清空"
+                android:background="@drawable/dowbload_btn1_bg"
+                android:paddingTop="8dip"
+                android:paddingBottom="8dip"
+                />
+        </LinearLayout>
+        <LinearLayout 
+            android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="1"
+    		android:gravity="center">
+            <Button 
+                android:id="@+id/downloding_flash"
+                android:layout_width="fill_parent"
+    			android:layout_height="fill_parent"
+                android:textSize="15dip"
+                android:textColor="#000000"
+                android:text="刷新"
+                android:background="@drawable/dowbload_btn1_bg"
+                android:paddingTop="8dip"
+                android:paddingBottom="8dip"
+                />
+        </LinearLayout>
+        <LinearLayout 
+            android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="1"
+    		android:gravity="center">
+            <Button 
+                android:id="@+id/downloding_back"
+                android:layout_width="fill_parent"
+    			android:layout_height="fill_parent"
+                android:textSize="15dip"
+                android:textColor="#000000"
+                android:text="返回"
+                android:background="@drawable/dowbload_btn1_bg"
+                android:paddingTop="8dip"
+                android:paddingBottom="8dip"
+                />
+        </LinearLayout>
+        
+    </LinearLayout>
+    
+
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:layout_above="@id/downloding_bottom_layout">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/download_block_bg"
+        android:gravity="center"
+        android:paddingBottom="10dip"
+        android:paddingTop="10dip"
+        android:text="下载管理"
+        android:textColor="@color/download_default"
+        android:textSize="22dip" />
+    <!-- 正在下载 -->
+
+    <RelativeLayout
+        android:id="@+id/downloding_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/download_block_bg" >
+
+        <ImageView
+            android:id="@+id/downloding_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dip"
+            android:scaleType="centerInside"
+            android:src="@drawable/downloading_icon" />
+
+        <TextView
+            android:id="@+id/downloding_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/downloding_icon"
+            android:text="正在下载(0)"
+            android:textColor="@color/download_default"
+            android:textSize="18dip" />
+        <ImageView 
+            android:id="@+id/downloding_expand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dip"
+            android:scaleType="centerInside"
+            android:src="@drawable/expand_close"
+            />
+    </RelativeLayout>
+    
+    <!-- 正在下载内容 -->
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <!-- 无内容 显示 -->
+        <ImageView 
+            android:id="@+id/downloding_no_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="20dip"
+            android:scaleType="centerInside"
+            android:src="@drawable/downloaing_no_info"
+            />
+        <ListView 
+            android:id="@+id/downloding_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:listSelector="@color/download_list_selector"
+            android:cacheColorHint="#00000000"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
+    
+    <!-- 已下载 -->
+
+    <RelativeLayout
+        android:id="@+id/downloded_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/download_block_bg" >
+
+        <ImageView
+            android:id="@+id/downloded_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dip"
+            android:scaleType="centerInside"
+            android:src="@drawable/downloading_icon" />
+
+        <TextView
+            android:id="@+id/downloded_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/downloded_icon"
+            android:text="已下载(0)"
+            android:textColor="@color/download_default"
+            android:textSize="18dip" />
+        <ImageView 
+            android:id="@+id/downloded_expand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dip"
+            android:scaleType="centerInside"
+            android:src="@drawable/expand_close"
+            />
+    </RelativeLayout>
+    
+    <!-- 正在下载内容 -->
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <!-- 无内容 显示 -->
+        <ImageView 
+            android:id="@+id/downloded_no_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="20dip"
+            android:scaleType="centerInside"
+            android:src="@drawable/downloaing_no_info"
+            />
+        <ListView 
+            android:id="@+id/downloded_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:listSelector="@color/download_list_selector"
+            android:cacheColorHint="#00000000"
+            android:visibility="gone"
+            />
+    </RelativeLayout>    
+
+</LinearLayout>
+</RelativeLayout>

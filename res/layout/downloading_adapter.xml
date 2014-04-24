@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical" >
+    <LinearLayout 
+        android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+	    android:layout_weight="2"
+	    android:gravity="center"
+	    android:layout_marginTop="8dip"
+	    android:layout_marginBottom="8dip">
+       <ImageView 
+	    android:id="@+id/downloading_adapter_states"
+	    android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+	    android:scaleType="centerInside"
+	    android:src="@drawable/downloaing_wait"
+	    />
+        
+    </LinearLayout>
+	
+	<!-- 中间部分  -->
+    <LinearLayout 
+        android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:layout_weight="1"
+    	android:orientation="vertical"
+        >
+        <!-- 下载文件名 -->
+        <TextView 
+            android:id="@+id/downloading_adapter_name"
+            android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="1"
+    		android:text="xxxxxxx.mp3"
+    		android:textSize="13dip"
+    		android:textColor="@color/download_default"
+    		android:gravity="center_vertical"
+            />
+
+        <LinearLayout
+            android:id="@+id/downloading_adapter_preLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical" >
+
+            <!--  android:indeterminateDrawable="@drawable/download_process_green" 
+            	android:indeterminateDrawable="@drawable/download_process_green"
+            	android:progressDrawable="@drawable/color_progressbar"  -->
+            <ProgressBar
+                android:id="@+id/downloading_adapter_pre"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:indeterminateOnly="false"
+                
+                 android:progressDrawable="@drawable/barcolor"
+                />
+        </LinearLayout>
+         <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" >
+            <TextView 
+                android:id="@+id/downloading_adapter_info"
+                android:layout_width="fill_parent"
+            	android:layout_height="fill_parent"
+            	android:layout_weight="1"
+            	android:gravity="center_vertical"
+            	android:textColor="@color/download_default"
+            	android:textSize="12dip"
+            	android:text="191KB/23.2MB"
+                />
+            <TextView 
+                android:id="@+id/downloading_adapter_speed"
+                android:layout_width="fill_parent"
+            	android:layout_height="fill_parent"
+            	android:layout_weight="1"
+            	android:gravity="right|center_vertical"
+            	android:textColor="@color/download_default"
+            	android:textSize="12dip"
+            	android:text=""
+            	android:visibility="invisible"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <!-- 按钮 -->
+    <LinearLayout 
+        
+        android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+	    android:layout_weight="2"
+	    android:gravity="center">
+        <Button 
+            android:id="@+id/downloading_adapter_btn"
+	   		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+	    	android:scaleType="center"
+	    	android:text="暂停"
+	    	android:textSize="14dip"
+	    	android:textColor="@color/download_default"
+	    	android:background="@drawable/dowbload_btn_bg"
+	    	android:focusable="false"
+	    />
+        
+    </LinearLayout>
+	
+</LinearLayout>
