@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 
+import com.wei.util.download.R;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -378,5 +380,44 @@ public class BaseUtil {
 			intent.setDataAndType(Uri.fromFile(file), type);
 			return intent;
 
+	}
+	
+	/**
+	 * 根据文件名 得到对应的 图标
+	 */
+	public static int getIcon(File f){
+		if(!f.isDirectory()){
+			//文件
+			String name = f.getName().toLowerCase();
+			if(name.indexOf(".txt") > 0){
+				return R.drawable.mimetype_text_txt;
+			}else if(name.indexOf(".doc") > 0){
+				return R.drawable.mimetype_office_doc;
+			}else if(name.indexOf(".apk") > 0){
+				return R.drawable.mimetype_app_apk;
+			}else if(name.indexOf(".htm") > 0){
+				return R.drawable.mimetype_htm_html;
+			}else if(name.indexOf(".png") > 0
+					||name.indexOf(".jpg") > 0
+					||name.indexOf(".bmp") > 0
+					||name.indexOf(".gif") > 0){
+				return R.drawable.mimetype_img;
+			}else if(name.indexOf(".pdf") > 0){
+				return R.drawable.mimetype_office_pdf;
+			}else if(name.indexOf(".mp3") > 0
+					||name.indexOf(".wma") > 0){
+				return R.drawable.mimetype_sound;
+			}else if(name.indexOf(".mp4") > 0
+					||name.indexOf(".rm") > 0
+					||name.indexOf(".rmvb") > 0){
+				return R.drawable.mimetype_video;
+			}		
+		}else{
+			//文件夹
+			return R.drawable.mimetype_folder;
+		}
+		
+		
+		return R.drawable.mimetype_null;
 	}
 }
