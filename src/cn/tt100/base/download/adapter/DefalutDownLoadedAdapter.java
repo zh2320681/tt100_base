@@ -36,7 +36,7 @@ public class DefalutDownLoadedAdapter extends BaseAdapter {
 		return this.allTasks.size();
 	}
 
-	public Object getItem(int position) {
+	public DLTask getItem(int position) {
 		return allTasks.get(position);
 	}
 
@@ -45,7 +45,7 @@ public class DefalutDownLoadedAdapter extends BaseAdapter {
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent){
-	    final DLTask mDLTask = (DLTask)this.allTasks.get(position);
+	    final DLTask mDLTask = this.allTasks.get(position);
 	    
 	    DownloadShow mDownloadShow;
 	    if(convertView == null){

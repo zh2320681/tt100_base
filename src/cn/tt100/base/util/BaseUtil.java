@@ -6,8 +6,6 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 
-import com.wei.util.download.R;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
+import cn.tt100.base.R;
 
 /**
  * π§æﬂ¿‡

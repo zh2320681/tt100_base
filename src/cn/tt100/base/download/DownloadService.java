@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.widget.RemoteViews;
 import cn.tt100.base.R;
 import cn.tt100.base.download.bo.DLTask;
+import cn.tt100.base.download.ui.BaseDownLoadActivity;
 
 public class DownloadService extends Service {
 	public static final int NOTIFICATION_ID = 0x11;
@@ -67,8 +68,7 @@ public class DownloadService extends Service {
 				"点击查看详情");
 		notification.flags |= Notification.FLAG_ONGOING_EVENT; // 将此通知放到通知栏的"Ongoing"即"正在运行"组中
 		notification.flags |= Notification.FLAG_NO_CLEAR;
-		Intent i = null;
-//		new Intent(this, BaseDownLoadActivity.class);
+		Intent i = new Intent(this, BaseDownLoadActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 				| Intent.FLAG_ACTIVITY_NEW_TASK);
 		PendingIntent contentIntent = PendingIntent.getActivity(this,

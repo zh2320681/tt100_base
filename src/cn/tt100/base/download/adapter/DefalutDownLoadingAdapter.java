@@ -5,10 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import cn.tt100.base.R;
 import cn.tt100.base.download.DLConstant;
-import cn.tt100.base.download.DownloadService;
 import cn.tt100.base.download.Downloader;
 import cn.tt100.base.download.bo.DLTask;
 import cn.tt100.base.download.bo.DLThreadTask;
@@ -34,10 +30,10 @@ public class DefalutDownLoadingAdapter extends BaseAdapter {
 	private LayoutInflater mLayoutInflater;
 	private Map<DLTask, Date> taskTimeRecs;
 
-	public DefalutDownLoadingAdapter(Context paramContext,
+	public DefalutDownLoadingAdapter(Context context,
 			DLDatabaseHelper paramDLDatabaseHelper) {
-		mContext = paramContext;
-		mLayoutInflater = LayoutInflater.from(paramContext);
+		mContext = context;
+		mLayoutInflater = LayoutInflater.from(mContext);
 		mHelper = paramDLDatabaseHelper;
 
 		taskTimeRecs = new HashMap<DLTask, Date>();
