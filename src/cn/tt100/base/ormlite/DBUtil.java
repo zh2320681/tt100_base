@@ -35,126 +35,13 @@ public class DBUtil {
 	private static final String TAG = "DBUtil";
 
 	public static final void createTable(SQLiteDatabase mDatabase, Class<? extends BaseBo> clazz, boolean isExists){
-    String tableName = getTableName(clazz);
-    StringBuffer localStringBuffer1 = new StringBuffer();
-    Object localObject = new StringBuilder("create table ");
-    if (paramBoolean)
-      str2 = " IF NOT EXISTS ";
-    int m;
-    while (true)
-    {
-      String str3 = str2 + str1 + " (";
-      localStringBuffer1.<init>(str3);
-      ArrayList localArrayList = new ArrayList();
-      TableInfo localTableInfo = TableInfo.newInstance(paramClass);
-      int i = 1;
-      int j = 0;
-      int k = localTableInfo.allField.size();
-      if (j >= k)
-      {
-        if (localArrayList.size() > 0)
-        {
-          m = 1;
-          StringBuffer localStringBuffer2 = localStringBuffer1.append(",primary key(");
-          localObject = localArrayList.iterator();
-          if (((Iterator)localObject).hasNext())
-            break;
-          StringBuffer localStringBuffer3 = localStringBuffer1.append(")");
-        }
-        else
-        {
-          StringBuffer localStringBuffer4 = localStringBuffer1.append(");");
-          StringBuilder localStringBuilder1 = new StringBuilder("create SQL: ");
-          String str4 = localStringBuffer1.toString();
-          print(str4);
-          return;
-          str2 = "";
-          continue;
-        }
-      }
-      else
-      {
-        Field localField1 = (Field)localTableInfo.allField.get(j);
-        Class localClass = localField1.getType();
-        String str5 = (String)localTableInfo.allColumnNames.get(j);
-        DatabaseField localDatabaseField = (DatabaseField)localField1.getAnnotation(DatabaseField.class);
-        Field localField2 = (Field)localTableInfo.allforeignMaps.get(str5);
-        if (localField2 != null)
-        {
-          str6 = "";
-          if (i != 0)
-            i = 0;
-          while (true)
-          {
-            String str7 = String.valueOf(str6);
-            StringBuilder localStringBuilder2 = new StringBuilder(str7).append(str5).append(" ");
-            String str8 = getObjMapping(localField2);
-            String str9 = str8 + " ";
-            String str10 = str9;
-            StringBuffer localStringBuffer5 = localStringBuffer1.append(str10);
-            if (List.class.isAssignableFrom(localClass))
-            {
-              Type localType = localField1.getGenericType();
-              if ((localType instanceof ParameterizedType))
-                localClass = (Class)((ParameterizedType)localType).getActualTypeArguments()[0];
-            }
-            PrintStream localPrintStream = System.out;
-            StringBuilder localStringBuilder3 = new StringBuilder("=======>");
-            String str11 = localClass.toString();
-            String str12 = str11;
-            localPrintStream.println(str12);
-            String str13 = getTableName(localClass);
-            String str14 = getFeildName(localField2);
-            createTrigeerFKCaceade(paramSQLiteDatabase, localDatabaseField, str13, str14, str1, str5);
-            j += 1;
-            break;
-            str6 = ", ";
-          }
-        }
-        String str15 = getObjMapping(localField1);
-        String str6 = "";
-        if (i != 0)
-          i = 0;
-        while (true)
-        {
-          String str16 = String.valueOf(str6);
-          String str17 = str16 + str5 + " " + str15 + " ";
-          StringBuffer localStringBuffer6 = new StringBuffer(str17);
-          if (!localDatabaseField.canBeNull())
-            StringBuffer localStringBuffer7 = localStringBuffer6.append(" NOT NULL  ");
-          String str18 = localDatabaseField.defaultValue();
-          if (!str15.equals("TEXT"))
-          {
-            String str19 = String.valueOf(str18);
-            String str20 = str19 + " ";
-            StringBuffer localStringBuffer8 = localStringBuffer6.append(str20);
-          }
-          if (localDatabaseField.id())
-            boolean bool = localArrayList.add(str5);
-          if (localDatabaseField.generatedId())
-            StringBuffer localStringBuffer9 = localStringBuffer6.append("Autoincrement ");
-          if (localDatabaseField.unique())
-            StringBuffer localStringBuffer10 = localStringBuffer6.append("UNIQUE ");
-          String str21 = localStringBuffer6.toString();
-          StringBuffer localStringBuffer11 = localStringBuffer1.append(str21);
-          break;
-          str6 = ", ";
-        }
-      }
-    }
-    String str22 = (String)((Iterator)localObject).next();
-    StringBuilder localStringBuilder4 = new java/lang/StringBuilder;
-    if (m != 0);
-    for (String str2 = ""; ; str2 = ",")
-    {
-      String str23 = String.valueOf(str2);
-      localStringBuilder4.<init>(str23);
-      String str24 = str22;
-      String str25 = str24;
-      StringBuffer localStringBuffer12 = localStringBuffer1.append(str25);
-      m = 0;
-      break;
-    }
+		String tableName = getTableName(clazz);
+		StringBuffer createSqlSB = new StringBuffer("create table ");
+		if (isExists){
+			createSqlSB.append(" IF NOT EXISTS ");
+		}
+		createSqlSB.append(tableName);
+		
   }
 
 	/**
@@ -239,7 +126,7 @@ public class DBUtil {
 
 	/**
 	 * 返回外键名称
-	 * 
+	 * FK_TEACHER_ID
 	 * @param paramString
 	 * @param clazz
 	 * @return
@@ -298,6 +185,42 @@ public class DBUtil {
 		return tableName;
 	}
 
+	/**
+	 * 判断属性 是否有效
+	 * @param field
+	 * @return
+	 */
+	public static final  boolean judgeFieldAvaid(Field field){
+		DatabaseField mDatabaseField = field.getAnnotation(DatabaseField.class);
+		if(mDatabaseField != null
+				&& isSupportType(field)){
+			return true;
+		}	
+		return false;
+	}
+	
+	
+	/**
+	 * 是否是 支持的类型
+	 * 
+	 * @param mField
+	 * @return
+	 */
+	public static boolean isSupportType(Field mField) {
+		Class<?> clazz = mField.getType();
+		if (!clazz.isPrimitive() && !String.class.isAssignableFrom(clazz)
+				&& !clazz.isAssignableFrom(Date.class)
+				&& !clazz.isAssignableFrom(Calendar.class)
+				&& !Number.class.isAssignableFrom(clazz)
+				&& !List.class.isAssignableFrom(clazz)
+				&& !BaseBo.class.isAssignableFrom(clazz)) {
+			BaseLog.printLog(TAG, clazz.getName() + " 不支持的数据类型");
+			return false;
+		}
+		return true;
+	}
+
+	
 	private static void print(String paramString) {
 		BaseLog.printLog(LogLevel.INFO, "DBUtil", paramString);
 	}

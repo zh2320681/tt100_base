@@ -1,6 +1,5 @@
 package cn.tt100.base.example;
 
-import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,7 +11,7 @@ import cn.tt100.base.annotation.AutoOnClick;
 public class MenuActivity extends BaseActivity {
 	@AutoInitialize(idFormat = "menu_?")
 	@AutoOnClick(clickSelector = "mClick")
-	private Button dbTestBtn,downTestBtn,imgBtn;
+	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn;
 
 	private OnClickListener mClick = new OnClickListener() {
 		
@@ -26,6 +25,10 @@ public class MenuActivity extends BaseActivity {
 			}else if(arg0 == imgBtn){
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), ImageTestActivity.class);
+			    startActivity(intent);
+			}else if(arg0 == restTestBtn){
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), RestActivity.class);
 			    startActivity(intent);
 			}
 		}
