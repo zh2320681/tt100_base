@@ -26,6 +26,10 @@
         <activity
             android:name="cn.tt100.base.example.ImageTestActivity"
             android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="cn.tt100.base.example.RestActivity"
+            android:screenOrientation="portrait" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
