@@ -48,9 +48,9 @@ public class BaseUtil {
 				try {
 					f.set(holderObj, parentView.findViewById(value));
 				} catch (IllegalArgumentException e) {
-					BaseLog.printLog(BaseUtil.class, f.getName() + "∏≥÷µ ß∞‹!");
+					ZWLogger.printLog(BaseUtil.class, f.getName() + "∏≥÷µ ß∞‹!");
 				} catch (IllegalAccessException e) {
-					BaseLog.printLog(BaseUtil.class, f.getName() + "∏≥÷µ ±∑√Œ  ß∞‹!");
+					ZWLogger.printLog(BaseUtil.class, f.getName() + "∏≥÷µ ±∑√Œ  ß∞‹!");
 				}
 			}
 		}

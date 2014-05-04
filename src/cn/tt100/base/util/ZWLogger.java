@@ -2,7 +2,7 @@ package cn.tt100.base.util;
 
 import android.util.Log;
 
-public class BaseLog {
+public class ZWLogger {
 	public static boolean isDebug = true;
 	
 	public static void printLog(Object obj,String msg){
