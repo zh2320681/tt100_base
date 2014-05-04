@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import cn.tt100.base.BaseActivity;
+import cn.tt100.base.ZWActivity;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
 
-public class MenuActivity extends BaseActivity {
+public class MenuActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "menu_?")
 	@AutoOnClick(clickSelector = "mClick")
 	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn;

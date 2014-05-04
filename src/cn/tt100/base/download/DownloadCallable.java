@@ -11,7 +11,7 @@ import android.content.Intent;
 import cn.tt100.base.download.bo.DLTask;
 import cn.tt100.base.download.bo.DLThreadTask;
 import cn.tt100.base.download.db.DLDatabaseHelper;
-import cn.tt100.base.util.BaseLog;
+import cn.tt100.base.util.ZWLogger;
 
 public class DownloadCallable implements Runnable {
 	private Context context;
@@ -43,7 +43,7 @@ public class DownloadCallable implements Runnable {
 			intent.putExtra("e", info);
 			context.sendBroadcast(intent);
 		}
-		BaseLog.printLog(DownloadCallable.class, "下载的文件名: "+task.fileName+" 下载线程id："+dtTask.threadId
+		ZWLogger.printLog(DownloadCallable.class, "下载的文件名: "+task.fileName+" 下载线程id："+dtTask.threadId
 				+" 已经下载#####################===>"+dtTask.hasDownloadLength+"/"+dtTask.downloadBlock);
 	}
 
@@ -83,7 +83,7 @@ public class DownloadCallable implements Runnable {
 //					endPos = block * threadId -1;//结束位置
 //				}
 				
-				BaseLog.printLog(DownloadCallable.this, "线程"+dtTask.threadId+"开始下载的位置 ===>"+startPos+"   下载结束的位置===>"+
+				ZWLogger.printLog(DownloadCallable.this, "线程"+dtTask.threadId+"开始下载的位置 ===>"+startPos+"   下载结束的位置===>"+
 						endPos);
 				http.setRequestProperty("Range", "bytes=" + startPos + "-"+ endPos);//设置获取实体数据的范围
 				http.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)");

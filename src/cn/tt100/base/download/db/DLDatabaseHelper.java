@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import cn.tt100.base.download.bo.DLTask;
 import cn.tt100.base.download.bo.DLThreadTask;
-import cn.tt100.base.util.BaseLog;
+import cn.tt100.base.util.ZWLogger;
 
 public class DLDatabaseHelper extends SQLiteOpenHelper {
 	/**
@@ -40,7 +40,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 		synchronized (LOCK) {
 			SQLiteDatabase mDatabase = getWritableDatabase();
 			int num = mDatabase.delete("DLThreadTask", "taskHashCode = "+taskHashCode, null);
-			BaseLog.printLog(DLDatabaseHelper.class, "删除线程下载任务,删除条数:" + num);
+			ZWLogger.printLog(DLDatabaseHelper.class, "删除线程下载任务,删除条数:" + num);
 			mDatabase.close();
 		}
 	}
@@ -259,7 +259,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 			
 			int i = mDatabase.update("DLTask", cValues,
 					"downLoadUrl = ?", new String[]{mDLTask.downLoadUrl});
-			BaseLog.printLog(DLDatabaseHelper.class, "更新线程下载任务,线程id:" + i);
+			ZWLogger.printLog(DLDatabaseHelper.class, "更新线程下载任务,线程id:" + i);
 			if (mDatabase.isOpen()){
 				mDatabase.close();
 			}
@@ -308,7 +308,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 			cValues.put("errorMessage", task.errorMessage);
 			int num = mDatabase.update("DLTask", cValues,
 					"downLoadUrl = ?", new String[]{task.downLoadUrl});
-			BaseLog.printLog(DLDatabaseHelper.class, "更新线程下载任务,影响条数:" + num);
+			ZWLogger.printLog(DLDatabaseHelper.class, "更新线程下载任务,影响条数:" + num);
 			
 			ContentValues cValues1 = new ContentValues();
 			cValues1.put("downloadBlock", dtTask.downloadBlock);
@@ -317,7 +317,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 			cValues1.put("costTime", dtTask.costTime);
 			int tNum = mDatabase.update("DLThreadTask",
 					cValues1, "idCode = "+ dtTask.idCode, null);
-			BaseLog.printLog(DLDatabaseHelper.class, "更新线程下载任务,影响条数:" + tNum);
+			ZWLogger.printLog(DLDatabaseHelper.class, "更新线程下载任务,影响条数:" + tNum);
 			if (mDatabase.isOpen()){
 				mDatabase.close();
 			}
@@ -339,7 +339,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 			cValues.put("costTime", dtTask.costTime);
 			int num = mDatabase.update("DLThreadTask",
 					cValues, "idCode = "+ dtTask.idCode, null);
-			BaseLog.printLog(DLDatabaseHelper.class, "更新线程下载任务,影响条数:" + num);
+			ZWLogger.printLog(DLDatabaseHelper.class, "更新线程下载任务,影响条数:" + num);
 			if (mDatabase.isOpen()){
 				mDatabase.close();
 			}

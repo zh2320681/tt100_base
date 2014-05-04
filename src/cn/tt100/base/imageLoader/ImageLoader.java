@@ -18,7 +18,7 @@ import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.widget.ImageView;
 import cn.tt100.base.R;
-import cn.tt100.base.util.BaseLog;
+import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.BaseUtil;
 
 public class ImageLoader {
@@ -43,7 +43,7 @@ public class ImageLoader {
 	 */
 	private ImageLoader(Application mApplication) throws Exception {
 		if (mApplication == null) {
-			BaseLog.printLog(ImageLoader.class, "app为null 不能初始化!");
+			ZWLogger.printLog(ImageLoader.class, "app为null 不能初始化!");
 			throw new Exception("app为null 不能初始化!");
 		}
 		memoryCache = new MemoryCache();
@@ -174,7 +174,7 @@ public class ImageLoader {
 			}
 			return bitmap;
 		} catch (Exception ex) {
-			BaseLog.printLog(ImageLoader.class, "加载本地缓存失败!");
+			ZWLogger.printLog(ImageLoader.class, "加载本地缓存失败!");
 //			ex.printStackTrace();
 			if (ex.getCause() instanceof OutOfMemoryError){
 				memoryCache.clear();

@@ -6,14 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.widget.ImageView;
-import cn.tt100.base.BaseActivity;
+import cn.tt100.base.ZWActivity;
 import cn.tt100.base.R;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.imageLoader.ImageBo;
 import cn.tt100.base.imageLoader.ImageHandler;
 import cn.tt100.base.imageLoader.ImageLoader;
 
-public class ImageTestActivity extends BaseActivity {
+public class ImageTestActivity extends ZWActivity {
 
 	@AutoInitialize(idFormat = "it_?")
 	private ImageView imgView;

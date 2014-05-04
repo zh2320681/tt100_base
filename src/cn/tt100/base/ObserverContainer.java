@@ -2,7 +2,7 @@ package cn.tt100.base;
 
 import java.util.HashMap;
 
-import cn.tt100.base.util.BaseLog;
+import cn.tt100.base.util.ZWLogger;
 import android.view.View;
 
 public class ObserverContainer {
@@ -20,7 +20,7 @@ public class ObserverContainer {
 		if(container.containsKey(hashCodeKey)){
 			container.get(hashCodeKey).addObserver(mViewObserver);
 		}else{
-			BaseLog.printLog(ObserverContainer.class, "未找到观察对象,无法添加观察者");
+			ZWLogger.printLog(ObserverContainer.class, "未找到观察对象,无法添加观察者");
 		}
 	}
 	

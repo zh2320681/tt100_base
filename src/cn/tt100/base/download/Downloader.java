@@ -36,7 +36,7 @@ import cn.tt100.base.R;
 import cn.tt100.base.download.bo.DLTask;
 import cn.tt100.base.download.bo.DLThreadTask;
 import cn.tt100.base.download.db.DLDatabaseHelper;
-import cn.tt100.base.util.BaseLog;
+import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.BaseUtil;
 
 public class Downloader {
@@ -83,7 +83,7 @@ public class Downloader {
 		if (!defaultSavePath.exists()) {
 			boolean bool = defaultSavePath.mkdir();
 			if (!bool)
-				BaseLog.printLog(Downloader.this, "baseDLLoader文件夹创建失败!");
+				ZWLogger.printLog(Downloader.this, "baseDLLoader文件夹创建失败!");
 		}
 
 		this.infoNotification = new Notification(R.layout.update_notify,
@@ -204,7 +204,7 @@ public class Downloader {
 					System.out.println("检测到文件夹中,有相同的文件名存在,做了删除处理!");
 				} else if (handler != null && handler.isDLFileExist(mDLTask)) {
 					postTaskDoing(mDLTask);
-					BaseLog.printLog(Downloader.this, "任务"
+					ZWLogger.printLog(Downloader.this, "任务"
 							+ mDLTask.downLoadUrl + " 不用下载,上次已经存在!");
 					return;
 				}
@@ -288,7 +288,7 @@ public class Downloader {
 		errorTasks.remove(mDLTask);
 
 		long deffTime = mDLTask.createTime - new Date().getTime();
-		BaseLog.printLog(Downloader.class, "下载任务" + mDLTask.downLoadUrl
+		ZWLogger.printLog(Downloader.class, "下载任务" + mDLTask.downLoadUrl
 				+ "都完成了 \n 耗时:" + (deffTime / 1000L) + "s  实际记录耗时间："
 				+ mDLTask.costTime / 1000L);
 
@@ -317,7 +317,7 @@ public class Downloader {
 	}
 
 	private void print(String paramString) {
-		BaseLog.printLog(this, paramString);
+		ZWLogger.printLog(this, paramString);
 	}
 
 	/**
@@ -333,7 +333,7 @@ public class Downloader {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				BaseLog.printLog(Downloader.class, "任务:" + mDLTask.downLoadUrl
+				ZWLogger.printLog(Downloader.class, "任务:" + mDLTask.downLoadUrl
 						+ " 现在开始重试下载!");
 				Intent intent = new Intent(context, DownloadService.class);
 				intent.putExtra("d", mDLTask);
@@ -341,7 +341,7 @@ public class Downloader {
 			}
 		};
 		localTimer.schedule(timeTask, delayTime);
-		BaseLog.printLog(Downloader.class, "任务:" + mDLTask.downLoadUrl + "  "
+		ZWLogger.printLog(Downloader.class, "任务:" + mDLTask.downLoadUrl + "  "
 				+ delayTime + "ms后重试下载!");
 	}
 
@@ -482,7 +482,7 @@ public class Downloader {
 					mDLTask = dbDLTask;
 					break;
 				case DLConstant.CONFLICT_RETURN:
-					BaseLog.printLog(Downloader.class,
+					ZWLogger.printLog(Downloader.class,
 							"下载线程数目与上一次不符合,用户设置退出下载!");
 					return;
 				default:

@@ -8,7 +8,7 @@ import java.util.List;
 import cn.tt100.base.BaseBo;
 import cn.tt100.base.annotation.DatabaseField;
 import cn.tt100.base.annotation.DatabaseTable;
-import cn.tt100.base.util.BaseLog;
+import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.LogLevel;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -214,7 +214,7 @@ public class DBUtil {
 				&& !Number.class.isAssignableFrom(clazz)
 				&& !List.class.isAssignableFrom(clazz)
 				&& !BaseBo.class.isAssignableFrom(clazz)) {
-			BaseLog.printLog(TAG, clazz.getName() + " 不支持的数据类型");
+			ZWLogger.printLog(TAG, clazz.getName() + " 不支持的数据类型");
 			return false;
 		}
 		return true;
@@ -222,6 +222,6 @@ public class DBUtil {
 
 	
 	private static void print(String paramString) {
-		BaseLog.printLog(LogLevel.INFO, "DBUtil", paramString);
+		ZWLogger.printLog(LogLevel.INFO, "DBUtil", paramString);
 	}
 }

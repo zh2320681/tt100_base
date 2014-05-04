@@ -6,17 +6,18 @@ import java.lang.reflect.Method;
 import java.util.Observable;
 import java.util.Observer;
 
+import android.app.Activity;
+import android.app.Application;
+import android.os.Bundle;
+import android.view.View.OnClickListener;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
 import cn.tt100.base.annotation.OberverLoad;
-import cn.tt100.base.util.BaseLog;
+import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.BaseUtil;
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.View.OnClickListener;
+import cn.tt100.base.util.net.ZWNetWorkUtil.NetType;
 
-public abstract class BaseActivity extends Activity implements Observer{
-	
+public abstract class ZWActivity extends Activity implements Observer{
 	private static String packageName;
 	private String activityName;
 	
@@ -30,7 +31,11 @@ public abstract class BaseActivity extends Activity implements Observer{
 		}
 		
 		activityName = getClass().getSimpleName();
-		
+		Application app = getApplication();
+		if(app instanceof ZWApplication){
+			ZWApplication zwApp = (ZWApplication)app;
+			zwApp.mActivityManager.pushActivity(this);
+		}
 		onBaseCreate(savedInstanceState);
 		loadField();
 		
@@ -70,10 +75,10 @@ public abstract class BaseActivity extends Activity implements Observer{
 					f.set(this, findViewById(value));
 				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
-					BaseLog.printLog(this, f.getName()+"赋值失败!");
+					ZWLogger.printLog(this, f.getName()+"赋值失败!");
 				} catch (IllegalAccessException e) {
 					// TODO Auto-generated catch block
-					BaseLog.printLog(this, f.getName()+"赋值时访问失败!");
+					ZWLogger.printLog(this, f.getName()+"赋值时访问失败!");
 				}
 			}
 			
@@ -87,7 +92,7 @@ public abstract class BaseActivity extends Activity implements Observer{
 					clickMethod = viewClazz.getMethod("setOnClickListener", OnClickListener.class);
 				} catch (NoSuchMethodException e) {
 					// TODO Auto-generated catch block
-					BaseLog.printLog(this, f.getName()+"设置setOnClickListener()方法失败!");
+					ZWLogger.printLog(this, f.getName()+"设置setOnClickListener()方法失败!");
 				}
 				if(clickMethod != null){
 					Field clickField;
@@ -97,13 +102,13 @@ public abstract class BaseActivity extends Activity implements Observer{
 						clickMethod.invoke(f.get(this), clickField.get(this));
 					} catch (NoSuchFieldException e) {
 						// TODO Auto-generated catch block
-						BaseLog.printLog(this, "没有找到方法:"+autoOnClick.clickSelector());
+						ZWLogger.printLog(this, "没有找到方法:"+autoOnClick.clickSelector());
 					} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block
-						BaseLog.printLog(BaseUtil.class, f.getName()+"赋值失败!");
+						ZWLogger.printLog(BaseUtil.class, f.getName()+"赋值失败!");
 					} catch (IllegalAccessException e) {
 						// TODO Auto-generated catch block
-						BaseLog.printLog(BaseUtil.class, f.getName()+"赋值时访问失败!");
+						ZWLogger.printLog(BaseUtil.class, f.getName()+"赋值时访问失败!");
 					} catch (InvocationTargetException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -125,10 +130,10 @@ public abstract class BaseActivity extends Activity implements Observer{
 					ObserverContainer.addObservable(f.getName(), mModelObservable);
 				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
-					BaseLog.printLog(BaseUtil.class, f.getName()+"赋值失败!");
+					ZWLogger.printLog(BaseUtil.class, f.getName()+"赋值失败!");
 				} catch (IllegalAccessException e) {
 					// TODO Auto-generated catch block
-					BaseLog.printLog(BaseUtil.class, f.getName()+"赋值时访问失败!");
+					ZWLogger.printLog(BaseUtil.class, f.getName()+"赋值时访问失败!");
 				}
 				
 			}
@@ -165,4 +170,18 @@ public abstract class BaseActivity extends Activity implements Observer{
 	}
 	
 	public abstract void notifyObserver(Object oldObj , Object newObj);
+	
+	/**
+	 * 网络连接连接时调用
+	 */
+	public void onConnect(NetType type) {
+
+	}
+
+	/**
+	 * 当前没有网络连接
+	 */
+	public void onDisConnect() {
+
+	}
 }

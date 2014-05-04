@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 import android.graphics.Bitmap;
 import android.util.Log;
-import cn.tt100.base.util.BaseLog;
+import cn.tt100.base.util.ZWLogger;
 
 public class MemoryCache {
 	private static final String TAG = "MemoryCache";
@@ -23,7 +23,7 @@ public class MemoryCache {
     
     public void setLimit(long new_limit){
         limit=new_limit;
-        BaseLog.printLog(MemoryCache.this, "内存限制的大小是: "+limit/1024./1024.+"MB");
+        ZWLogger.printLog(MemoryCache.this, "内存限制的大小是: "+limit/1024./1024.+"MB");
     }
 
     /**

@@ -14,7 +14,7 @@ import java.util.WeakHashMap;
 
 import cn.tt100.base.BaseBo;
 import cn.tt100.base.annotation.DatabaseField;
-import cn.tt100.base.util.BaseLog;
+import cn.tt100.base.util.ZWLogger;
 
 public class TableInfo<T extends BaseBo, ID> {
 	private static final Map<Class<? extends BaseBo>, TableInfo<? extends BaseBo, ?>> tableInfoFactory = Collections
@@ -62,7 +62,7 @@ public class TableInfo<T extends BaseBo, ID> {
 								allColumnNames.add(fkColumnName);
 								allforeignMaps.put(fkColumnName, objField);
 							} else {
-								BaseLog.printLog(this,
+								ZWLogger.printLog(this,
 										"外键指向的 类名：" + fieldType.getSimpleName()
 												+ "字段名:" + foreignColumnName
 												+ "不符合DataBaseField的条件!");
@@ -77,7 +77,7 @@ public class TableInfo<T extends BaseBo, ID> {
 						// 外键是集合类型
 						Type fc = field.getGenericType(); // 关键的地方，如果是List类型，得到其Generic的类型
 						if (fc == null) {
-							BaseLog.printLog(this,
+							ZWLogger.printLog(this,
 									"外键指向的 类名：" + fieldType.getSimpleName()
 											+ "字段名:" + foreignColumnName
 											+ " list 未设置泛型");
@@ -101,7 +101,7 @@ public class TableInfo<T extends BaseBo, ID> {
 									allColumnNames.add(fkColumnName);
 									allforeignMaps.put(fkColumnName, objField);
 								} else {
-									BaseLog.printLog(this, "外键指向的 类名："
+									ZWLogger.printLog(this, "外键指向的 类名："
 											+ fieldType.getSimpleName()
 											+ "字段名:" + foreignColumnName
 											+ "不符合DataBaseField的条件!");
@@ -113,7 +113,7 @@ public class TableInfo<T extends BaseBo, ID> {
 
 						}
 					} else {
-						BaseLog.printLog(this, fieldType.getSimpleName()
+						ZWLogger.printLog(this, fieldType.getSimpleName()
 								+ "不是 BaseBo or List的子类 不能设置为外键！");
 					}
 					continue;
