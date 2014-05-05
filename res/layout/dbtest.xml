@@ -9,4 +9,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="创建表测试" />
+	
+	<Button
+        android:id="@+id/dt_insertBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="插入表测试" />
 </LinearLayout>
