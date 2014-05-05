@@ -12,7 +12,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" 
-        android:name="cn.tt100.base.BaseApplication">
+        android:name="cn.tt100.base.ZWApplication">
         <activity
             android:name="cn.tt100.base.example.MenuActivity"
             android:label="@string/app_name"
@@ -30,6 +30,10 @@
         <activity
             android:name="cn.tt100.base.example.RestActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="cn.tt100.base.example.DBTestActivity"
+            android:screenOrientation="portrait" />
+        
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
