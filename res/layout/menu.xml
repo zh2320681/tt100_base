@@ -22,4 +22,9 @@
         android:layout_height="wrap_content"
         android:text="数据库操作" />
 
+    <Button
+        android:id="@+id/menu_restTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="REST请求测试" />
 </LinearLayout>
