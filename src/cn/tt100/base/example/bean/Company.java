@@ -9,13 +9,13 @@ import cn.tt100.base.annotation.DatabaseTable;
 @DatabaseTable(tableName="_Company")
 public class Company extends ZWBo{
 
-  @DatabaseField(unique=true)
+  @DatabaseField
   public String companyName;
 
   @DatabaseField(columnName="_ID", id=true)
   public int id;
 
-  @DatabaseField(id=true)
+  @DatabaseField
   public String info;
   
   public String remark;

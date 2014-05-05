@@ -34,6 +34,8 @@ public class ZWApplication extends Application {
 	public static int dbVersion = 1;
 	//数据库名称
 	public static String dbName = "DEFALUT_DB_NAME";
+	//DBOPerator的有效时间单位ms
+	public static int dbOPeratorAvailTime = 1000;
 	
 	/** App异常崩溃处理器 */
 	private UncaughtExceptionHandler uncaughtExceptionHandler;
@@ -122,6 +124,7 @@ public class ZWApplication extends Application {
 			loggerPrintPath = prop.getProperty("loggerPrintPath");
 			dbVersion = Integer.parseInt(prop.getProperty("loggerPrintAvaidTime"));
 			dbName = prop.getProperty("dbName");
+			dbOPeratorAvailTime = Integer.parseInt(prop.getProperty("dbOPeratorAvailTime"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -55,7 +55,8 @@ public class DBUtil {
 		StringBuffer premarySB = new StringBuffer();
 		//索引<支持组合索引>
 		List<String> indexColNames = new ArrayList<String>();
-		
+		//触发器
+		List<String> trigeerArr = new ArrayList<String>();
 		boolean isFirstAddField = true;
 		for(int i = 0 ;i<mTableInfo.allColumnNames.size();i++){
 			String columnName = mTableInfo.allColumnNames.get(i);
@@ -67,8 +68,8 @@ public class DBUtil {
 			if(fkColumnField != null){
 				Class<?> objClazz = mTableInfo.allforeignClassMaps.get(columnName);
 				//有外键 得到外键 指向的 那个表名
-				createTrigeerFKCaceade(mDatabase, mDatabaseField, 
-						getTableName(objClazz), getFeildName(fkColumnField), tableName, columnName);
+				trigeerArr.addAll(getTrigeerFKCaceade(mDatabaseField, 
+						getTableName(objClazz), getFeildName(fkColumnField), tableName, columnName));
 			}
 			/**  ---------------- -- ----------------------  */
 			if(!isFirstAddField){
@@ -117,17 +118,24 @@ public class DBUtil {
 		}
 		createSqlSB.append(");");
 		ZWLogger.printLog(TAG, "创建表的语句："+createSqlSB.toString());
+		mDatabase.execSQL(createSqlSB.toString());
 		
 		/**  ---------------- 创建索引 ----------------------  */
 		if(indexColNames.size() > 0){
 			boolean isFirstAddIndex = true;
-			StringBuffer indexSB = new StringBuffer("CREATE INDEX "+ INDEX_CONSTRAINT + tableName+" ON "+tableName+"(");
+			StringBuffer indexSB = new StringBuffer("CREATE INDEX  IF NOT EXISTS "+ INDEX_CONSTRAINT + tableName+" ON "+tableName+"(");
 			for(String indexColumn : indexColNames){
 				indexSB.append(indexColumn+(isFirstAddIndex?",":""));
 				isFirstAddIndex = false;
 			}
 			indexSB.append(");");
 			ZWLogger.printLog(TAG, "创建索引的语句："+indexSB.toString());
+			mDatabase.execSQL(indexSB.toString());
+		}
+		
+		/**  ---------------- 创建触发器 ----------------------  */
+		for(String trige : trigeerArr){
+			mDatabase.execSQL(trige);
 		}
   }
 
@@ -154,9 +162,9 @@ public class DBUtil {
 	 * @param fkTableName
 	 * @param fkFieldName
 	 */
-	private static final void createTrigeerFKCaceade(SQLiteDatabase mDatabase,
-			DatabaseField mDatabaseField, String objTableName,
+	private static final List<String> getTrigeerFKCaceade(DatabaseField mDatabaseField, String objTableName,
 			String objFieldName, String fkTableName, String fkFieldName) {
+		List<String> trigeerArr = new ArrayList<String>();
 		// 创建插入触发器
 		StringBuffer insertSB = new StringBuffer("CREATE TRIGGER "
 				+ fkFieldName + "_Insert ");
@@ -169,7 +177,8 @@ public class DBUtil {
 				+ fkFieldName + ") IS NULL; ");
 		insertSB.append(" END ");
 		print("创建插入触发器 ：" + insertSB.toString());
-
+		trigeerArr.add(insertSB.toString());
+		
 		// 创建更新触发器
 		StringBuffer updateSB = new StringBuffer("CREATE TRIGGER "
 				+ fkFieldName + "_Update ");
@@ -182,7 +191,8 @@ public class DBUtil {
 				+ fkFieldName + ") IS NULL; ");
 		updateSB.append(" END ");
 		print("创建更新触发器 ：" + updateSB.toString());
-
+		trigeerArr.add(updateSB.toString());
+		
 		// 创建Delete触发器
 		StringBuffer deleteSB = new StringBuffer("CREATE TRIGGER "
 				+ fkFieldName + "_Delete ");
@@ -192,7 +202,8 @@ public class DBUtil {
 				+ " = OLD." + objFieldName + ";");
 		deleteSB.append(" END ");
 		print("创建Delete触发器 ：" + deleteSB.toString());
-
+		trigeerArr.add(deleteSB.toString());
+		
 		if (mDatabaseField.foreignAutoRefresh()) {
 			// 创建级联操作
 			StringBuffer caceadeUpdateSB = new StringBuffer("CREATE TRIGGER "
@@ -204,7 +215,9 @@ public class DBUtil {
 					+ fkFieldName + " = old." + objFieldName + ";");
 			caceadeUpdateSB.append(" END ");
 			print("创建级联操作 更新触发器 ：" + caceadeUpdateSB.toString());
+			trigeerArr.add(caceadeUpdateSB.toString());
 		}
+		return trigeerArr;
 	}
 
 	/**
@@ -249,7 +262,7 @@ public class DBUtil {
 	 * @param field
 	 * @return
 	 */
-	private static final String getObjMapping(Field field) {
+	public static final String getObjMapping(Field field) {
 		Class<?> fieldClazz = field.getType();
 		String columnTypeName = STRING_COLUMN_NAME;
 		if (fieldClazz.isAssignableFrom(String.class)) {
@@ -330,5 +343,28 @@ public class DBUtil {
 	
 	private static void print(String paramString) {
 		ZWLogger.printLog(LogLevel.INFO, "DBUtil", paramString);
+	}
+	
+	/**
+	 * 时间 和 long之间转换
+	 * @param obj
+	 * @return
+	 */
+	public static long parseDateToLong(Date obj){
+		return obj.getTime();
+	}
+	
+	public static long parseCalendarToLong(Calendar obj){
+		return parseDateToLong(obj.getTime());
+	}
+	
+	public static Date parseLongToDate(long value){
+		return new Date(value);
+	}
+	
+	public static Calendar parseLongToCalendar(long value){
+		Calendar cal=Calendar.getInstance();
+		cal.setTime(parseLongToDate(value));
+		return cal;
 	}
 }
