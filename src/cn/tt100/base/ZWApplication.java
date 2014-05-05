@@ -24,6 +24,17 @@ public class ZWApplication extends Application {
 	public static boolean isDebugMode = false;
 	//是否监听网络变化
 	public static boolean isMonitorNetChange = false;
+	//是否开启日志打印
+	public static boolean isLoggerPrint = false;
+	//日志保存时间（以s为单位）
+	public static long loggerPrintAvaidTime = 600;
+	//日志保存路径
+	public static String loggerPrintPath = "";
+	//数据库版本号
+	public static int dbVersion = 1;
+	//数据库名称
+	public static String dbName = "DEFALUT_DB_NAME";
+	
 	/** App异常崩溃处理器 */
 	private UncaughtExceptionHandler uncaughtExceptionHandler;
 	
@@ -39,6 +50,8 @@ public class ZWApplication extends Application {
 	public final void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
+		// 注册App异常崩溃处理器
+		Thread.setDefaultUncaughtExceptionHandler(getUncaughtExceptionHandler());
 		onPreCreateApplication();
 		initParameterWithProperties();
 		mActivityManager = ZWActivityManager.getInstance();
@@ -51,8 +64,6 @@ public class ZWApplication extends Application {
 				ZWLogger.printLog(LogLevel.INFO,systemOutTAG, str);
 			}
 		});
-		// 注册App异常崩溃处理器
-		Thread.setDefaultUncaughtExceptionHandler(getUncaughtExceptionHandler());
 		
 		//网络监听
 		if(isMonitorNetChange){
@@ -99,17 +110,31 @@ public class ZWApplication extends Application {
 	 */
 	private void initParameterWithProperties(){
 		AssetManager mManager = getAssets();
+		InputStream iStream = null;
 		try {
-			InputStream iStream =  mManager.open("app_setting.properties",AssetManager.ACCESS_BUFFER);
+			iStream =  mManager.open("app_setting.properties",AssetManager.ACCESS_BUFFER);
 			Properties prop = new Properties();
 			prop.load(iStream);
-			isDebugMode = Boolean.getBoolean(prop.get("isDebugMode").toString());
-			isMonitorNetChange = Boolean.getBoolean(prop.get("isMonitorNetChange").toString());
+			isDebugMode = Boolean.parseBoolean(prop.getProperty("isDebugMode"));
+			isMonitorNetChange = Boolean.parseBoolean(prop.getProperty("isMonitorNetChange"));
+			isLoggerPrint = Boolean.parseBoolean(prop.getProperty("isLoggerPrint"));
+			loggerPrintAvaidTime = Long.parseLong(prop.getProperty("loggerPrintAvaidTime"));
+			loggerPrintPath = prop.getProperty("loggerPrintPath");
+			dbVersion = Integer.parseInt(prop.getProperty("loggerPrintAvaidTime"));
+			dbName = prop.getProperty("dbName");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
-			mManager.close();
+//			mManager.close();
+			if(iStream != null){
+				try {
+					iStream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

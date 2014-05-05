@@ -1,11 +1,12 @@
 package cn.tt100.base.ormlite;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import cn.tt100.base.BaseBo;
+import cn.tt100.base.ZWBo;
 import cn.tt100.base.annotation.DatabaseField;
 import cn.tt100.base.annotation.DatabaseTable;
 import cn.tt100.base.util.ZWLogger;
@@ -14,9 +15,11 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DBUtil {
 
-	public static final String FK_CONSTRAINT = "FK_";
-	public static final String NOT_NULL_CONSTRAINT = " NOT NULL ";
-
+	private static final String FK_CONSTRAINT = "FK_";
+	private static final String NOT_NULL_CONSTRAINT = " NOT NULL ";
+	private static final String UNIQUE_CONSTRAINT = " UNIQUE ";
+	
+	private static final String INDEX_CONSTRAINT = "INDEX_";
 	/**
 	 * 数据库 类型
 	 */
@@ -34,16 +37,111 @@ public class DBUtil {
 
 	private static final String TAG = "DBUtil";
 
-	public static final void createTable(SQLiteDatabase mDatabase, Class<? extends BaseBo> clazz, boolean isExists){
-		String tableName = getTableName(clazz);
+	public static final void createTable(SQLiteDatabase mDatabase, Class<? extends ZWBo> clazz, boolean isExists){
+		TableInfo mTableInfo = TableInfo.newInstance(clazz);
+		if(mTableInfo == null){
+			throw new NullPointerException("无法获取"+clazz.getSimpleName()+"表描述对象 TableInfo");
+		}
+		
+		String tableName = mTableInfo.tableName;
 		StringBuffer createSqlSB = new StringBuffer("create table ");
 		if (isExists){
 			createSqlSB.append(" IF NOT EXISTS ");
 		}
-		createSqlSB.append(tableName);
+		createSqlSB.append(tableName+"(");
 		
+		
+		//主键 
+		StringBuffer premarySB = new StringBuffer();
+		//索引<支持组合索引>
+		List<String> indexColNames = new ArrayList<String>();
+		
+		boolean isFirstAddField = true;
+		for(int i = 0 ;i<mTableInfo.allColumnNames.size();i++){
+			String columnName = mTableInfo.allColumnNames.get(i);
+			Field columnField = mTableInfo.allField.get(i);
+			
+			DatabaseField mDatabaseField = columnField.getAnnotation(DatabaseField.class);
+			/**  ---------------- 外键 ----------------------  */
+			Field fkColumnField = mTableInfo.allforeignMaps.get(columnName);
+			if(fkColumnField != null){
+				Class<?> objClazz = mTableInfo.allforeignClassMaps.get(columnName);
+				//有外键 得到外键 指向的 那个表名
+				createTrigeerFKCaceade(mDatabase, mDatabaseField, 
+						getTableName(objClazz), getFeildName(fkColumnField), tableName, columnName);
+			}
+			/**  ---------------- -- ----------------------  */
+			if(!isFirstAddField){
+				createSqlSB.append(",");
+			}else{
+				isFirstAddField = false;
+			}
+			
+			String columnTypeStr = getObjMapping(columnField);
+			createSqlSB.append(columnName+" "+columnTypeStr);
+			
+			/**  ---------------- 约束 ----------------------  */
+			if(!mDatabaseField.canBeNull()){
+				createSqlSB.append(NOT_NULL_CONSTRAINT);
+			}
+			if(mDatabaseField.unique()){
+				createSqlSB.append(UNIQUE_CONSTRAINT);
+			}
+			
+			String defaultStr = mDatabaseField.defaultValue();
+			if(defaultStr != null && !"".equals(defaultStr)){
+				if(columnTypeStr.equals(STRING_COLUMN_NAME)){
+					createSqlSB.append( "DEFAULT '"+defaultStr+"' ");
+				}else{
+					createSqlSB.append( "DEFAULT "+defaultStr+" ");
+				}
+			}
+			
+			/**  ---------------- 索引 ----------------------  */
+			if (mDatabaseField.index()) {
+				indexColNames.add(columnName);
+			}
+			
+			/**  ---------------- 主键 ----------------------  */
+			if(mDatabaseField.id()){
+				String gapStr = " ";
+				if(premarySB.length() != 0){
+					gapStr = ",";
+				}
+				premarySB.append(gapStr + columnName);
+			}
+		}
+		
+		if(premarySB.length() > 0){
+			createSqlSB.append(",primary key("+premarySB.toString()+")");
+		}
+		createSqlSB.append(");");
+		ZWLogger.printLog(TAG, "创建表的语句："+createSqlSB.toString());
+		
+		/**  ---------------- 创建索引 ----------------------  */
+		if(indexColNames.size() > 0){
+			boolean isFirstAddIndex = true;
+			StringBuffer indexSB = new StringBuffer("CREATE INDEX "+ INDEX_CONSTRAINT + tableName+" ON "+tableName+"(");
+			for(String indexColumn : indexColNames){
+				indexSB.append(indexColumn+(isFirstAddIndex?",":""));
+				isFirstAddIndex = false;
+			}
+			indexSB.append(");");
+			ZWLogger.printLog(TAG, "创建索引的语句："+indexSB.toString());
+		}
   }
 
+	
+	public static final void dropTable(SQLiteDatabase mDatabase, Class<? extends ZWBo> clazz){
+		TableInfo mTableInfo = TableInfo.newInstance(clazz);
+		if(mTableInfo == null){
+			throw new NullPointerException("无法获取"+clazz.getSimpleName()+"表描述对象 TableInfo");
+		}
+		StringBuffer dropSB = new StringBuffer("DROP TABLE "+mTableInfo.tableName);
+		ZWLogger.printLog(TAG, "DROP TABLE的语句："+dropSB.toString());
+		mDatabase.execSQL(dropSB.toString());
+	}
+	
 	/**
 	 * 创建触发器 & 级联操作
 	 * 
@@ -133,9 +231,18 @@ public class DBUtil {
 	 */
 	public static final String getMapFKCulmonName(String paramString,
 			Class<?> clazz) {
-		return "FK_" + clazz.getSimpleName() + "_" + paramString;
+		return FK_CONSTRAINT + clazz.getSimpleName() + "_" + paramString;
 	}
 
+	/**
+	 * 从FK_TEACHER_ID 得到 表名TEACHER
+	 * @param fkName
+	 * @return
+	 */
+//	public static final String getFKClazzNameFromFKName(String fkName){
+//		
+//	}
+	
 	/**
 	 * 通过 field类型 得到对应数据库的字段类型
 	 * 
@@ -162,7 +269,7 @@ public class DBUtil {
 					|| fieldClazz.isAssignableFrom(float.class)) {
 				columnTypeName = REAL_COLUMN_NAME;
 			}
-		} else if (fieldClazz.isAssignableFrom(BaseBo.class)) {
+		} else if (fieldClazz.isAssignableFrom(ZWBo.class)) {
 			print("可能是外键");
 		} else if (fieldClazz.isAssignableFrom(List.class)) {
 			print("可能是List");
@@ -213,7 +320,7 @@ public class DBUtil {
 				&& !clazz.isAssignableFrom(Calendar.class)
 				&& !Number.class.isAssignableFrom(clazz)
 				&& !List.class.isAssignableFrom(clazz)
-				&& !BaseBo.class.isAssignableFrom(clazz)) {
+				&& !ZWBo.class.isAssignableFrom(clazz)) {
 			ZWLogger.printLog(TAG, clazz.getName() + " 不支持的数据类型");
 			return false;
 		}

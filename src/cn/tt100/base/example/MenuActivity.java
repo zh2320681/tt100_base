@@ -19,7 +19,9 @@ public class MenuActivity extends ZWActivity {
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 			if(arg0 == dbTestBtn){
-				
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), DBTestActivity.class);
+			    startActivity(intent);
 			}else if(arg0 == downTestBtn){
 				
 			}else if(arg0 == imgBtn){

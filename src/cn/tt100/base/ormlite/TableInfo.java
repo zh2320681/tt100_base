@@ -4,37 +4,38 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import cn.tt100.base.BaseBo;
+import cn.tt100.base.ZWBo;
 import cn.tt100.base.annotation.DatabaseField;
 import cn.tt100.base.util.ZWLogger;
 
-public class TableInfo<T extends BaseBo, ID> {
-	private static final Map<Class<? extends BaseBo>, TableInfo<? extends BaseBo, ?>> tableInfoFactory = Collections
-			.synchronizedMap(new WeakHashMap<Class<? extends BaseBo>, TableInfo<? extends BaseBo, ?>>());
+public class TableInfo {
+	private static final Map<Class<? extends ZWBo>, TableInfo> tableInfoFactory = Collections
+			.synchronizedMap(new WeakHashMap<Class<? extends ZWBo>, TableInfo>());
 	// 所有字段名
 	public List<String> allColumnNames;
 	// 所有属性
 	public List<Field> allField;
 	// 所有外键 key:外键字段名 value:对于Teacher 的id属性
 	public Map<String, Field> allforeignMaps;
-	public Class<? extends BaseBo> clazz;
+	// 所有外键 key:外键字段名 value:对于Teacher.class
+	public Map<String, Class<?>> allforeignClassMaps;
+	public Class<? extends ZWBo> clazz;
 	public String tableName;
 
-	private TableInfo(Class<? extends BaseBo> clazz) {
+	private TableInfo(Class<? extends ZWBo> clazz) {
 		this.clazz = clazz;
 		tableName = DBUtil.getTableName(clazz);
 		allField = new ArrayList<Field>();
 		allColumnNames = new ArrayList<String>();
 
 		this.allforeignMaps = new HashMap<String, Field>();
+		allforeignClassMaps = new HashMap<String, Class<?>>();
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
 			DatabaseField mDatabaseField = field
@@ -50,7 +51,7 @@ public class TableInfo<T extends BaseBo, ID> {
 				String foreignColumnName = mDatabaseField.foreignColumnName();
 				if (foreignColumnName != null && !"".equals(foreignColumnName)) {
 
-					if (BaseBo.class.isAssignableFrom(fieldType)) {
+					if (ZWBo.class.isAssignableFrom(fieldType)) {
 						// 外键是BO类型
 						Field objField;
 						try {
@@ -61,6 +62,7 @@ public class TableInfo<T extends BaseBo, ID> {
 												fieldType);
 								allColumnNames.add(fkColumnName);
 								allforeignMaps.put(fkColumnName, objField);
+								allforeignClassMaps.put(fkColumnName, fieldType);
 							} else {
 								ZWLogger.printLog(this,
 										"外键指向的 类名：" + fieldType.getSimpleName()
@@ -100,6 +102,7 @@ public class TableInfo<T extends BaseBo, ID> {
 													fieldType);
 									allColumnNames.add(fkColumnName);
 									allforeignMaps.put(fkColumnName, objField);
+									allforeignClassMaps.put(fkColumnName, fieldType);
 								} else {
 									ZWLogger.printLog(this, "外键指向的 类名："
 											+ fieldType.getSimpleName()
@@ -130,9 +133,9 @@ public class TableInfo<T extends BaseBo, ID> {
 
 	}
 
-	public static final TableInfo<? extends BaseBo, ?> newInstance(
-			Class<? extends BaseBo> clazz) {
-		TableInfo<? extends BaseBo, ?> mTableInfo = null;
+	public static final TableInfo newInstance(
+			Class<? extends ZWBo> clazz) {
+		TableInfo  mTableInfo = null;
 		if (tableInfoFactory.containsKey(clazz)) {
 			mTableInfo = tableInfoFactory.get(clazz);
 		}

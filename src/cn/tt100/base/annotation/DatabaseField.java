@@ -24,7 +24,7 @@ public @interface DatabaseField {
 	 */
 	boolean canBeNull() default true;
 
-	String columnDefinition();
+//	String columnDefinition();
 
 	/**
 	 * 缺省的 字段名
@@ -38,7 +38,7 @@ public @interface DatabaseField {
 	 * 
 	 * @return
 	 */
-	DataType dataType();
+//	DataType dataType();
 
 	/**
 	 * 默认值
@@ -80,7 +80,7 @@ public @interface DatabaseField {
 	 */
 	boolean generatedId() default false;
 
-	public String generatedIdSequence();
+//	public String generatedIdSequence();
 
 	/**
 	 * Whether the field is the id field or not. Default is false. Only one
@@ -96,11 +96,11 @@ public @interface DatabaseField {
 	 */
 	boolean index() default false;
 
-	public String indexName();
+//	public String indexName();
 
-	public int maxForeignAutoRefreshLevel();
+//	public int maxForeignAutoRefreshLevel();
 
-	public boolean throwIfNull();
+	public boolean throwIfNull() default false;
 
 	/**
 	 * 是否唯一
@@ -108,7 +108,7 @@ public @interface DatabaseField {
 	 */
 	boolean unique() default false;
 
-	public String unknownEnumName();
+//	public String unknownEnumName();
 
 	/**
 	 * 是否试用 get set方法
@@ -117,7 +117,7 @@ public @interface DatabaseField {
 	boolean useGetSet() default false;
 
 	
-	public boolean version();
+//	public boolean version();
 
-	public int width();
+//	public int width();
 }

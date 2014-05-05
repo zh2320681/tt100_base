@@ -38,6 +38,7 @@ public class ZWAppException implements UncaughtExceptionHandler {
 
 	@Override
 	public void uncaughtException(Thread thread, Throwable ex) {
+		ex.printStackTrace();
 		if (!handleException(ex) && mDefaultHandler != null) {
 			mDefaultHandler.uncaughtException(thread, ex);
 		} else {
