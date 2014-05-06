@@ -32,4 +32,10 @@ public class Employee extends ZWBo {
 	// @DatabaseField(foreign=true, foreignAutoRefresh=true,
 	// foreignColumnName="id")
 	// public List<CompanyWork> works;
+	
+	
+	public Employee() {
+		// TODO Auto-generated constructor stub
+		super();
+	}
 }

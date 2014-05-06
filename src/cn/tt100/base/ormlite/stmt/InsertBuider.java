@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 
 import android.content.ContentValues;
 import cn.tt100.base.ZWBo;
+import cn.tt100.base.ormlite.dao.DBTransforFactory;
 
 public class InsertBuider<T extends ZWBo> extends StmtBuilder {
 	public ContentValues cvs;
@@ -29,7 +30,11 @@ public class InsertBuider<T extends ZWBo> extends StmtBuilder {
 			Field field = tableInfo.allField.get(i);
 			String columnName = tableInfo.allColumnNames.get(i);
 			try {
-				Object obj = field.get(t);
+				Object obj = DBTransforFactory.getColumnValue(field.get(t));
+				if(obj instanceof String){
+					String str = (String) obj;
+					obj = str.substring(1, str.length()-1);
+				}
 				Method method = ContentValues.class.getMethod("put",String.class, obj.getClass());
 				method.invoke(cvs, columnName,obj);
 			} catch (IllegalAccessException e) {

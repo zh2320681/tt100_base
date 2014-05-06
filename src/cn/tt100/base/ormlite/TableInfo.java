@@ -6,8 +6,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import cn.tt100.base.ZWBo;
@@ -36,7 +38,28 @@ public class TableInfo {
 
 		this.allforeignMaps = new HashMap<String, Field>();
 		allforeignClassMaps = new HashMap<String, Class<?>>();
-		Field[] fields = clazz.getDeclaredFields();
+		//得到本类的所有属性 不包括 父类
+		Field[] declaredFields = clazz.getDeclaredFields();
+		//得到本类的所有public属性 包括 父类
+		Field[] publicFields = clazz.getFields();
+		List<Field> fields = new ArrayList<Field>();
+		for (Field field : declaredFields) {
+			fields.add(field);
+		}
+		for (Field field : publicFields) {
+			boolean isFind = false;
+			for (int i = 0; i < declaredFields.length; i++) {
+				Field oldField = declaredFields[i];
+				if(oldField.getName().equals(field.getName())){
+					isFind = true;
+					break;
+				}
+			}
+			if(!isFind){
+				fields.add(field);
+			}
+		}
+		
 		for (Field field : fields) {
 			DatabaseField mDatabaseField = field
 					.getAnnotation(DatabaseField.class);
@@ -62,7 +85,8 @@ public class TableInfo {
 												fieldType);
 								allColumnNames.add(fkColumnName);
 								allforeignMaps.put(fkColumnName, objField);
-								allforeignClassMaps.put(fkColumnName, fieldType);
+								allforeignClassMaps
+										.put(fkColumnName, fieldType);
 							} else {
 								ZWLogger.printLog(this,
 										"外键指向的 类名：" + fieldType.getSimpleName()
@@ -102,7 +126,8 @@ public class TableInfo {
 													fieldType);
 									allColumnNames.add(fkColumnName);
 									allforeignMaps.put(fkColumnName, objField);
-									allforeignClassMaps.put(fkColumnName, fieldType);
+									allforeignClassMaps.put(fkColumnName,
+											fieldType);
 								} else {
 									ZWLogger.printLog(this, "外键指向的 类名："
 											+ fieldType.getSimpleName()
@@ -133,9 +158,8 @@ public class TableInfo {
 
 	}
 
-	public static final TableInfo newInstance(
-			Class<? extends ZWBo> clazz) {
-		TableInfo  mTableInfo = null;
+	public static final TableInfo newInstance(Class<? extends ZWBo> clazz) {
+		TableInfo mTableInfo = null;
 		if (tableInfoFactory.containsKey(clazz)) {
 			mTableInfo = tableInfoFactory.get(clazz);
 		}
@@ -147,4 +171,54 @@ public class TableInfo {
 		return mTableInfo;
 	}
 
+	/**
+	 * 通过 field name找到表字段名
+	 * 
+	 * @param fieldName
+	 * @return
+	 */
+	public String getColumnByFieldStr(String fieldName) {
+		for (int i = 0; i < allField.size(); i++) {
+			Field field = allField.get(i);
+			if (fieldName.equals(field.getName())) {
+				return allColumnNames.get(i);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 通过 field name找到表字段下标
+	 * 
+	 * @param fieldName
+	 * @return
+	 */
+	public int getColumnIndexByFieldStr(String fieldName) {
+		for (int i = 0; i < allField.size(); i++) {
+			Field field = allField.get(i);
+			if (fieldName.equals(field.getName())) {
+				return i;
+			}
+		}
+		ZWLogger.printLog(this, "类："+clazz.toString()+" 属性名叫:"+fieldName+" 找不到~~");
+		return -1;
+	}
+	
+	/**
+	 * 通过表中 字段下标 找到 对应属性的Class对象
+	 * @param index
+	 * @return
+	 */
+	public Class<?> getFieldType(int index) {
+		String columnName = allColumnNames.get(index);
+		Field field = allField.get(index);
+		Class<?> fieldType = null;
+		// 判断属性是否 外键
+		if (allforeignClassMaps.containsKey(columnName)) {
+			fieldType = allforeignClassMaps.get(columnName);
+		} else {
+			fieldType = field.getType();
+		}
+		return fieldType;
+	}
 }

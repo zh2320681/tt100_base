@@ -7,15 +7,21 @@ import java.util.Date;
 import cn.tt100.base.ZWBo;
 import cn.tt100.base.ormlite.DBUtil;
 import cn.tt100.base.ormlite.TableInfo;
+import cn.tt100.base.ormlite.dao.DBTransforFactory;
 import cn.tt100.base.util.ZWLogger;
 
 public abstract class StmtBuilder{
+	/**
+	 * 空值<设置为空值不会对数据库操作>
+	 */
+	public static final int NULL_INTEGER = Integer.MAX_VALUE;
+	public static final String NULL_STR = "THIS IS NULL VALUE";
+	
 	public static final String SPEPARANT_STR = " ";
 	private static final String WHERE_KEYWORD = " WHERE ";
 	public TableInfo tableInfo ;
 	public StringBuffer whereBuffer;
 	public StringBuffer sqlBuffer;
-	
 	
 	private static final String LIKE_KEYWORD = " LIKE ";
 	private static final String OR_KEYWORD = " OR ";
@@ -23,6 +29,8 @@ public abstract class StmtBuilder{
 	private static final String BETWEEN_KEYWORD = " BETWEEN ";
 	//是否可以添加条件
 	private boolean isAddCondition = true;
+	//括号数量 空值(  )
+	private int bracketsNum = 0;
 	
 	public StmtBuilder(Class<? extends ZWBo> clazz){
 		tableInfo = TableInfo.newInstance(clazz);
@@ -73,6 +81,30 @@ public abstract class StmtBuilder{
 	}
 	
 	/**
+	 * 只有可以添加条件时候 添加左括号(   
+	 * @return
+	 */
+	public StmtBuilder leftBrackets(){
+		if(isAddCondition){
+			appendWhereStr("(");
+			bracketsNum++;
+		}
+		return this;
+	}
+	
+	/**
+	 * 添加右括号  
+	 * @return
+	 */
+	public StmtBuilder rightBrackets(){
+		if(!isAddCondition && bracketsNum > 0){
+			appendWhereStr(")");
+			bracketsNum--;
+		}
+		return this;
+	}
+	
+	/**
 	 * like 描述  必须是子串
 	 * @param fieldName  属性名<不是表的字段名>
 	 * @param likeStr like子串
@@ -81,10 +113,11 @@ public abstract class StmtBuilder{
 	 * @return
 	 */
 	public StmtBuilder like(String fieldName,String likeStr,boolean isAddBefor,boolean isAddAfter){
-		Field mField = null;
-		String columnName=null; 
+		int index = tableInfo.getColumnIndexByFieldStr(fieldName);
+		Field mField = tableInfo.allField.get(index);
+		String columnName = tableInfo.allColumnNames.get(index); 
+		Class<?> fieldType = tableInfo.getFieldType(index);
 		
-		Class<?> fieldType = null;
 		if(initContinue(fieldName, mField, columnName, fieldType,false, fieldName)){
 			appendWhereStr(columnName +LIKE_KEYWORD+"'"+
 					(isAddBefor?"%":"")+likeStr+(isAddAfter?"%'":"'"));
@@ -95,10 +128,11 @@ public abstract class StmtBuilder{
 	
 	
 	public StmtBuilder like(String fieldName,String likeStr){
-		Field mField = null;
-		String columnName=null; 
+		int index = tableInfo.getColumnIndexByFieldStr(fieldName);
+		Field mField = tableInfo.allField.get(index);
+		String columnName = tableInfo.allColumnNames.get(index); 
+		Class<?> fieldType = tableInfo.getFieldType(index);
 		
-		Class<?> fieldType = null;
 		if(initContinue(fieldName, mField, columnName, fieldType,false, fieldName)){
 			appendWhereStr(columnName +LIKE_KEYWORD+"'"+likeStr+"'");
 			isAddCondition = false;
@@ -115,82 +149,72 @@ public abstract class StmtBuilder{
 	 * @return
 	 */
 	public StmtBuilder between(String fieldName,Object beforObj,Object afterObj){
-		Field mField = null;
-		String columnName=null; 
+		int index = tableInfo.getColumnIndexByFieldStr(fieldName);
+		Field mField = tableInfo.allField.get(index);
+		String columnName = tableInfo.allColumnNames.get(index); 
+		Class<?> fieldType = tableInfo.getFieldType(index);
 		
-		Class<?> fieldType = null;
 		if(initContinue(fieldName, mField, columnName, fieldType,true, beforObj,afterObj)){
 			appendWhereStr(columnName + BETWEEN_KEYWORD);
-			if(Date.class.isAssignableFrom(fieldType)
-					&& beforObj instanceof Date
-					&& afterObj instanceof Date){
-				Date date1 = (Date)beforObj;
-				Date date2 = (Date)afterObj;
-				appendWhereStr(DBUtil.parseDateToLong(date1)+ AND_KEYWORD+DBUtil.parseDateToLong(date2));
-			}else if(Calendar.class.isAssignableFrom(fieldType)
-					&& beforObj instanceof Calendar
-					&& afterObj instanceof Calendar){
-				Calendar date1 = (Calendar)beforObj;
-				Calendar date2 = (Calendar)afterObj;
-				appendWhereStr(DBUtil.parseCalendarToLong(date1)+ AND_KEYWORD+DBUtil.parseCalendarToLong(date2));
-			}else if(String.class.isAssignableFrom(fieldType)){
-				//子串
-				appendWhereStr("'"+beforObj.toString()+"'"+AND_KEYWORD+"'"+afterObj+"'");
-			}else{
-				appendWhereStr(" "+beforObj.toString()+" "+AND_KEYWORD+" "+afterObj+" ");
-			}
+//			if(Date.class.isAssignableFrom(fieldType)
+//					&& beforObj instanceof Date
+//					&& afterObj instanceof Date){
+//				Date date1 = (Date)beforObj;
+//				Date date2 = (Date)afterObj;
+//				appendWhereStr(DBUtil.parseDateToLong(date1)+ AND_KEYWORD+DBUtil.parseDateToLong(date2));
+//			}else if(Calendar.class.isAssignableFrom(fieldType)
+//					&& beforObj instanceof Calendar
+//					&& afterObj instanceof Calendar){
+//				Calendar date1 = (Calendar)beforObj;
+//				Calendar date2 = (Calendar)afterObj;
+//				appendWhereStr(DBUtil.parseCalendarToLong(date1)+ AND_KEYWORD+DBUtil.parseCalendarToLong(date2));
+//			}else if(String.class.isAssignableFrom(fieldType)){
+//				//子串
+//				appendWhereStr("'"+beforObj.toString()+"'"+AND_KEYWORD+"'"+afterObj+"'");
+//			}else{
+//				appendWhereStr(" "+beforObj.toString()+" "+AND_KEYWORD+" "+afterObj+" ");
+//			}
+			appendWhereStr(DBTransforFactory.getColumnValue(beforObj)+" "+AND_KEYWORD+" "+DBTransforFactory.getColumnValue(afterObj)+" ");
 			isAddCondition = false;
 		}
 		return this;
 	}
 	
-	public StmtBuilder between(String fieldName,Object... objs){
-		Field mField = null;
-		String columnName=null; 
+	public StmtBuilder in(String fieldName,Object... objs){
+		int index = tableInfo.getColumnIndexByFieldStr(fieldName);
+		Field mField = tableInfo.allField.get(index);
+		String columnName = tableInfo.allColumnNames.get(index); 
+		Class<?> fieldType = tableInfo.getFieldType(index);
 		
-		Class<?> fieldType = null;
+		if(objs == null || objs.length == 0){
+			ZWLogger.printLog(this, "in 的条件（）里面得有值哦~~~");
+			return this;
+		}
 		if(initContinue(fieldName, mField, columnName, fieldType,true, objs)){
-			appendWhereStr(columnName + "in(");
+			appendWhereStr(columnName + " in (");
+			
 			boolean isFirstAdd = true;
-			if(Date.class.isAssignableFrom(fieldType)){
-				for(Object obj : objs){
-					Date date = (Date)obj;
-					if(!isFirstAdd){
-						appendWhereStr(",");
-						isFirstAdd = false;
-					}
-					appendWhereStr(DBUtil.parseDateToLong(date)+"");
+			for(Object obj : objs){
+				if(!isFirstAdd){
+					appendWhereStr(",");	
 				}
-				
-			}else if(Calendar.class.isAssignableFrom(fieldType)){
-				for(Object obj : objs){
-					Calendar date = (Calendar)obj;
-					if(!isFirstAdd){
-						appendWhereStr(",");
-						isFirstAdd = false;
-					}
-					appendWhereStr(DBUtil.parseCalendarToLong(date)+"");
-				}
-			}else if(String.class.isAssignableFrom(fieldType)){
-				//子串
-				for(Object obj : objs){
-					Calendar date = (Calendar)obj;
-					if(!isFirstAdd){
-						appendWhereStr(",");
-						isFirstAdd = false;
-					}
-					appendWhereStr("'"+obj.toString()+"'");
-				}
-			}else{
-				for(Object obj : objs){
-					Calendar date = (Calendar)obj;
-					if(!isFirstAdd){
-						appendWhereStr(",");
-						isFirstAdd = false;
-					}
-					appendWhereStr(" "+obj.toString()+" ");
-				}
+				isFirstAdd = false;
+//				if(Date.class.isAssignableFrom(fieldType)){
+//					Date date = (Date)obj;
+//					appendWhereStr(DBUtil.parseDateToLong(date)+"");
+//				}else if(Calendar.class.isAssignableFrom(fieldType)){
+//					Calendar date = (Calendar)obj;
+//					appendWhereStr(DBUtil.parseCalendarToLong(date)+"");
+//				}else if(String.class.isAssignableFrom(fieldType)){
+//					//子串
+//					appendWhereStr("'"+obj.toString()+"'");
+//				}else{
+//					appendWhereStr(" "+obj.toString()+" ");
+//				}
+				appendWhereStr(" "+DBTransforFactory.getColumnValue(obj)+" ");
 			}
+			
+			
 			isAddCondition = false;
 			
 			appendWhereStr(")");
@@ -205,10 +229,10 @@ public abstract class StmtBuilder{
 	 * @return
 	 */
 	private StmtBuilder isNull(boolean isNull,String fieldName){
-		Field mField = null;
-		String columnName=null; 
-		
-		Class<?> fieldType = null;
+		int index = tableInfo.getColumnIndexByFieldStr(fieldName);
+		Field mField = tableInfo.allField.get(index);
+		String columnName = tableInfo.allColumnNames.get(index); 
+		Class<?> fieldType = tableInfo.getFieldType(index);
 		
 		if(initContinue(fieldName, mField, columnName, fieldType,false, fieldName)){
 			appendWhereStr(columnName +(isNull?"IS NULL":"IS NOT NULL"));
@@ -225,10 +249,10 @@ public abstract class StmtBuilder{
 	 * @return
 	 */
 	public StmtBuilder compare(String compareStr,String fieldName,Object obj){
-		Field mField = null;
-		String columnName=null; 
-		
-		Class<?> fieldType = null;
+		int index = tableInfo.getColumnIndexByFieldStr(fieldName);
+		Field mField = tableInfo.allField.get(index);
+		String columnName = tableInfo.allColumnNames.get(index); 
+		Class<?> fieldType = tableInfo.getFieldType(index);
 		
 		if(initContinue(fieldName, mField, columnName, fieldType,true, obj)){
 //			if(obj.getClass().isAssignableFrom(fieldType)){
@@ -276,14 +300,14 @@ public abstract class StmtBuilder{
 			}
 		}
 
-		for (int i = 0; i < tableInfo.allField.size(); i++) {
-			Field field = tableInfo.allField.get(i);
-			if(fieldName.equals(field.getName())){
-				mField = field;
-				columnName = tableInfo.allColumnNames.get(i);
-				break;
-			}
-		}
+//		for (int i = 0; i < tableInfo.allField.size(); i++) {
+//			Field field = tableInfo.allField.get(i);
+//			if(fieldName.equals(field.getName())){
+//				mField = field;
+//				columnName = tableInfo.allColumnNames.get(i);
+//				break;
+//			}
+//		}
 		
 		if(mField == null || columnName == null){
 			ZWLogger.printLog(StmtBuilder.this, "添加条件 属性名："+fieldName+"对于表中的映射字段 根本找不到！");
@@ -291,15 +315,16 @@ public abstract class StmtBuilder{
 		}
 		
 		//判断属性是否 外键
-		if(tableInfo.allforeignClassMaps.containsKey(columnName)){
-			fieldType = tableInfo.allforeignClassMaps.get(columnName);
-		}else{
-			fieldType = mField.getType();
-		}
+//		if(tableInfo.allforeignClassMaps.containsKey(columnName)){
+//			fieldType = tableInfo.allforeignClassMaps.get(columnName);
+//		}else{
+//			fieldType = mField.getType();
+//		}
 		
 		if(isCheckObjNull){
 			for(Object obj : objs){
-				if(!obj.getClass().isAssignableFrom(fieldType)){
+				//基础类型 不检测
+				if(!fieldType.isPrimitive() &&!obj.getClass().isAssignableFrom(fieldType)){
 					ZWLogger.printLog(StmtBuilder.this, "添加条件 属性类型 和 参数类型不一致！");
 					return false;
 				}
@@ -310,7 +335,7 @@ public abstract class StmtBuilder{
 	}
 	
 	
-	public void appendWhereStr(String str){
+	protected void appendWhereStr(String str){
 		if(whereBuffer.length() == 0){
 			whereBuffer.append(WHERE_KEYWORD);
 		}
@@ -321,6 +346,11 @@ public abstract class StmtBuilder{
 	public void cycle(){
 		whereBuffer = null;
 		sqlBuffer = null;
+	}
+	
+	
+	public String getWhereSql(){
+		return whereBuffer.toString();
 	}
 	
 	public abstract String getSql();

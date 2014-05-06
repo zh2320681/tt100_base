@@ -18,8 +18,18 @@ public class Company extends ZWBo{
   @DatabaseField
   public String info;
   
+  @DatabaseField
+  public boolean isITCompany;
+  
   public String remark;
   
 //  @DatabaseField(foreign = true, foreignColumnName=)
   public List<Employee> allWorks;
+  
+  
+  public Company() {
+	// TODO Auto-generated constructor stub
+	  super();
+  }
+  
 }
