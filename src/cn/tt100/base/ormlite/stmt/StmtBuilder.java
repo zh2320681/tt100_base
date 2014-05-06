@@ -14,8 +14,9 @@ public abstract class StmtBuilder{
 	/**
 	 * 空值<设置为空值不会对数据库操作>
 	 */
-	public static final int NULL_INTEGER = Integer.MAX_VALUE;
+	public static final int NULL_INTEGER = Integer.MIN_VALUE;
 	public static final String NULL_STR = "THIS IS NULL VALUE";
+	public static final Short NULL_SHORT = Short.MIN_VALUE;
 	
 	public static final String SPEPARANT_STR = " ";
 	private static final String WHERE_KEYWORD = " WHERE ";

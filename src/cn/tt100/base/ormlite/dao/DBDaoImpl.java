@@ -1,5 +1,6 @@
 package cn.tt100.base.ormlite.dao;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,6 +96,27 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 		TableInfo info = TableInfo.newInstance(clazz);
 		long optNum = helper.getDatabase(false).delete(info.tableName, whereSql, null);
 		return optNum;
+	}
+
+	
+	@Override
+	public void clearObj(T t) {
+		// TODO Auto-generated method stub
+		TableInfo info = TableInfo.newInstance(clazz);
+		for (int j = 0; j < info.allField.size(); j++) {
+			Field field = info.allField.get(j);
+			Class<?> typeClazz = info.getFieldType(j);
+			field.setAccessible(true);
+			try {
+				field.set(t, DBTransforFactory.getFieldNullValue(typeClazz));
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

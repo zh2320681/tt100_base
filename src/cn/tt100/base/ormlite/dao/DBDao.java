@@ -5,6 +5,7 @@ import java.util.List;
 import cn.tt100.base.ZWBo;
 import cn.tt100.base.ormlite.stmt.DeleteBuider;
 import cn.tt100.base.ormlite.stmt.InsertBuider;
+import cn.tt100.base.ormlite.stmt.UpdateBuider;
 
 public interface DBDao<T extends ZWBo> {
 	
@@ -19,6 +20,12 @@ public interface DBDao<T extends ZWBo> {
 	 * @return
 	 */
 	public DeleteBuider deleteBuider();
+	
+	/**
+	 * 得到 更新的 构造器
+	 * @return
+	 */
+	public UpdateBuider<T> updateBuider();
 	
 	/**
 	 * 插入对象
@@ -39,5 +46,16 @@ public interface DBDao<T extends ZWBo> {
 	public long deleteAll();
 	
 	public long deleteObj(String whereSql);
+	
+	/**
+	 * 清空对象
+	 */
+	public void clearObj(T t);
+	
+	
+	/**
+	 * 更新 对象
+	 */
+//	public long updateObjs();
 	
 }

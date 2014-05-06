@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import cn.tt100.base.ormlite.stmt.StmtBuilder;
 import cn.tt100.base.util.ZWLogger;
 
 public class DBTransforFactory {
@@ -58,6 +59,58 @@ public class DBTransforFactory {
 		}
 		
 		return null;
+	}
+	
+	public static Object getFieldNullValue(Class<?> clazz){
+		HashMap<Class<?>, DBTransforDao<?, ?>> map;
+		try {
+			map = getMap();
+			DBTransforDao dao = map.get(clazz);
+			if(dao == null){
+				if(int.class.isAssignableFrom(clazz)
+						|| Integer.class.isAssignableFrom(clazz)){
+					return StmtBuilder.NULL_INTEGER;
+				}else if(short.class.isAssignableFrom(clazz)
+						|| Short.class.isAssignableFrom(clazz)){
+					return StmtBuilder.NULL_SHORT;
+				}
+			}else{
+				return dao.getFeildValueNull();
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	
+	public static boolean isFieldNullValue(Object object){
+		HashMap<Class<?>, DBTransforDao<?, ?>> map;
+		try {
+			map = getMap();
+			Class<?> objClazz = object.getClass();
+			DBTransforDao dao = map.get(objClazz);
+			if(dao == null){
+				if(int.class.isAssignableFrom(objClazz)
+						|| Integer.class.isAssignableFrom(objClazz)){
+					return Integer.valueOf(object.toString()) == StmtBuilder.NULL_INTEGER;
+				}else if(short.class.isAssignableFrom(objClazz)
+						|| Short.class.isAssignableFrom(objClazz)){
+					return Short.valueOf(object.toString()) == StmtBuilder.NULL_SHORT;
+				}
+			}else{
+				return dao.isFeildNullFeild(object);
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
 	}
 	
 	

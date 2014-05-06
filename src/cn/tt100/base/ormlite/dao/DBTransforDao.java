@@ -28,4 +28,16 @@ public interface DBTransforDao<F,C> {
 	 * 特殊清空
 	 */
 	public void specialDoing();
+	
+	/**
+	 * 得到空值<空值不会插入数据库>
+	 */
+	public Object getFeildValueNull();
+	
+	/**
+	 * 判断值是否为空
+	 * @param f
+	 * @return
+	 */
+	public boolean isFeildNullFeild(F f);
 }

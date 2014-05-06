@@ -24,5 +24,17 @@ public class CalendarTransfor implements DBTransforDao<Calendar, Long> {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public Object getFeildValueNull() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isFeildNullFeild(Calendar f) {
+		// TODO Auto-generated method stub
+		return f==null;
+	}
 	
 }

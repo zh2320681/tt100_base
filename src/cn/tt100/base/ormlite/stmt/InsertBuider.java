@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import android.content.ContentValues;
 import cn.tt100.base.ZWBo;
 import cn.tt100.base.ormlite.dao.DBTransforFactory;
@@ -35,8 +37,11 @@ public class InsertBuider<T extends ZWBo> extends StmtBuilder {
 					String str = (String) obj;
 					obj = str.substring(1, str.length()-1);
 				}
-				Method method = ContentValues.class.getMethod("put",String.class, obj.getClass());
-				method.invoke(cvs, columnName,obj);
+				if(!DBTransforFactory.isFieldNullValue(obj)){
+					Method method = ContentValues.class.getMethod("put",String.class, obj.getClass());
+					method.invoke(cvs, columnName,obj);
+				}
+				
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -17,6 +17,7 @@ import cn.tt100.base.ormlite.DBUtil;
 import cn.tt100.base.ormlite.ZWDBHelper;
 import cn.tt100.base.ormlite.dao.DBDao;
 import cn.tt100.base.ormlite.stmt.DeleteBuider;
+import cn.tt100.base.ormlite.stmt.StmtBuilder;
 import cn.tt100.base.util.ZWLogger;
 
 public class DBTestActivity extends ZWActivity {
@@ -43,7 +44,12 @@ public class DBTestActivity extends ZWActivity {
 					Company c = new Company();
 					c.id = i;
 					c.companyName="¹«Ë¾Ãû³Æ"+i;
-					c.info = "info"+i;
+					if(i%10 == 0){
+						c.info = StmtBuilder.NULL_STR;
+					}else{
+						c.info = "info"+i;
+					}
+					
 					c.isITCompany = (i%2==1);
 					coms.add(c);
 				}

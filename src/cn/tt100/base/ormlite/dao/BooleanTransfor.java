@@ -19,5 +19,18 @@ public class BooleanTransfor implements DBTransforDao<Boolean, Integer> {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public Object getFeildValueNull() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isFeildNullFeild(Boolean f) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 }
