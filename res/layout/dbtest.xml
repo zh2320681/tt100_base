@@ -15,4 +15,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="插入表测试" />
+	<Button
+        android:id="@+id/dt_delConBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="删除条件测试" />
+	<Button
+        android:id="@+id/dt_delAllBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="删除所有测试" />
 </LinearLayout>
