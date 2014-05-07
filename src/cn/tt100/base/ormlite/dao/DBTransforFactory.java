@@ -14,6 +14,7 @@ public class DBTransforFactory {
 	static{
 		HashMap<Class<?>,DBTransforDao<?,?>> map = new HashMap<Class<?>, DBTransforDao<?,?>>();
 		map.put(Boolean.class, new BooleanTransfor());
+		map.put(boolean.class, new BooleanTransfor());
 		map.put(Date.class, new DateTransfor());
 		map.put(Calendar.class, new CalendarTransfor());
 		map.put(String.class, new StringTransfor());
@@ -32,6 +33,19 @@ public class DBTransforFactory {
 			map = getMap();
 			DBTransforDao dao = map.get(clazzType);
 			if(dao == null){
+				if(int.class.isAssignableFrom(clazzType)
+						|| Integer.class.isAssignableFrom(clazzType)){
+					return Integer.valueOf(column.toString());
+				}else if(short.class.isAssignableFrom(clazzType)
+						|| Short.class.isAssignableFrom(clazzType)){
+					return Short.valueOf(column.toString());
+				}else if(Float.class.isAssignableFrom(clazzType)
+						|| float.class.isAssignableFrom(clazzType)){
+					return Float.valueOf(column.toString());
+				}else if(Double.class.isAssignableFrom(clazzType)
+						|| double.class.isAssignableFrom(clazzType)){
+					return Double.valueOf(column.toString());
+				}
 				return column;
 			}
 			return dao.parseColumnToField(column);
@@ -46,6 +60,9 @@ public class DBTransforFactory {
 	
 	public static Object getColumnValue(Object fieldValue){
 		HashMap<Class<?>, DBTransforDao<?, ?>> map;
+		if(fieldValue == null){
+			return null;
+		}
 		try {
 			map = getMap();
 			DBTransforDao dao = map.get(fieldValue.getClass());
@@ -73,6 +90,8 @@ public class DBTransforFactory {
 				}else if(short.class.isAssignableFrom(clazz)
 						|| Short.class.isAssignableFrom(clazz)){
 					return StmtBuilder.NULL_SHORT;
+				}else if(boolean.class.isAssignableFrom(clazz)){
+					return false;
 				}
 			}else{
 				return dao.getFeildValueNull();
@@ -88,6 +107,9 @@ public class DBTransforFactory {
 	
 	
 	public static boolean isFieldNullValue(Object object){
+		if(object == null){
+			return true;
+		}
 		HashMap<Class<?>, DBTransforDao<?, ?>> map;
 		try {
 			map = getMap();

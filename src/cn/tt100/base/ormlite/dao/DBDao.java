@@ -1,10 +1,12 @@
 package cn.tt100.base.ormlite.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import cn.tt100.base.ZWBo;
 import cn.tt100.base.ormlite.stmt.DeleteBuider;
 import cn.tt100.base.ormlite.stmt.InsertBuider;
+import cn.tt100.base.ormlite.stmt.QueryBuilder;
 import cn.tt100.base.ormlite.stmt.UpdateBuider;
 
 public interface DBDao<T extends ZWBo> {
@@ -26,6 +28,12 @@ public interface DBDao<T extends ZWBo> {
 	 * @return
 	 */
 	public UpdateBuider<T> updateBuider();
+	
+	/**
+	 * 得到 查询的 构造器
+	 * @return
+	 */
+	public QueryBuilder queryBuilder();
 	
 	/**
 	 * 插入对象
@@ -56,6 +64,29 @@ public interface DBDao<T extends ZWBo> {
 	/**
 	 * 更新 对象
 	 */
-//	public long updateObjs();
+	public long updateAllObjs(T t);
 	
+	public long updateObjs(UpdateBuider<T> mUpdateBuider);
+	
+	public long updateObjs(Map<String,Object> updateMap);
+	
+	
+	/**
+	 * 查询对象
+	 */
+	public List<T> queryAllObjs();
+	
+	public List<T> queryObjs(QueryBuilder mQueryBuilder);
+	
+	public List<T> queryObjs(String sql);
+	
+	public T queryFirstObj(QueryBuilder mQueryBuilder);
+	
+	public int queryCount(QueryBuilder mQueryBuilder);
+	
+	/**
+	 * 连接查询 查询Worker时候 把 Company也查出来
+	 * @return
+	 */
+	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder);
 }

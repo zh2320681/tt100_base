@@ -12,8 +12,8 @@ public class Employee extends ZWBo {
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, foreignColumnName = "id")
 	public Company company;
 
-	@DatabaseField(canBeNull = false)
-	public Date createTime;
+//	@DatabaseField(canBeNull = false)
+//	public Date createTime;
 
 	@DatabaseField(id = true)
 	public int id;
@@ -38,4 +38,13 @@ public class Employee extends ZWBo {
 		// TODO Auto-generated constructor stub
 		super();
 	}
+
+	@Override
+	public String toString() {
+		return "Employee [company=" + company + ", id=" + id + ", isNew="
+				+ isNew + ", name=" + name + ", index1=" + index1 + ", index2="
+				+ index2 + "]";
+	}
+	
+	
 }

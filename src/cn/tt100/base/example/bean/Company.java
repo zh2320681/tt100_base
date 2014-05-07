@@ -32,4 +32,27 @@ public class Company extends ZWBo{
 	  super();
   }
   
+  
+  /**
+   * 插入数据库的 重复数据过滤
+   */
+  @Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+	  if(o instanceof Company){
+		  Company c = (Company)o;
+		  return c.id == this.id;
+	  }
+		return super.equals(o);
+	}
+
+
+@Override
+public String toString() {
+	return "Company [companyName=" + companyName + ", id=" + id + ", info="
+			+ info + ", isITCompany=" + isITCompany + ", remark=" + remark
+			+ ", allWorks=" + allWorks + "]";
+}
+  
+  
 }

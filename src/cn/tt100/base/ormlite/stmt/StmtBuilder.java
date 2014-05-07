@@ -36,7 +36,7 @@ public abstract class StmtBuilder{
 	public StmtBuilder(Class<? extends ZWBo> clazz){
 		tableInfo = TableInfo.newInstance(clazz);
 		whereBuffer = new StringBuffer();
-		sqlBuffer = new StringBuffer();
+//		sqlBuffer = new StringBuffer();
 	}
 	
 	

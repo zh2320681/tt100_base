@@ -2,16 +2,16 @@ package cn.tt100.base.ormlite.dao;
 
 import java.util.Date;
 
-public class DateTransfor implements DBTransforDao<Date, Long> {
+public class DateTransfor implements DBTransforDao<Date, Integer> {
 
 	@Override
-	public Long parseFieldToColumn(Date fieldObj) {
+	public Integer parseFieldToColumn(Date fieldObj) {
 		// TODO Auto-generated method stub
-		return fieldObj.getTime();
+		return (int) fieldObj.getTime();
 	}
 
 	@Override
-	public Date parseColumnToField(Long columnObj) {
+	public Date parseColumnToField(Integer columnObj) {
 		// TODO Auto-generated method stub
 		return new Date(columnObj);
 	}

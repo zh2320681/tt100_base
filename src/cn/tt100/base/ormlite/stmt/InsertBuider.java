@@ -3,8 +3,8 @@ package cn.tt100.base.ormlite.stmt;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.HashSet;
+import java.util.Set;
 
 import android.content.ContentValues;
 import cn.tt100.base.ZWBo;
@@ -31,8 +31,18 @@ public class InsertBuider<T extends ZWBo> extends StmtBuilder {
 		for (int i = 0; i < tableInfo.allField.size(); i++) {
 			Field field = tableInfo.allField.get(i);
 			String columnName = tableInfo.allColumnNames.get(i);
+
 			try {
-				Object obj = DBTransforFactory.getColumnValue(field.get(t));
+				Object fieldValue = field.get(t);
+				if(tableInfo.allforeignMaps.containsKey(columnName)){
+					/**
+					 * fieldValue
+					 * 如果是外键 例如Worker的Company  这边要存的是 Company ID 但是Company对象要先存 因为 有外键约束 
+					 */
+					Field foreignField = tableInfo.allforeignMaps.get(columnName);
+					fieldValue = foreignField.get(fieldValue);
+				}
+				Object obj = DBTransforFactory.getColumnValue(fieldValue);
 				if(obj instanceof String){
 					String str = (String) obj;
 					obj = str.substring(1, str.length()-1);
@@ -57,6 +67,36 @@ public class InsertBuider<T extends ZWBo> extends StmtBuilder {
 			}
 		}
 		
+	}
+	
+	
+	/**
+	 * 得到这个对象 里面所有外键 的对象值
+	 * @param t
+	 * @return
+	 */
+	public Set<Object> getForeignKeyObjs(T t){
+		Set<Object> objs = new HashSet<Object>();
+		for (int i = 0; i < tableInfo.allColumnNames.size(); i++) {
+			String columnName = tableInfo.allColumnNames.get(i);
+			if(tableInfo.allforeignMaps.containsKey(columnName)){
+				Field field = tableInfo.allField.get(i);
+				try {
+					Object fieldValue = field.get(t);
+					if(fieldValue != null){
+						objs.add(fieldValue);
+					}
+					
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return objs;
 	}
 
 }

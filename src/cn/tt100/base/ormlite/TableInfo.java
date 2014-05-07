@@ -1,17 +1,17 @@
 package cn.tt100.base.ormlite;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 
+import android.widget.Toast;
 import cn.tt100.base.ZWBo;
 import cn.tt100.base.annotation.DatabaseField;
 import cn.tt100.base.util.ZWLogger;
@@ -32,6 +32,14 @@ public class TableInfo {
 
 	private TableInfo(Class<? extends ZWBo> clazz) {
 		this.clazz = clazz;
+		//必须有无参数的构造方法
+		try {
+			clazz.getConstructor();
+		} catch (NoSuchMethodException e1) {
+			// TODO Auto-generated catch block
+			ZWLogger.printLog(TableInfo.this,"类"+clazz.getSimpleName()+"请提供无参数的构造方法！");
+			e1.printStackTrace();
+		}
 		tableName = DBUtil.getTableName(clazz);
 		allField = new ArrayList<Field>();
 		allColumnNames = new ArrayList<String>();
