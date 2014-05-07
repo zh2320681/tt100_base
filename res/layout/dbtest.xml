@@ -3,26 +3,93 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-	<Button
-        android:id="@+id/dt_createBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="创建表测试" />
-	
-	<Button
-        android:id="@+id/dt_insertBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="插入表测试" />
-	<Button
-        android:id="@+id/dt_delConBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="删除条件测试" />
-	<Button
-        android:id="@+id/dt_delAllBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="删除所有测试" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/dt_createBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="创建表测试" />
+
+            <Button
+                android:id="@+id/dt_insertBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="插入表测试" />
+
+            <Button
+                android:id="@+id/dt_delConBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="删除条件测试" />
+
+            <Button
+                android:id="@+id/dt_delAllBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="删除所有测试" />
+
+            <Button
+                android:id="@+id/dt_updateAllBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="更新所有测试" />
+
+            <Button
+                android:id="@+id/dt_updateConBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="更新条件测试(去除特殊)" />
+
+            <Button
+                android:id="@+id/dt_updateMapBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="通过Map更新测试" />
+            
+            <Button
+                android:id="@+id/dt_queryAllBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="查询所有(不包括外键对象)" />
+            <Button
+                android:id="@+id/dt_queryAllBtn1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="查询所有(包括FK对象)直接执行SQL" />
+            <Button
+                android:id="@+id/dt_queryConBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="条件分页查询测试" />
+            <Button
+                android:id="@+id/dt_queryCountBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="条件分页查询数量测试" />
+        </LinearLayout>
+    </ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/dt_infoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:textColor="@android:color/white" />
+    </ScrollView>
+
 </LinearLayout>
