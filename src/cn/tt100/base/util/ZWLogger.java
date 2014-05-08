@@ -1,5 +1,7 @@
 package cn.tt100.base.util;
 
+import cn.tt100.base.ZWApplication;
+import cn.tt100.base.util.logger.ZWPrintToFileLogger;
 import android.util.Log;
 
 public class ZWLogger {
@@ -29,6 +31,11 @@ public class ZWLogger {
 			default:
 				Log.i(tag, "#"+msg);
 				break;
+			}
+			
+			/** -------------- »’÷æ¥Ú”° ------------------- */
+			if(ZWApplication.isLoggerPrint){
+				ZWApplication.mPrintLogger.println(mLogLevel, tag, msg);
 			}
 			
 		}

@@ -15,6 +15,7 @@ import cn.tt100.base.exception.ZWAppException;
 import cn.tt100.base.imageLoader.ImageLoader;
 import cn.tt100.base.util.LogLevel;
 import cn.tt100.base.util.ZWLogger;
+import cn.tt100.base.util.logger.ZWPrintToFileLogger;
 import cn.tt100.base.util.net.ZWNetChangeObserver;
 import cn.tt100.base.util.net.ZWNetWorkUtil.NetType;
 import cn.tt100.base.util.net.ZWNetworkStateReceiver;
@@ -27,7 +28,7 @@ public class ZWApplication extends Application {
 	// 是否开启日志打印
 	public static boolean isLoggerPrint = false;
 	// 日志保存时间（以s为单位）
-	public static long loggerPrintAvaidTime = 600;
+	public static long loggerPrintAvaidTime = 7;
 	// 日志保存路径
 	public static String loggerPrintName = "";
 	// 数据库版本号
@@ -42,7 +43,8 @@ public class ZWApplication extends Application {
 
 	private String systemOutTAG = "测试";
 	public ZWActivityManager mActivityManager;
-
+	public static  ZWPrintToFileLogger mPrintLogger;
+	
 	public int screenWidth, screenHight;
 	public float density;
 
@@ -94,6 +96,12 @@ public class ZWApplication extends Application {
 			}
 		}
 
+		/** -------------- 日志打印 ------------------- */
+		if(isLoggerPrint){
+			mPrintLogger = new ZWPrintToFileLogger(getApplicationContext());
+			mPrintLogger.open();
+		}
+		
 		WindowManager wm = (WindowManager) this
 				.getSystemService(Context.WINDOW_SERVICE);
 		DisplayMetrics dm = new DisplayMetrics();
@@ -128,7 +136,7 @@ public class ZWApplication extends Application {
 					.getProperty("loggerPrintAvaidTime"));
 			loggerPrintName = prop.getProperty("loggerPrintName");
 			dbVersion = Integer.parseInt(prop
-					.getProperty("loggerPrintAvaidTime"));
+					.getProperty("dbVersion"));
 			dbName = prop.getProperty("dbName");
 			dbOPeratorAvailTime = Integer.parseInt(prop
 					.getProperty("dbOPeratorAvailTime"));
@@ -169,6 +177,7 @@ public class ZWApplication extends Application {
 		super.onTerminate();
 		// clearDataCache();
 		mActivityManager = null;
+		closeLoggerPrint();
 		System.gc();
 	}
 
@@ -192,5 +201,14 @@ public class ZWApplication extends Application {
 			uncaughtExceptionHandler = ZWAppException.getInstance(this);
 		}
 		return uncaughtExceptionHandler;
+	}
+	
+	/**
+	 * 关闭日志打印功能
+	 */
+	public void closeLoggerPrint(){
+		isLoggerPrint = false;
+		mPrintLogger.close();
+		mPrintLogger = null;
 	}
 }

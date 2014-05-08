@@ -465,11 +465,12 @@ public class BaseUtil {
 	 */
 	public static File getExternalCacheDir(Context context) {
 		if (AndroidVersionCheckUtils.hasFroyo()) {
-			return context.getExternalCacheDir();
+//			return context.getExternalCacheDir();
+			return  Environment.getExternalStorageDirectory();
 		}
-		final String cacheDir = "/Android/data/" + context.getPackageName()
+		final String cacheDir = "/data/data/" + context.getPackageName()
 				+ "/cache/";
-		return new File(Environment.getExternalStorageDirectory().getPath()
-				+ cacheDir);
+		//Environment.getExternalStorageDirectory().getPath()
+		return new File(cacheDir);
 	}
 }

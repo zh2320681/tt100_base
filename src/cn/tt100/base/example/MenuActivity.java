@@ -37,7 +37,7 @@ public class MenuActivity extends ZWActivity {
 			}else if(arg0 == errorTestBtn){
 				throw new NullPointerException();
 			}else if(arg0 == logPrintTestBtn){
-				ZWApplication.isLoggerPrint = false;
+				((ZWApplication)getApplication()).closeLoggerPrint();
 				Toast.makeText(getApplicationContext(), "日志打印已关闭!", Toast.LENGTH_LONG).show();
 			}
 		}

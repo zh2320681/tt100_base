@@ -55,18 +55,18 @@ public class ZWDBHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(SQLiteDatabase arg0) {
 		// TODO Auto-generated method stub
-
+		createTables(arg0, Company.class,Employee.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
-		DBUtil.dropTable(arg0, Company.class);
-		DBUtil.dropTable(arg0, Employee.class);
-		
+		dropTables(arg0, Company.class,Employee.class);
 		onCreate(arg0);
 	}
 
@@ -112,4 +112,23 @@ public class ZWDBHelper extends SQLiteOpenHelper {
 		allDBDaos.put(clazz, dao);
 		return dao;
 	}
+	
+	/**
+	 * 创建多个表
+	 * @param arg0
+	 * @param createTablClss
+	 */
+	protected void createTables(SQLiteDatabase arg0,Class<? extends ZWBo>... createTablClss){
+		for(Class<? extends ZWBo> clazz : createTablClss){
+			DBUtil.createTable(arg0, clazz, true);
+		}
+	}
+	
+	
+	protected void dropTables(SQLiteDatabase arg0,Class<? extends ZWBo>... createTablClss){
+		for(Class<? extends ZWBo> clazz : createTablClss){
+			DBUtil.dropTable(arg0, clazz);
+		}
+	}
+	
 }

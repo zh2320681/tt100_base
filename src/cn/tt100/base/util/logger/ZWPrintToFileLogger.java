@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import cn.tt100.base.ZWApplication;
 import cn.tt100.base.util.AndroidVersionCheckUtils;
 import cn.tt100.base.util.BaseUtil;
 import cn.tt100.base.util.LogLevel;
+import cn.tt100.base.util.ZWLogger;
 
 /**
  * @Title TAPrintToFileLogger
@@ -26,11 +28,12 @@ public class ZWPrintToFileLogger implements ILogger {
 
 	private static final SimpleDateFormat TIMESTAMP_FMT = new SimpleDateFormat(
 			"[yyyy-MM-dd HH:mm:ss] ");
-	private String basePath = "";
+//	private String basePath = "";
 	private static String LOG_DIR = "log";
 	// private static String BASE_FILENAME = "ta.log";
 	private File logDir;
-
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd");
+	
 	private Context context;
 
 	public ZWPrintToFileLogger(Context context) {
@@ -54,10 +57,46 @@ public class ZWPrintToFileLogger implements ILogger {
 				e.printStackTrace();
 			}
 		}
-		basePath = logDir.getAbsolutePath() + "/"
-				+ ZWApplication.loggerPrintName;
+//		basePath = logDir.getAbsolutePath() + "/"
+//				+ ;
+		//检测当前文件是否超过时间
+		File[] timeoutFiles = logDir.listFiles();
+		Date nowDate = new Date();
+		for(File file : timeoutFiles){
+			String fileName = file.getName();
+			if(fileName.indexOf(".") == 0){
+				continue;
+			}
+			
+			boolean isDel = false;
+			if(fileName.length() <= 14 ){
+				isDel = true;
+			}else{
+				fileName = fileName.substring(fileName.length()-13, fileName.length()-4);
+				try { 
+					Date laseDate = simpleDateFormat.parse(fileName);
+					if(nowDate.getTime() - laseDate.getTime() >= ZWApplication.loggerPrintAvaidTime*1000*60*60*24){
+						isDel = true;
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				if(isDel){
+					ZWLogger.printLog(this, "日志文件"+ file.getName() +"有效期超时，已删除!");
+					file.delete();
+				}
+			}
+			
+		}
+		
+		
 		try {
-			File file = new File(basePath + "-" + getCurrentTimeString());
+			File file = new File(logDir,ZWApplication.loggerPrintName+"_"+getCurrentTimeString()+".log");
+			if(!file.exists()){
+				file.createNewFile();
+			}
 			mPath = file.getAbsolutePath();
 			mWriter = new BufferedWriter(new FileWriter(mPath), 2048);
 		} catch (Exception e) {
@@ -69,8 +108,6 @@ public class ZWPrintToFileLogger implements ILogger {
 
 	private String getCurrentTimeString() {
 		Date now = new Date();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
 		return simpleDateFormat.format(now);
 	}
 
@@ -128,6 +165,9 @@ public class ZWPrintToFileLogger implements ILogger {
 	}
 
 	public void println(String message) {
+		if(mWriter == null){
+			return;
+		}
 		try {
 			mWriter.write(TIMESTAMP_FMT.format(new Date()));
 			mWriter.write(message);
