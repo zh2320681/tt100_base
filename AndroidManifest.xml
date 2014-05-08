@@ -34,6 +34,11 @@
             android:name="cn.tt100.base.example.DBTestActivity"
             android:screenOrientation="portrait" />
         
+        <!-- 一定要加  -->
+        <activity
+            android:name="cn.tt100.base.ErrorActivity"
+            android:screenOrientation="portrait" />
+        
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
