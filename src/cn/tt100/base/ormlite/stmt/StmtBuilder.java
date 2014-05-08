@@ -23,6 +23,8 @@ public abstract class StmtBuilder{
 	public TableInfo tableInfo ;
 	public StringBuffer whereBuffer;
 	public StringBuffer sqlBuffer;
+	//tableAliases 表的别名
+	protected String tableAliases;
 	
 	private static final String LIKE_KEYWORD = " LIKE ";
 	private static final String OR_KEYWORD = " OR ";
@@ -120,7 +122,7 @@ public abstract class StmtBuilder{
 		Class<?> fieldType = tableInfo.getFieldType(index);
 		
 		if(initContinue(fieldName, mField, columnName, fieldType,false, fieldName)){
-			appendWhereStr(columnName +LIKE_KEYWORD+"'"+
+			appendWhereStr(getColumnNameWithAliases(columnName) +LIKE_KEYWORD+"'"+
 					(isAddBefor?"%":"")+likeStr+(isAddAfter?"%'":"'"));
 			isAddCondition = false;
 		}
@@ -135,7 +137,7 @@ public abstract class StmtBuilder{
 		Class<?> fieldType = tableInfo.getFieldType(index);
 		
 		if(initContinue(fieldName, mField, columnName, fieldType,false, fieldName)){
-			appendWhereStr(columnName +LIKE_KEYWORD+"'"+likeStr+"'");
+			appendWhereStr(getColumnNameWithAliases(columnName) +LIKE_KEYWORD+"'"+likeStr+"'");
 			isAddCondition = false;
 		}
 		return this;
@@ -156,7 +158,7 @@ public abstract class StmtBuilder{
 		Class<?> fieldType = tableInfo.getFieldType(index);
 		
 		if(initContinue(fieldName, mField, columnName, fieldType,true, beforObj,afterObj)){
-			appendWhereStr(columnName + BETWEEN_KEYWORD);
+			appendWhereStr(getColumnNameWithAliases(columnName) + BETWEEN_KEYWORD);
 //			if(Date.class.isAssignableFrom(fieldType)
 //					&& beforObj instanceof Date
 //					&& afterObj instanceof Date){
@@ -192,7 +194,7 @@ public abstract class StmtBuilder{
 			return this;
 		}
 		if(initContinue(fieldName, mField, columnName, fieldType,true, objs)){
-			appendWhereStr(columnName + " in (");
+			appendWhereStr(getColumnNameWithAliases(columnName) + " in (");
 			
 			boolean isFirstAdd = true;
 			for(Object obj : objs){
@@ -236,7 +238,7 @@ public abstract class StmtBuilder{
 		Class<?> fieldType = tableInfo.getFieldType(index);
 		
 		if(initContinue(fieldName, mField, columnName, fieldType,false, fieldName)){
-			appendWhereStr(columnName +(isNull?"IS NULL":"IS NOT NULL"));
+			appendWhereStr(getColumnNameWithAliases(columnName) +(isNull?"IS NULL":"IS NOT NULL"));
 			isAddCondition = false;
 		}
 		return this;
@@ -260,7 +262,7 @@ public abstract class StmtBuilder{
 //				ZWLogger.printLog(StmtBuilder.this, "添加条件 属性类型 和 参数类型不一致！");
 //				return this;
 //			}
-			appendWhereStr(columnName+compareStr);
+			appendWhereStr(getColumnNameWithAliases(columnName)+compareStr);
 			if(Date.class.isAssignableFrom(fieldType)
 					&& obj instanceof Date){
 				Date date = (Date)obj;
@@ -354,5 +356,41 @@ public abstract class StmtBuilder{
 		return whereBuffer.toString();
 	}
 	
+	/**
+	 * 判断表名 是否加上别名
+	 * @param tableName
+	 * @return
+	 */
+	public String getTableNameWithAliases(){ 
+//		if(tableAliases != null){
+//			return tableInfo.tableName+" "+tableAliases;
+//		}
+		return tableInfo.tableName;
+	}
+	
+	
+	
+	public String getColumnNameWithAliases(String columnName){
+//		if(tableAliases != null){
+//			return tableAliases+"."+columnName;
+//		}
+		return columnName;
+	}
+	
+	/**
+	 * 设置表的别名 (SQLite只有 Select支持别名)
+	 * @param tableAliases
+	 */
+	public void setTableAliases(String tableAliases) {
+		this.tableAliases = tableAliases;
+	}
+
+	
+
+	public String getTableAliases() {
+		return tableAliases;
+	}
+
+
 	public abstract String getSql();
 }

@@ -1,7 +1,5 @@
 package cn.tt100.base.example.bean;
 
-import java.util.Date;
-
 import cn.tt100.base.ZWBo;
 import cn.tt100.base.annotation.DatabaseField;
 import cn.tt100.base.annotation.DatabaseTable;

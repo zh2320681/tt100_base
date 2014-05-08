@@ -2,8 +2,8 @@ package cn.tt100.base;
 
 import java.util.HashMap;
 
-import cn.tt100.base.util.ZWLogger;
 import android.view.View;
+import cn.tt100.base.util.ZWLogger;
 
 public class ObserverContainer {
 	public final static HashMap<String, ModelObservable> container = new HashMap<String, ModelObservable>();

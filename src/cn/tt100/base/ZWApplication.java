@@ -20,34 +20,34 @@ import cn.tt100.base.util.net.ZWNetWorkUtil.NetType;
 import cn.tt100.base.util.net.ZWNetworkStateReceiver;
 
 public class ZWApplication extends Application {
-	//是否开启debug模式
+	// 是否开启debug模式
 	public static boolean isDebugMode = false;
-	//是否监听网络变化
+	// 是否监听网络变化
 	public static boolean isMonitorNetChange = false;
-	//是否开启日志打印
+	// 是否开启日志打印
 	public static boolean isLoggerPrint = false;
-	//日志保存时间（以s为单位）
+	// 日志保存时间（以s为单位）
 	public static long loggerPrintAvaidTime = 600;
-	//日志保存路径
-	public static String loggerPrintPath = "";
-	//数据库版本号
+	// 日志保存路径
+	public static String loggerPrintName = "";
+	// 数据库版本号
 	public static int dbVersion = 1;
-	//数据库名称
+	// 数据库名称
 	public static String dbName = "DEFALUT_DB_NAME";
-	//DBOPerator的有效时间单位ms
+	// DBOPerator的有效时间单位ms
 	public static int dbOPeratorAvailTime = 1000;
-	
+
 	/** App异常崩溃处理器 */
 	private UncaughtExceptionHandler uncaughtExceptionHandler;
-	
-	private String systemOutTAG= "测试";
+
+	private String systemOutTAG = "测试";
 	public ZWActivityManager mActivityManager;
-	
-	public int screenWidth,screenHight;
-	public float density; 
-	
+
+	public int screenWidth, screenHight;
+	public float density;
+
 	private ZWNetChangeObserver zwNetChangeObserver;
-	
+
 	@Override
 	public final void onCreate() {
 		// TODO Auto-generated method stub
@@ -57,21 +57,22 @@ public class ZWApplication extends Application {
 		onPreCreateApplication();
 		initParameterWithProperties();
 		mActivityManager = ZWActivityManager.getInstance();
-		//修改System.out输出流
-		System.setOut(new PrintStream(System.out){
+		// 修改System.out输出流
+		System.setOut(new PrintStream(System.out) {
 			@Override
 			public synchronized void println(String str) {
 				// TODO Auto-generated method stub
-//				super.print(str);
-				ZWLogger.printLog(LogLevel.INFO,systemOutTAG, str);
+				// super.print(str);
+				ZWLogger.printLog(LogLevel.INFO, systemOutTAG, str);
 			}
 		});
-		
-		//网络监听
-		if(isMonitorNetChange){
+
+		// 网络监听
+		if (isMonitorNetChange) {
 			try {
-				final ZWActivity currActivity = mActivityManager.currentActivity();
-				zwNetChangeObserver = new ZWNetChangeObserver(){
+				final ZWActivity currActivity = mActivityManager
+						.currentActivity();
+				zwNetChangeObserver = new ZWNetChangeObserver() {
 
 					@Override
 					public void onConnect(NetType type) {
@@ -89,48 +90,54 @@ public class ZWApplication extends Application {
 				};
 				ZWNetworkStateReceiver.registerObserver(zwNetChangeObserver);
 			} catch (NullPointerException e) {
-				// TODO Auto-generated catch block	
+				// TODO Auto-generated catch block
 			}
 		}
-		
-		WindowManager wm = (WindowManager)this.getSystemService(Context.WINDOW_SERVICE);
-		DisplayMetrics dm  = new DisplayMetrics();
+
+		WindowManager wm = (WindowManager) this
+				.getSystemService(Context.WINDOW_SERVICE);
+		DisplayMetrics dm = new DisplayMetrics();
 		wm.getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
-		
+
 		screenWidth = dm.widthPixels;
 		screenHight = dm.heightPixels;
-		
+
 		ImageLoader.getLoader(this);
-		
+
 		onAfterCreateApplication();
 	}
-	
-	
+
 	/**
 	 * 从assets/Properties文件中 初始化 参数值
 	 */
-	private void initParameterWithProperties(){
+	private void initParameterWithProperties() {
 		AssetManager mManager = getAssets();
 		InputStream iStream = null;
 		try {
-			iStream =  mManager.open("app_setting.properties",AssetManager.ACCESS_BUFFER);
+			iStream = mManager.open("app_setting.properties",
+					AssetManager.ACCESS_BUFFER);
 			Properties prop = new Properties();
 			prop.load(iStream);
 			isDebugMode = Boolean.parseBoolean(prop.getProperty("isDebugMode"));
-			isMonitorNetChange = Boolean.parseBoolean(prop.getProperty("isMonitorNetChange"));
-			isLoggerPrint = Boolean.parseBoolean(prop.getProperty("isLoggerPrint"));
-			loggerPrintAvaidTime = Long.parseLong(prop.getProperty("loggerPrintAvaidTime"));
-			loggerPrintPath = prop.getProperty("loggerPrintPath");
-			dbVersion = Integer.parseInt(prop.getProperty("loggerPrintAvaidTime"));
+			isMonitorNetChange = Boolean.parseBoolean(prop
+					.getProperty("isMonitorNetChange"));
+			isLoggerPrint = Boolean.parseBoolean(prop
+					.getProperty("isLoggerPrint"));
+			loggerPrintAvaidTime = Long.parseLong(prop
+					.getProperty("loggerPrintAvaidTime"));
+			loggerPrintName = prop.getProperty("loggerPrintName");
+			dbVersion = Integer.parseInt(prop
+					.getProperty("loggerPrintAvaidTime"));
 			dbName = prop.getProperty("dbName");
-			dbOPeratorAvailTime = Integer.parseInt(prop.getProperty("dbOPeratorAvailTime"));
+			dbOPeratorAvailTime = Integer.parseInt(prop
+					.getProperty("dbOPeratorAvailTime"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally{
-//			mManager.close();
-			if(iStream != null){
+		} finally {
+			// mManager.close();
+			if (iStream != null) {
 				try {
 					iStream.close();
 				} catch (IOException e) {
@@ -147,7 +154,7 @@ public class ZWApplication extends Application {
 	protected void onPreCreateApplication() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	/**
 	 * 创建Application之后 做什么动作
 	 */
@@ -155,17 +162,16 @@ public class ZWApplication extends Application {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public void onTerminate() {
 		// TODO Auto-generated method stub
 		super.onTerminate();
-//		clearDataCache();
+		// clearDataCache();
 		mActivityManager = null;
 		System.gc();
 	}
-	
-	
+
 	/**
 	 * 设置 App异常崩溃处理器
 	 * 
@@ -178,9 +184,10 @@ public class ZWApplication extends Application {
 
 	/**
 	 * 得到App异常崩溃处理器
+	 * 
 	 * @return
 	 */
-	private UncaughtExceptionHandler getUncaughtExceptionHandler() {
+	public UncaughtExceptionHandler getUncaughtExceptionHandler() {
 		if (uncaughtExceptionHandler == null) {
 			uncaughtExceptionHandler = ZWAppException.getInstance(this);
 		}

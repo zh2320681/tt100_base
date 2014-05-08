@@ -13,8 +13,9 @@ import android.view.View.OnClickListener;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
 import cn.tt100.base.annotation.OberverLoad;
-import cn.tt100.base.util.ZWLogger;
+import cn.tt100.base.exception.ZWAppException;
 import cn.tt100.base.util.BaseUtil;
+import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.net.ZWNetWorkUtil.NetType;
 
 public abstract class ZWActivity extends Activity implements Observer{
@@ -26,6 +27,7 @@ public abstract class ZWActivity extends Activity implements Observer{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
+		ZWAppException.getInstance(this);
 		if(packageName == null){
 			packageName = getPackageName();
 		}

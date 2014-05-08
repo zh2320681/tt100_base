@@ -36,8 +36,8 @@ import cn.tt100.base.R;
 import cn.tt100.base.download.bo.DLTask;
 import cn.tt100.base.download.bo.DLThreadTask;
 import cn.tt100.base.download.db.DLDatabaseHelper;
-import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.BaseUtil;
+import cn.tt100.base.util.ZWLogger;
 
 public class Downloader {
 	public static final int NOTIFICATION_ID = 0x22;

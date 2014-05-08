@@ -6,12 +6,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import android.database.sqlite.SQLiteDatabase;
 import cn.tt100.base.ZWBo;
 import cn.tt100.base.annotation.DatabaseField;
 import cn.tt100.base.annotation.DatabaseTable;
-import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.LogLevel;
-import android.database.sqlite.SQLiteDatabase;
+import cn.tt100.base.util.ZWLogger;
 
 public class DBUtil {
 
@@ -366,5 +366,10 @@ public class DBUtil {
 		Calendar cal=Calendar.getInstance();
 		cal.setTime(parseLongToDate(value));
 		return cal;
+	}
+	
+	
+	public static void timeCompute(long before,long after ){
+		ZWLogger.printLog("数据库操作:", "数据库操作耗时:"+(after-before)+"毫秒!");
 	}
 }

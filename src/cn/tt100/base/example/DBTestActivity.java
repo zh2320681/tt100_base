@@ -23,6 +23,7 @@ import cn.tt100.base.ormlite.dao.DBDao;
 import cn.tt100.base.ormlite.stmt.DeleteBuider;
 import cn.tt100.base.ormlite.stmt.QueryBuilder;
 import cn.tt100.base.ormlite.stmt.UpdateBuider;
+import cn.tt100.base.ormlite.task.DBAsyncTask;
 import cn.tt100.base.util.ZWLogger;
 
 public class DBTestActivity extends ZWActivity {
@@ -30,7 +31,8 @@ public class DBTestActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "dt_?")
 	@AutoOnClick(clickSelector = "mClick")
 	private Button createBtn,insertBtn,delConBtn,delAllBtn,updateAllBtn,updateConBtn,updateMapBtn
-		,queryAllBtn,queryAllBtn1,queryConBtn,queryCountBtn;
+		,queryAllBtn,queryAllBtn1,queryConBtn,queryCountBtn,delConAliBtn,queryConAliBtn,queryJoinBtn
+		,updateCaceadeBtn,deleteCaceadeBtn,asyncBtn;
 	
 	@AutoInitialize(idFormat = "dt_?")
 	private TextView infoView;
@@ -91,6 +93,19 @@ public class DBTestActivity extends ZWActivity {
 				ZWLogger.printLog(DBTestActivity.this, "删除SQL测试:::"+deleteBuider.getSql());
 				long optNum = comDao.deleteObjs(deleteBuider);
 				showToast(optNum);
+			}else if(v == delConAliBtn){
+				DBDao<Company> comDao =  mZWDBHelper.getDao(Company.class);
+				DeleteBuider deleteBuider = comDao.deleteBuider();
+				deleteBuider.setTableAliases("A");
+				deleteBuider.leftBrackets().between("id", 10,15).and().like("info", "12", true, true)
+				.rightBrackets().or().in("id", 22,24,26);
+				ZWLogger.printLog(DBTestActivity.this, "删除SQL测试:::"+deleteBuider.getSql());
+				long optNum = comDao.deleteObjs(deleteBuider);
+				showToast(optNum);
+			}else if(v == deleteCaceadeBtn){
+				DBDao<Company> comDao =  mZWDBHelper.getDao(Company.class);
+				long optNum = comDao.deleteAll();
+				showToast(optNum);
 			}else if(v == delAllBtn){
 				DBDao<Company> comDao =  mZWDBHelper.getDao(Company.class);
 				long optNum = comDao.deleteAll();
@@ -118,6 +133,12 @@ public class DBTestActivity extends ZWActivity {
 				DBDao<Company> comDao =  mZWDBHelper.getDao(Company.class);
 				Map<String,Object> map = new HashMap<String,Object>();
 				map.put("createTime", new Date());
+				long optNum = comDao.updateObjs(map);
+				showToast(optNum);
+			}else if(v == updateCaceadeBtn){
+				DBDao<Company> comDao =  mZWDBHelper.getDao(Company.class);
+				Map<String,Object> map = new HashMap<String,Object>();
+				map.put("id", 99);
 				long optNum = comDao.updateObjs(map);
 				showToast(optNum);
 			}else if(v == queryAllBtn){
@@ -159,6 +180,67 @@ public class DBTestActivity extends ZWActivity {
 				queryBuilder.offsetIndex = 1;
 				int num = comDao.queryCount(queryBuilder);
 				infoView.setText("查询到的数量:"+num);
+			}else if(v == queryConAliBtn){
+				DBDao<Employee> comDao =  mZWDBHelper.getDao(Employee.class);
+				QueryBuilder queryBuilder = comDao.queryBuilder();
+				queryBuilder.setTableAliases("A");
+				queryBuilder.compare("<=", "id", 10);
+				queryBuilder.limitIndex = 5;
+				queryBuilder.offsetIndex = 1;
+				List<Employee> emps = comDao.queryObjs(queryBuilder);
+				StringBuffer sb = new StringBuffer();
+				for (int j = 0; j < emps.size(); j++) {
+					Employee e = emps.get(j);
+					sb.append(j+". "+e.toString()+"\n");
+				}
+				infoView.setText(sb.toString());
+			}else if(v == queryJoinBtn){
+				DBDao<Employee> comDao =  mZWDBHelper.getDao(Employee.class);
+				QueryBuilder queryBuilder = comDao.queryBuilder();
+				queryBuilder.compare("<=", "id", 10);
+				queryBuilder.limitIndex = 5;
+				queryBuilder.offsetIndex = 1;
+				List<Employee> emps = comDao.queryJoinObjs(queryBuilder);
+				StringBuffer sb = new StringBuffer();
+				for (int j = 0; j < emps.size(); j++) {
+					Employee e = emps.get(j);
+					sb.append(j+". "+e.toString()+"\n");
+				}
+				infoView.setText(sb.toString());
+			}else if(v == asyncBtn){
+				DBAsyncTask task = new DBAsyncTask(mZWDBHelper,true) {
+					
+					@Override
+					protected Integer doInBackground(ZWDBHelper mHelper, Object... arg0) {
+						// TODO Auto-generated method stub
+						DBDao<Employee> comDao =  mZWDBHelper.getDao(Employee.class);
+						List<Employee> coms = new ArrayList<Employee>();
+						
+						Company company = new Company();
+						company.id = 100;
+						company.companyName = "天天一百网络科技";
+						company.info="好公司";
+						company.isITCompany=true;
+						for (int i = 0; i < 100; i++) {
+							Employee e = new Employee();
+							e.id = i;
+							e.company = company;
+							e.name="钱骚货"+i+"号";
+							e.isNew = (i%2==1);
+							coms.add(e);
+						}
+						long optNum = comDao.insertObjs(coms);				
+						return (int)optNum;
+					}
+					
+					@Override
+					protected void onPostExecute(Integer result) {
+						// TODO Auto-generated method stub
+						super.onPostExecute(result);
+						showToast(result);
+					}
+				};
+				task.execute();
 			}
 		}
 		

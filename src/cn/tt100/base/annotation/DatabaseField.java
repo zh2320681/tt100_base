@@ -4,9 +4,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
-import android.renderscript.Element.DataType;
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ java.lang.annotation.ElementType.FIELD })
 public @interface DatabaseField {

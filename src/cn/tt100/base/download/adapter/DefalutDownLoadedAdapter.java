@@ -1,6 +1,5 @@
 package cn.tt100.base.download.adapter;
 
-import java.io.File;
 import java.util.List;
 
 import android.content.Context;

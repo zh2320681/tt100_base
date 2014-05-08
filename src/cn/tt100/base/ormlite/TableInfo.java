@@ -1,6 +1,5 @@
 package cn.tt100.base.ormlite;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import android.widget.Toast;
 import cn.tt100.base.ZWBo;
 import cn.tt100.base.annotation.DatabaseField;
 import cn.tt100.base.util.ZWLogger;

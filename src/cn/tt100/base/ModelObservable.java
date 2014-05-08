@@ -3,8 +3,6 @@ package cn.tt100.base;
 import java.util.Observable;
 import java.util.Observer;
 
-import android.view.View;
-
 public class ModelObservable extends Observable {
 	private Object data;
 	

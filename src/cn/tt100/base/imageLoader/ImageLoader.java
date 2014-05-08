@@ -18,8 +18,8 @@ import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.widget.ImageView;
 import cn.tt100.base.R;
-import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.BaseUtil;
+import cn.tt100.base.util.ZWLogger;
 
 public class ImageLoader {
 	private static ImageLoader mLoader;// µ¥Àý

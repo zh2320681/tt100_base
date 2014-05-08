@@ -1,12 +1,8 @@
 package cn.tt100.base.example;
 
-import java.util.List;
-
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import android.os.AsyncTask;
 import android.view.View;
@@ -17,6 +13,8 @@ import cn.tt100.base.ZWActivity;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
 import cn.tt100.base.example.bean.City;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class RestActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "rest_?")

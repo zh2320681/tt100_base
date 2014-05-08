@@ -25,6 +25,7 @@ public class ZWDBHelper extends SQLiteOpenHelper {
 	private static SQLiteDatabase currentDBOperator;
 	
 	private static final Object SQLITEDATABASE_LOCK = new Object();
+	public static final Object LOCK_OBJ = new Object();
 	private static Handler mHandler;
 	
 	public ZWDBHelper(Context context) {

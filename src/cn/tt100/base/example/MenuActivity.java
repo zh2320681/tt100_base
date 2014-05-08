@@ -4,14 +4,16 @@ import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 import cn.tt100.base.ZWActivity;
+import cn.tt100.base.ZWApplication;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
 
 public class MenuActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "menu_?")
 	@AutoOnClick(clickSelector = "mClick")
-	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn;
+	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn;
 
 	private OnClickListener mClick = new OnClickListener() {
 		
@@ -32,6 +34,11 @@ public class MenuActivity extends ZWActivity {
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), RestActivity.class);
 			    startActivity(intent);
+			}else if(arg0 == errorTestBtn){
+				throw new NullPointerException();
+			}else if(arg0 == logPrintTestBtn){
+				ZWApplication.isLoggerPrint = false;
+				Toast.makeText(getApplicationContext(), "日志打印已关闭!", Toast.LENGTH_LONG).show();
 			}
 		}
 	};
@@ -39,7 +46,6 @@ public class MenuActivity extends ZWActivity {
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

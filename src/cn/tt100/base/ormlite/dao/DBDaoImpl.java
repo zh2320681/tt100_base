@@ -10,6 +10,7 @@ import java.util.Set;
 
 import android.database.Cursor;
 import cn.tt100.base.ZWBo;
+import cn.tt100.base.ormlite.DBUtil;
 import cn.tt100.base.ormlite.TableInfo;
 import cn.tt100.base.ormlite.ZWDBHelper;
 import cn.tt100.base.ormlite.stmt.DeleteBuider;
@@ -19,7 +20,6 @@ import cn.tt100.base.ormlite.stmt.UpdateBuider;
 
 public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 	private Class<T> clazz;
-	private static final Object LOCK_OBJ = new Object();
 	private ZWDBHelper helper;
 	
 	public DBDaoImpl(Class<T> clazz1,ZWDBHelper helper){
@@ -99,7 +99,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 	@Override
 	public long deleteObjs(DeleteBuider builder) {
 		// TODO Auto-generated method stub
-		long optNum = helper.getDatabase(false).delete(builder.tableInfo.tableName, builder.getWhereSql(), null);
+		long optNum = helper.getDatabase(false).delete(builder.getTableNameWithAliases(), builder.getWhereSql(), null);
 		return optNum;
 	}
 
@@ -287,8 +287,6 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 //					foreignField.set(forgienObj, fieldValues);
 					Object forgienObj = parseCurser(cursor, (Class<? extends ZWBo>)forgienClazz);
 					field.set(obj, forgienObj);
-					
-					
 				}else {
 					//从字段的值 转换为 Java里面的值
 					Object fieldValues =  DBTransforFactory.getFieldValue(columnValue, fieldType);
@@ -319,9 +317,29 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 		return parseCurser(cursor, clazz);
 	}
 
+	/**
+	 * 连接主要是左连接查询
+	 * 例如Employee查询的时候 顺便把所属公司Company 查出来
+	 * 1.得到所有的外键
+	 */
 	@Override
 	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder) {
+		char aliases = 'A';
+		mQueryBuilder.setTableAliases(aliases+"");
 		// TODO Auto-generated method stub
-		return null;
+		for(Map.Entry<String, Field> entry : mQueryBuilder.tableInfo.allforeignMaps.entrySet()){
+			aliases++;
+			
+			String fkName = entry.getKey();
+			Field fkField = entry.getValue();
+			Class<?> fkClazz = mQueryBuilder.tableInfo.allforeignClassMaps.get(fkName);
+			
+//			TableInfo fkInfo = TableInfo.newInstance((Class<ZWBo>)fkClazz);
+			mQueryBuilder.joinSB.append("LEFT JOIN "+DBUtil.getTableName(fkClazz)+" "+aliases+" ON ");
+			mQueryBuilder.joinSB.append(mQueryBuilder.getColumnNameWithAliases(fkName)+" = "+aliases+"."+
+					DBUtil.getFeildName(fkField));
+			mQueryBuilder.joinSelect.append(","+aliases+".*");
+		}
+		return queryObjs(mQueryBuilder);
 	}
 }

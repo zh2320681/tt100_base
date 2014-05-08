@@ -25,6 +25,8 @@ public class QueryBuilder extends StmtBuilder {
 	public String havingStr;
 	//limitIndex 为查询多少行  offsetIndex 跳过多少行
 	public int limitIndex,offsetIndex;
+	//连接查询语句  joinSelect查询时候添加的
+	public StringBuffer joinSB,joinSelect;
 	
 	public QueryBuilder(Class<? extends ZWBo> clazz) {
 		super(clazz);
@@ -36,6 +38,8 @@ public class QueryBuilder extends StmtBuilder {
 		queryColumns = new ArrayList<String>();
 		groupColumns = new ArrayList<String>();
 		
+		joinSB = new StringBuffer();
+		joinSelect = new StringBuffer();
 //		havingStr = new StringBuffer();
 		limitIndex = offsetIndex = -1;
 	}
@@ -112,7 +116,7 @@ public class QueryBuilder extends StmtBuilder {
 				if(columnName == null){
 					continue;
 				}
-				columnName = hasAddStr.replace(fieldName, columnName);
+				columnName = hasAddStr.replace(fieldName, getColumnNameWithAliases(columnName));
 			}else if(asIndex != -1){
 				//有别名
 				String fieldName = hasAddStr.substring(0, asIndex);
@@ -120,12 +124,12 @@ public class QueryBuilder extends StmtBuilder {
 				if(columnName == null){
 					continue;
 				}
-				columnName = hasAddStr.replace(fieldName, columnName);
+				columnName = hasAddStr.replace(fieldName, getColumnNameWithAliases(columnName));
 			}else if(xIndex != -1){
 				//* 查询所有
-				columnName = hasAddStr;
+				columnName = getColumnNameWithAliases(hasAddStr);
 			}else{
-				columnName = tableInfo.getColumnByFieldStr(hasAddStr);
+				columnName = getColumnNameWithAliases(tableInfo.getColumnByFieldStr(hasAddStr));
 				if(columnName == null){
 					continue;
 				}
@@ -137,7 +141,7 @@ public class QueryBuilder extends StmtBuilder {
 			sqlBuffer.append(columnName);
 		}
 		
-		sqlBuffer.append(" FROM "+tableInfo.tableName+" ");
+		sqlBuffer.append(joinSelect+" FROM "+ getTableNameWithAliases() +" "+joinSB);
 		/** ------------------- 添加where的字段 ------------------------- */
 		sqlBuffer.append(getWhereSql());
 		/** ------------------- 添加group by的字段 ------------------------- */
@@ -152,12 +156,12 @@ public class QueryBuilder extends StmtBuilder {
 			}else{
 				sqlBuffer.append(",");
 			}
-			sqlBuffer.append(columnName);
+			sqlBuffer.append(getColumnNameWithAliases(columnName));
 		}
 		
 		/** ------------------- 添加Having的字段 ------------------------- */
 		if(havingStr != null && "".equals(havingStr)){
-			sqlBuffer.append(HAVING_KEYWORD+havingStr);
+			sqlBuffer.append(HAVING_KEYWORD + havingStr);
 		}
 		/** ------------------- 添加order by的字段 ------------------------- */
 		for (int i = 0; i < orderColumns.size(); i++) {
@@ -171,7 +175,7 @@ public class QueryBuilder extends StmtBuilder {
 			}else{
 				sqlBuffer.append(",");
 			}
-			sqlBuffer.append(columnName+" "+ orderColumnsMap.get(orderStr));
+			sqlBuffer.append(getColumnNameWithAliases(columnName)+" "+ orderColumnsMap.get(orderStr));
 		}
 		/** ------------------- 添加limit的字段 ------------------------- */
 		if(limitIndex != -1){
@@ -191,6 +195,22 @@ public class QueryBuilder extends StmtBuilder {
 	 */
 	public void clearSelectSection(){
 		queryColumns.clear();
+	}
+	
+	
+	public String getTableNameWithAliases(){ 
+		if(tableAliases != null){
+			return tableInfo.tableName+" "+tableAliases;
+		}
+		return tableInfo.tableName;
+	}
+	
+	
+	public String getColumnNameWithAliases(String columnName){
+		if(tableAliases != null){
+			return tableAliases+"."+columnName;
+		}
+		return columnName;
 	}
 	
 	@Override
