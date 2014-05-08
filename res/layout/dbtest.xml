@@ -31,6 +31,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="删除条件测试" />
+            <Button
+                android:id="@+id/dt_delConAliBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="删除条件别名测试" />
 
             <Button
                 android:id="@+id/dt_delAllBtn"
@@ -76,6 +81,31 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="条件分页查询数量测试" />
+            <Button
+                android:id="@+id/dt_queryConAliBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="查询别名测试" />
+            <Button
+                android:id="@+id/dt_queryJoinBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="连接查询测试(非SQL)" />
+            <Button
+                android:id="@+id/dt_updateCaceadeBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Update级联操作测试" />
+            <Button
+                android:id="@+id/dt_deleteCaceadeBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="DELETE级联操作测试" />
+            <Button
+                android:id="@+id/dt_asyncBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="数据库异步事务操作测试" />
         </LinearLayout>
     </ScrollView>
 

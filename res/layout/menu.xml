@@ -27,4 +27,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="REST请求测试" />
+    <Button
+        android:id="@+id/menu_errorTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="异常捕获测试" />
+    <Button
+        android:id="@+id/menu_logPrintTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="日志打印关闭测试" />
 </LinearLayout>
