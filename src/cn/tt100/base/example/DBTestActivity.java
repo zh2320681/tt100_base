@@ -201,6 +201,8 @@ public class DBTestActivity extends ZWActivity {
 				queryBuilder.limitIndex = 5;
 				queryBuilder.offsetIndex = 1;
 				List<Employee> emps = comDao.queryJoinObjs(queryBuilder);
+				
+				
 				StringBuffer sb = new StringBuffer();
 				for (int j = 0; j < emps.size(); j++) {
 					Employee e = emps.get(j);

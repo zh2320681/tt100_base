@@ -1,5 +1,12 @@
 package cn.tt100.base.example;
 
+import java.util.Collections;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -12,14 +19,13 @@ import android.widget.TextView;
 import cn.tt100.base.ZWActivity;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
-import cn.tt100.base.example.bean.City;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.tt100.base.example.bean.JSONConverter;
+import cn.tt100.base.example.bean.Result;
 
 public class RestActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "rest_?")
 	@AutoOnClick(clickSelector = "mClick")
-	private Button testBtn,jsonTestBtn;
+	private Button testBtn,jsonTestBtn,custonTestBtn;
 	
 	@AutoInitialize(idFormat = "rest_?")
 	private TextView infoView;
@@ -34,6 +40,9 @@ public class RestActivity extends ZWActivity {
 				task.execute();
 			}else if(arg0 == jsonTestBtn){
 				RestJsonGETTask task = new RestJsonGETTask();
+				task.execute();
+			}else if(arg0 == custonTestBtn){
+				RestCustomJsonGETTask task = new RestCustomJsonGETTask();
 				task.execute();
 			}
 		}
@@ -58,14 +67,17 @@ public class RestActivity extends ZWActivity {
 	
 	
 	class RestGETTask extends AsyncTask<Void, Void, String>{
-		String url = "http://www.dcai100.com:8080/rs/cities";
+		String url = "http://www.baidu.com";
 
 		@Override
 		protected String doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			RestTemplate restTemplate = new RestTemplate();
+			//ByteArrayHttpMessageConverter
 			restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 			String result = restTemplate.getForObject(url, String.class, "");
+			
+//			restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 			return result;
 		}
 
@@ -78,21 +90,51 @@ public class RestActivity extends ZWActivity {
 	}
 
 	
-	class RestJsonGETTask extends AsyncTask<Void, Void, City[]>{
-		String url = "http://www.dcai100.com:8080/rs/cities";
+	class RestJsonGETTask extends AsyncTask<Void, Void, Result>{
+		String url = "http://119.15.137.138:80/rs/showrooms?pageNo=1&pageSize=100";
 
 		@Override
-		protected City[] doInBackground(Void... params) {
+		protected Result doInBackground(Void... params) {
 			// TODO Auto-generated method stub
+			HttpHeaders requestHeaders = new HttpHeaders();
+			requestHeaders.setAccept(Collections.singletonList(new MediaType("application","json")));
+			HttpEntity<?> requestEntity = new HttpEntity<Object>(requestHeaders);
+			
 			RestTemplate restTemplate = new RestTemplate();
-			ObjectMapper m;
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			City[] result = restTemplate.getForObject(url, City[].class);
+			ResponseEntity<Result> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Result.class);
+			Result result = responseEntity.getBody();
 			return result;
 		}
 
 		@Override
-		protected void onPostExecute(City[] result) {
+		protected void onPostExecute(Result result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			infoView.setText("请求结果：\n"+result);
+		}
+	}
+	
+	
+	class RestCustomJsonGETTask extends AsyncTask<Void, Void, Result>{
+		String url = "http://119.15.137.138:80/rs/showrooms?pageNo=1&pageSize=100";
+
+		@Override
+		protected Result doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			HttpHeaders requestHeaders = new HttpHeaders();
+			requestHeaders.setAccept(Collections.singletonList(new MediaType("application","json")));
+			HttpEntity<?> requestEntity = new HttpEntity<Object>(requestHeaders);
+			
+			RestTemplate restTemplate = new RestTemplate();
+			restTemplate.getMessageConverters().add(new JSONConverter());
+			ResponseEntity<Result> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Result.class);
+			Result result = responseEntity.getBody();
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(Result result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			infoView.setText("请求结果：\n"+result);
