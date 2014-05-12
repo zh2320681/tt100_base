@@ -37,6 +37,8 @@ public class ZWApplication extends Application {
 	public static String dbName = "DEFALUT_DB_NAME";
 	// DBOPerator的有效时间单位ms
 	public static int dbOPeratorAvailTime = 1000;
+	// 是否发出rest 请求
+	public static boolean isLoadRestRequest = false;
 
 	/** App异常崩溃处理器 */
 	private UncaughtExceptionHandler uncaughtExceptionHandler;
@@ -140,6 +142,8 @@ public class ZWApplication extends Application {
 			dbName = prop.getProperty("dbName");
 			dbOPeratorAvailTime = Integer.parseInt(prop
 					.getProperty("dbOPeratorAvailTime"));
+			isLoadRestRequest = Boolean.parseBoolean(prop
+					.getProperty("isLoadRestRequest"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

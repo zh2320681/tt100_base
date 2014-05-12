@@ -1,8 +1,10 @@
 package cn.tt100.base;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -17,8 +19,11 @@ import cn.tt100.base.exception.ZWAppException;
 import cn.tt100.base.util.BaseUtil;
 import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.net.ZWNetWorkUtil.NetType;
+import cn.tt100.base.util.rest.ZWAsyncTask;
 
 public abstract class ZWActivity extends Activity implements Observer{
+	private LinkedList<WeakReference<ZWAsyncTask>> taskList;
+	
 	private static String packageName;
 	private String activityName;
 	
@@ -38,6 +43,11 @@ public abstract class ZWActivity extends Activity implements Observer{
 			ZWApplication zwApp = (ZWApplication)app;
 			zwApp.mActivityManager.pushActivity(this);
 		}
+		
+		if(ZWApplication.isLoadRestRequest){
+			taskList = new LinkedList<WeakReference<ZWAsyncTask>>();
+		}
+		
 		onBaseCreate(savedInstanceState);
 		loadField();
 		
@@ -170,6 +180,17 @@ public abstract class ZWActivity extends Activity implements Observer{
 		}
 		
 	}
+	
+	/**
+	 * ÃÌº”»ŒŒÒ
+	 * @param task
+	 */
+	public void addTask(ZWAsyncTask task) {
+		if(ZWApplication.isLoadRestRequest){
+			taskList.add(new WeakReference<ZWAsyncTask>(task));
+		}
+	}
+	
 	
 	public abstract void notifyObserver(Object oldObj , Object newObj);
 	

@@ -1,6 +1,8 @@
 package cn.tt100.base.example;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,13 +21,19 @@ import android.widget.TextView;
 import cn.tt100.base.ZWActivity;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
+import cn.tt100.base.example.bean.GalleryDate;
 import cn.tt100.base.example.bean.JSONConverter;
 import cn.tt100.base.example.bean.Result;
+import cn.tt100.base.util.rest.DialogTaskHandler;
+import cn.tt100.base.util.rest.DoNothingHandler;
+import cn.tt100.base.util.rest.ZWAsyncTask;
+import cn.tt100.base.util.rest.ZWRequestConfig;
+import cn.tt100.base.util.rest.ZWResult;
 
 public class RestActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "rest_?")
 	@AutoOnClick(clickSelector = "mClick")
-	private Button testBtn,jsonTestBtn,custonTestBtn;
+	private Button testBtn,jsonTestBtn,custonTestBtn,asyncTestBtn;
 	
 	@AutoInitialize(idFormat = "rest_?")
 	private TextView infoView;
@@ -44,13 +52,52 @@ public class RestActivity extends ZWActivity {
 			}else if(arg0 == custonTestBtn){
 				RestCustomJsonGETTask task = new RestCustomJsonGETTask();
 				task.execute();
+			}else if(arg0 == asyncTestBtn){
+				Map<String,String> map = new HashMap<String, String>();
+				map.put("pageNo", "1");
+				map.put("pageSize", "2");
+				
+				ZWAsyncTask.excuteTask(RestActivity.this, "http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
+						HttpMethod.GET,Result.class,map, new DialogTaskHandler<Result>("请求","请求测试中..."){
+
+							@Override
+							public void postResult(ZWResult<Result> result) {
+								// TODO Auto-generated method stub
+								StringBuffer sb = new StringBuffer();
+								sb.append("请求吗是:"+result.requestCode.value()+"\n");
+								for(GalleryDate g : result.bodyObj.data){
+									sb.append("数据：：:"+g.toString() +"\n");
+								}
+								infoView.setText(sb.toString());
+							}
+				});
+				
+//				ZWAsyncTask.excuteTask(RestActivity.this, "http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
+//						HttpMethod.GET,Result.class,map, new DoNothingHandler<Result>(){
+//
+//							@Override
+//							public void postResult(ZWResult<Result> result) {
+//								// TODO Auto-generated method stub
+//								super.postResult(result);
+//								StringBuffer sb = new StringBuffer();
+//								sb.append("请求吗是:"+result.requestCode.value()+"\n");
+//								for(GalleryDate g : result.bodyObj.data){
+//									sb.append("数据：：:"+g.toString() +"\n");
+//								}
+//								infoView.setText(sb.toString());
+//							}
+//					
+//				});
 			}
+			
 		}
 	};
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
-
+		ZWRequestConfig config = new ZWRequestConfig(HttpMethod.GET, new JSONConverter());
+		config.putHeaderValue("accept", "application/json");
+		ZWRequestConfig.setDefault(config); 
 	}
 
 	@Override
