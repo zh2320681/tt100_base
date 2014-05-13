@@ -26,6 +26,12 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="async测试" />
+    
+    <Button
+        android:id="@+id/rest_queneTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="队列任务测试" />
 
     <TextView
         android:id="@+id/rest_infoView"

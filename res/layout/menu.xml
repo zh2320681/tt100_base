@@ -37,4 +37,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="日志打印关闭测试" />
+    <Button
+        android:id="@+id/menu_netTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="网络环境变化测试" />
 </LinearLayout>
