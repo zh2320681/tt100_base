@@ -13,6 +13,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import cn.tt100.base.download.bo.DLTask;
 import cn.tt100.base.download.bo.DLThreadTask;
+import cn.tt100.base.ormlite.DBUtil;
+import cn.tt100.base.ormlite.ZWDBHelper;
 import cn.tt100.base.util.ZWLogger;
 
 public class DLDatabaseHelper extends SQLiteOpenHelper {
@@ -365,12 +367,15 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-
+		DBUtil.createTable(db, DLTask.class, true);
+		DBUtil.createTable(db, DLThreadTask.class, true);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
-
+		DBUtil.dropTable(db, DLTask.class);
+		DBUtil.dropTable(db, DLThreadTask.class);
+		onCreate(db);
 	}
 }

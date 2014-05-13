@@ -1,7 +1,11 @@
 package cn.tt100.base.util.rest;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.http.HttpEntity;
@@ -14,22 +18,32 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import cn.tt100.base.ZWActivity;
+import cn.tt100.base.util.ZWLogger;
 
 public class ZWAsyncTask<PARSEOBJ> extends
 		AsyncTask<ZWRequestConfig, Void, ZWResult<PARSEOBJ>> {
-	private static final String TAG = "BaseAsyncTask";
+	private static final String TAG = "ZWAsyncTask";
+	// 用于计时
+	private static final Map<String, Long> timeingMap = new HashMap<String, Long>();
 
 	public static final byte PRE_TASK_NORMAL = 0x01;
 	public static final byte PRE_TASK_CUSTOM = 0x02;
 	public static final byte PRE_TASK_DONOTHING = 0x03;
 
+	private String taskGuid;
 	public WeakReference<Context> ctx;
 	// 请求处理器
 	private AsyncTaskHandler<PARSEOBJ> handler;
 
 	private AtomicBoolean isCancel;
 	private Class<PARSEOBJ> parseObjClazz;
-	
+
+	/**
+	 * 自带请求的config 在队列时候用
+	 */
+	public ZWRequestConfig config;
+	private Queue<ZWAsyncTask<?>> allTask;
+
 	public ZWAsyncTask(Context ctx, AsyncTaskHandler<PARSEOBJ> handler) {
 		this.ctx = new WeakReference<Context>(ctx);
 		this.handler = handler;
@@ -43,40 +57,70 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		}
 
 	}
-
-	public static <T> void excuteTask(Context ctx,String url, HttpMethod method,Class<T> clazz,Map<String,String> paras, AsyncTaskHandler<T> handler) {
-		ZWAsyncTask<T> task =  new ZWAsyncTask<T>(ctx,handler);
+	
+	/**
+	 * 将任务添加到队列中,并返回队列的第一个任务执行
+	 * @param tasks
+	 * @return
+	 */
+	public static void addTaskIntoQueueAndExcute(ZWAsyncTask<?>... tasks){
+		Queue<ZWAsyncTask<?>> allTask = new LinkedList<ZWAsyncTask<?>>();
+		for(ZWAsyncTask<?> task : tasks){
+			if(task.config == null){
+				throw new NullPointerException("队列里面任务必须提前设置 Config!");
+			}
+			task.allTask = allTask;
+			allTask.add(task);
+		}
+		if(allTask.size() > 0 ){
+			ZWAsyncTask<?> task = allTask.poll();
+			if(task != null){
+				task.execute(task.config);
+			}
+		}
+	}
+	
+	public static <T> void excuteTask(Context ctx, String url,
+			HttpMethod method, Class<T> clazz, Map<String, String> paras,
+			AsyncTaskHandler<T> handler) {
+		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
 		task.parseObjClazz = clazz;
-		
+
 		ZWRequestConfig config = ZWRequestConfig.copyDefault();
-		if(method != null){
+		if (method != null) {
 			config.httpMethod = method;
 		}
-		
+
 		config.url = url;
-		if(paras != null){
+		if (paras != null) {
 			config.getMaps().putAll(paras);
 		}
-		
 		task.execute(config);
 	}
 
-	public static <T> void excuteTask(Context ctx,String urlWithoutPar,HttpMethod method,Class<T> clazz, AsyncTaskHandler<T> handler) {
-		excuteTask(ctx,urlWithoutPar,method,clazz,null,handler);
+	public static <T> void excuteTask(Context ctx, String urlWithoutPar,
+			HttpMethod method, Class<T> clazz, AsyncTaskHandler<T> handler) {
+		excuteTask(ctx, urlWithoutPar, method, clazz, null, handler);
 	}
-	
-	public static <T> void excuteTask(Context ctx,String urlWithoutPar,Class<T> clazz, AsyncTaskHandler<T> handler) {
-		excuteTask(ctx,urlWithoutPar,null,clazz,null,handler);
+
+	public static <T> void excuteTask(Context ctx, String urlWithoutPar,
+			Class<T> clazz, AsyncTaskHandler<T> handler) {
+		excuteTask(ctx, urlWithoutPar, null, clazz, null, handler);
 	}
-	
-//	public static <T> void excuteTask(Context ctx,String urlWithoutPar,Class<T> clazz, AsyncTaskHandler<T> handler) {
-//		excuteTask(ctx,urlWithoutPar,null,clazz,null,handler);
-//	}
-	
+
+	// public static <T> void excuteTask(Context ctx,String
+	// urlWithoutPar,Class<T> clazz, AsyncTaskHandler<T> handler) {
+	// excuteTask(ctx,urlWithoutPar,null,clazz,null,handler);
+	// }
+
 	@Override
 	protected void onPreExecute() {
 		// 任务执行前
 		super.onPreExecute();
+		taskGuid = UUID.randomUUID().toString();
+		ZWLogger.printLog(TAG, "任务开始,任务ID为:" + taskGuid);
+		timeingMap.put(taskGuid, System.currentTimeMillis());
+
 		if (judgeTaskValid() && handler != null) {
 			handler.preDoing();
 		}
@@ -105,23 +149,26 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			RestTemplate restTemplate = new RestTemplate();
 			restTemplate.getMessageConverters().add(config.converter);
 			ResponseEntity<PARSEOBJ> responseEntity = restTemplate.exchange(
-					config.url, config.httpMethod, requestEntity, parseObjClazz,
-					config.getMaps());
-//			String result = responseEntity.getBody();
+					config.url, config.httpMethod, requestEntity,
+					parseObjClazz, config.getMaps());
+			// String result = responseEntity.getBody();
 			r.requestCode = responseEntity.getStatusCode();
 			r.bodyObj = responseEntity.getBody();
 			r.errorException = null;
-//			if (config.parseClazz != null) {
-//				if (config.isList) {
-//					r.bodyObj = JSON.parseArray(result, config.parseClazz);
-//				} else {
-//					r.bodyObj = JSON.parseObject(result, config.parseClazz);
-//				}
-//			}
+			// if (config.parseClazz != null) {
+			// if (config.isList) {
+			// r.bodyObj = JSON.parseArray(result, config.parseClazz);
+			// } else {
+			// r.bodyObj = JSON.parseObject(result, config.parseClazz);
+			// }
+			// }
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 			r.errorException = e;
+			if(handler != null){
+				handler.postError(r, e);
+			}
 		}
 		return r;
 	}
@@ -134,8 +181,35 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			handler.afterTaskDoing();
 			// result.bodyStr
 			handler.postResult(result);
+
+			Context context = ctx.get();
+			if (context instanceof ZWActivity) {
+				((ZWActivity) context).removeTask(this);
+			}
+			if (allTask != null) {
+				if (allTask.size() == 0) {
+					// 队列里面任务允许完毕
+
+				} else {
+					if(config == null){
+						throw new NullPointerException("队列里面任务必须提前设置 Config!");
+					}
+					ZWLogger.printLog(TAG,"队列有任务,继续执行!");
+					ZWAsyncTask<?> task = allTask.poll();
+					task.execute(config);
+				}
+			} else {
+				cycle();
+			}
 		}
 
+		ZWLogger.printLog(
+				TAG,
+				"任务Over,任务ID为:"
+						+ taskGuid
+						+ "  耗时:"
+						+ (System.currentTimeMillis() - timeingMap
+								.remove(taskGuid)) + "毫秒!");
 	}
 
 	public final boolean judgeTaskValid() {
@@ -164,5 +238,20 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	public void setCancel(boolean isCancel) {
 		this.isCancel.set(isCancel);
+	}
+
+	/**
+	 * 清空数据
+	 */
+	private void cycle() {
+		ctx.clear();
+		ctx = null;
+		// 请求处理器
+		handler = null;
+
+		if (allTask != null) {
+			allTask.clear();
+			allTask = null;
+		}
 	}
 }

@@ -53,9 +53,9 @@ public class DownloadService extends Service {
 	public int onStartCommand(Intent intent, int paramInt1, int paramInt2) {
 		if (intent != null) {
 			DLTask localDLTask = (DLTask) intent.getSerializableExtra("d");
-			if (localDLTask.isShowNotify) {
-				showNotify();
-			}
+//			if (localDLTask.isShowNotify) {
+//				showNotify();
+//			}
 			mDownloader.addTask(localDLTask);
 		}
 		return super.onStartCommand(intent, paramInt1, paramInt2);

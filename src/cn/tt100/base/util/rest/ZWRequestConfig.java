@@ -12,7 +12,7 @@ import org.springframework.http.converter.HttpMessageConverter;
  *
  */
 public class ZWRequestConfig {
-	public static ZWRequestConfig defaultConfig;
+	private static ZWRequestConfig defaultConfig;
 	
 	private Map<String,String> headers;
 	private Map<String,Object> maps;  //参数列表

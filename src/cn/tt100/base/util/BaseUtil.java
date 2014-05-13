@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.util.WeakHashMap;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,11 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.Toast;
 import cn.tt100.base.R;
+import cn.tt100.base.download.DLConstant;
+import cn.tt100.base.download.DLHandler;
+import cn.tt100.base.download.DownloadService;
+import cn.tt100.base.download.Downloader;
+import cn.tt100.base.download.bo.DLTask;
 
 /**
  * 工具类
@@ -342,18 +348,18 @@ public class BaseUtil {
 		}
 	}
 
-	
 	/**
 	 * 判断sd卡是否存在
 	 */
-	public static boolean isSdCardExist(){
+	public static boolean isSdCardExist() {
 		boolean isExist = false;
-		if(android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)){
+		if (android.os.Environment.getExternalStorageState().equals(
+				android.os.Environment.MEDIA_MOUNTED)) {
 			isExist = true;
 		}
 		return isExist;
 	}
-	
+
 	/**
 	 * 返回打开文件的意图
 	 * 
@@ -365,63 +371,57 @@ public class BaseUtil {
 		String fName = file.getName();
 		int dotIndex = fName.lastIndexOf(".");
 		if (dotIndex < 0) {
-			//文件没有后缀名
+			// 文件没有后缀名
 			Toast.makeText(context, "无法识别的文件类型!", Toast.LENGTH_LONG).show();
 			return null;
 		}
 		/* 获取文件的后缀名 */
 		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			// 设置intent的Action属性
-			intent.setAction(Intent.ACTION_VIEW);
-			// 获取文件file的MIME类型
-			String type = getMIMEType(file);
-			// 设置intent的data和Type属性。
-			intent.setDataAndType(Uri.fromFile(file), type);
-			return intent;
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		// 设置intent的Action属性
+		intent.setAction(Intent.ACTION_VIEW);
+		// 获取文件file的MIME类型
+		String type = getMIMEType(file);
+		// 设置intent的data和Type属性。
+		intent.setDataAndType(Uri.fromFile(file), type);
+		return intent;
 
 	}
-	
+
 	/**
 	 * 根据文件名 得到对应的 图标
 	 */
-	public static int getIcon(File f){
-		if(!f.isDirectory()){
-			//文件
+	public static int getIcon(File f) {
+		if (!f.isDirectory()) {
+			// 文件
 			String name = f.getName().toLowerCase();
-			if(name.indexOf(".txt") > 0){
+			if (name.indexOf(".txt") > 0) {
 				return R.drawable.mimetype_text_txt;
-			}else if(name.indexOf(".doc") > 0){
+			} else if (name.indexOf(".doc") > 0) {
 				return R.drawable.mimetype_office_doc;
-			}else if(name.indexOf(".apk") > 0){
+			} else if (name.indexOf(".apk") > 0) {
 				return R.drawable.mimetype_app_apk;
-			}else if(name.indexOf(".htm") > 0){
+			} else if (name.indexOf(".htm") > 0) {
 				return R.drawable.mimetype_htm_html;
-			}else if(name.indexOf(".png") > 0
-					||name.indexOf(".jpg") > 0
-					||name.indexOf(".bmp") > 0
-					||name.indexOf(".gif") > 0){
+			} else if (name.indexOf(".png") > 0 || name.indexOf(".jpg") > 0
+					|| name.indexOf(".bmp") > 0 || name.indexOf(".gif") > 0) {
 				return R.drawable.mimetype_img;
-			}else if(name.indexOf(".pdf") > 0){
+			} else if (name.indexOf(".pdf") > 0) {
 				return R.drawable.mimetype_office_pdf;
-			}else if(name.indexOf(".mp3") > 0
-					||name.indexOf(".wma") > 0){
+			} else if (name.indexOf(".mp3") > 0 || name.indexOf(".wma") > 0) {
 				return R.drawable.mimetype_sound;
-			}else if(name.indexOf(".mp4") > 0
-					||name.indexOf(".rm") > 0
-					||name.indexOf(".rmvb") > 0){
+			} else if (name.indexOf(".mp4") > 0 || name.indexOf(".rm") > 0
+					|| name.indexOf(".rmvb") > 0) {
 				return R.drawable.mimetype_video;
-			}		
-		}else{
-			//文件夹
+			}
+		} else {
+			// 文件夹
 			return R.drawable.mimetype_folder;
 		}
-		
-		
+
 		return R.drawable.mimetype_null;
 	}
-	
-	
+
 	/**
 	 * 得到一个可用的缓存目录(如果外部可用使用外部,否则内部)。
 	 * 
@@ -442,8 +442,7 @@ public class BaseUtil {
 
 		return new File(cachePath + File.separator + uniqueName);
 	}
-	
-	
+
 	/**
 	 * 检查如果外部存储器是内置的或是可移动的。
 	 * 
@@ -455,7 +454,7 @@ public class BaseUtil {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * 获得外部应用程序缓存目录
 	 * 
@@ -465,12 +464,25 @@ public class BaseUtil {
 	 */
 	public static File getExternalCacheDir(Context context) {
 		if (AndroidVersionCheckUtils.hasFroyo()) {
-//			return context.getExternalCacheDir();
-			return  Environment.getExternalStorageDirectory();
+			// return context.getExternalCacheDir();
+			return Environment.getExternalStorageDirectory();
 		}
 		final String cacheDir = "/data/data/" + context.getPackageName()
 				+ "/cache/";
-		//Environment.getExternalStorageDirectory().getPath()
+		// Environment.getExternalStorageDirectory().getPath()
 		return new File(cacheDir);
+	}
+
+	public static void downloadFile(Context context, DLTask task,
+			DLHandler handler) {
+		if (handler != null) {
+			if (Downloader.allCallbacks == null)
+				Downloader.allCallbacks = new WeakHashMap<DLTask, DLHandler>();
+			Downloader.allCallbacks.put(task, handler);
+			handler.preDownloadDoing(task);
+		}
+		Intent intent = new Intent(context, DownloadService.class);
+		intent.putExtra(DLConstant.DL_TASK_OBJ, task);
+		context.startService(intent);
 	}
 }

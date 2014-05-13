@@ -22,7 +22,8 @@ import cn.tt100.base.util.net.ZWNetWorkUtil.NetType;
 import cn.tt100.base.util.rest.ZWAsyncTask;
 
 public abstract class ZWActivity extends Activity implements Observer{
-	private LinkedList<WeakReference<ZWAsyncTask>> taskList;
+//	private LinkedList<WeakReference<ZWAsyncTask<?>>> taskList;
+	private LinkedList<ZWAsyncTask<?>> taskList;
 	
 	private static String packageName;
 	private String activityName;
@@ -45,7 +46,7 @@ public abstract class ZWActivity extends Activity implements Observer{
 		}
 		
 		if(ZWApplication.isLoadRestRequest){
-			taskList = new LinkedList<WeakReference<ZWAsyncTask>>();
+			taskList = new LinkedList<ZWAsyncTask<?>>();
 		}
 		
 		onBaseCreate(savedInstanceState);
@@ -185,13 +186,21 @@ public abstract class ZWActivity extends Activity implements Observer{
 	 * 添加任务
 	 * @param task
 	 */
-	public void addTask(ZWAsyncTask task) {
+	public void addTask(ZWAsyncTask<?> task) {
 		if(ZWApplication.isLoadRestRequest){
-			taskList.add(new WeakReference<ZWAsyncTask>(task));
+			taskList.add(task);
 		}
 	}
 	
-	
+	/**
+	 * 移除任务
+	 * @param task
+	 */
+	public void removeTask(ZWAsyncTask<?> task){
+		if(ZWApplication.isLoadRestRequest){
+			taskList.remove(task);
+		}
+	}
 	public abstract void notifyObserver(Object oldObj , Object newObj);
 	
 	/**

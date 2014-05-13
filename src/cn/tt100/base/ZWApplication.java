@@ -45,8 +45,8 @@ public class ZWApplication extends Application {
 
 	private String systemOutTAG = "测试";
 	public ZWActivityManager mActivityManager;
-	public static  ZWPrintToFileLogger mPrintLogger;
-	
+	public static ZWPrintToFileLogger mPrintLogger;
+
 	public int screenWidth, screenHight;
 	public float density;
 
@@ -74,14 +74,15 @@ public class ZWApplication extends Application {
 		// 网络监听
 		if (isMonitorNetChange) {
 			try {
-				final ZWActivity currActivity = mActivityManager
-						.currentActivity();
+
 				zwNetChangeObserver = new ZWNetChangeObserver() {
 
 					@Override
 					public void onConnect(NetType type) {
 						// TODO Auto-generated method stub
 						super.onConnect(type);
+						ZWActivity currActivity = mActivityManager
+								.currentActivity();
 						currActivity.onConnect(type);
 					}
 
@@ -89,6 +90,8 @@ public class ZWApplication extends Application {
 					public void onDisConnect() {
 						// TODO Auto-generated method stub
 						super.onDisConnect();
+						ZWActivity currActivity = mActivityManager
+								.currentActivity();
 						currActivity.onDisConnect();
 					}
 				};
@@ -99,11 +102,11 @@ public class ZWApplication extends Application {
 		}
 
 		/** -------------- 日志打印 ------------------- */
-		if(isLoggerPrint){
+		if (isLoggerPrint) {
 			mPrintLogger = new ZWPrintToFileLogger(getApplicationContext());
 			mPrintLogger.open();
 		}
-		
+
 		WindowManager wm = (WindowManager) this
 				.getSystemService(Context.WINDOW_SERVICE);
 		DisplayMetrics dm = new DisplayMetrics();
@@ -137,8 +140,7 @@ public class ZWApplication extends Application {
 			loggerPrintAvaidTime = Long.parseLong(prop
 					.getProperty("loggerPrintAvaidTime"));
 			loggerPrintName = prop.getProperty("loggerPrintName");
-			dbVersion = Integer.parseInt(prop
-					.getProperty("dbVersion"));
+			dbVersion = Integer.parseInt(prop.getProperty("dbVersion"));
 			dbName = prop.getProperty("dbName");
 			dbOPeratorAvailTime = Integer.parseInt(prop
 					.getProperty("dbOPeratorAvailTime"));
@@ -206,11 +208,11 @@ public class ZWApplication extends Application {
 		}
 		return uncaughtExceptionHandler;
 	}
-	
+
 	/**
 	 * 关闭日志打印功能
 	 */
-	public void closeLoggerPrint(){
+	public void closeLoggerPrint() {
 		isLoggerPrint = false;
 		mPrintLogger.close();
 		mPrintLogger = null;

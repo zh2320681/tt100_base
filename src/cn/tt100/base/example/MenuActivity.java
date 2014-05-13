@@ -13,7 +13,7 @@ import cn.tt100.base.annotation.AutoOnClick;
 public class MenuActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "menu_?")
 	@AutoOnClick(clickSelector = "mClick")
-	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn;
+	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn;
 
 	private OnClickListener mClick = new OnClickListener() {
 		
@@ -25,6 +25,9 @@ public class MenuActivity extends ZWActivity {
 				intent.setClass(getApplicationContext(), DBTestActivity.class);
 			    startActivity(intent);
 			}else if(arg0 == downTestBtn){
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), DLTestActivity.class);
+			    startActivity(intent);
 				
 			}else if(arg0 == imgBtn){
 				Intent intent = new Intent();
@@ -39,6 +42,10 @@ public class MenuActivity extends ZWActivity {
 			}else if(arg0 == logPrintTestBtn){
 				((ZWApplication)getApplication()).closeLoggerPrint();
 				Toast.makeText(getApplicationContext(), "日志打印已关闭!", Toast.LENGTH_LONG).show();
+			}else if(arg0 == netTestBtn){
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), NetTestActivity.class);
+			    startActivity(intent);
 			}
 		}
 	};

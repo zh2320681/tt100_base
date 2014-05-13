@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Set;
 
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +46,15 @@ public class DownloadCallable implements Runnable {
 		}
 		ZWLogger.printLog(DownloadCallable.class, "下载的文件名: "+task.fileName+" 下载线程id："+dtTask.threadId
 				+" 已经下载#####################===>"+dtTask.hasDownloadLength+"/"+dtTask.downloadBlock);
+		DLHandler handler = Downloader.allCallbacks.get(task);
+		if(handler != null){
+			Set<DLThreadTask> set = Downloader.allTasks.get(task);
+			int sumSize = 0;
+			for(DLThreadTask dtTask : set){
+				sumSize += dtTask.hasDownloadLength;
+			}
+			handler.downLoadingProgress(task, sumSize);
+		}
 	}
 
 	public DLThreadTask getDtTask() {

@@ -15,15 +15,20 @@ public interface DLHandler {
 	/**
 	 * 下载时候 文件存在 
 	 * @param task
-	 * @return 是否删除 true 删除 覆盖  false 
+	 * @return 是否不删除 true 不删除   false 删除
 	 */
 	public boolean isDLFileExist(DLTask task);
 
 	/**
-	 * 下载过程中 做什么
+	 * 下载完成 做什么
 	 * @param task
 	 */
 	public void postDownLoading(DLTask task);
+	
+	/**
+	 * 下载过程中 返回
+	 */
+	public void downLoadingProgress(DLTask task,int hasDownSize);
 
 	/**
 	 * 下载前做什么<UI动作在主线程做>

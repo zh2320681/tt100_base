@@ -33,7 +33,7 @@ import cn.tt100.base.util.rest.ZWResult;
 public class RestActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "rest_?")
 	@AutoOnClick(clickSelector = "mClick")
-	private Button testBtn,jsonTestBtn,custonTestBtn,asyncTestBtn;
+	private Button testBtn,jsonTestBtn,custonTestBtn,asyncTestBtn,queneTestBtn;
 	
 	@AutoInitialize(idFormat = "rest_?")
 	private TextView infoView;
@@ -88,6 +88,29 @@ public class RestActivity extends ZWActivity {
 //							}
 //					
 //				});
+			}else if(arg0 == queneTestBtn){
+				ZWAsyncTask<Result> task1 = new ZWAsyncTask<Result>(RestActivity.this, new DoNothingHandler<Result>());
+				task1.config = ZWRequestConfig.copyDefault();
+				task1.config.url = "http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}";
+				Map<String,String> map = new HashMap<String, String>();
+				map.put("pageNo", "1");
+				map.put("pageSize", "2");
+				task1.config.getMaps().putAll(map);
+				
+				ZWAsyncTask<Result> task2 = new ZWAsyncTask<Result>(RestActivity.this, new DialogTaskHandler<Result>("≤‚ ‘", "≤‚ ‘≤‚ ‘") {
+
+					@Override
+					public void postResult(ZWResult<Result> result) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+				task2.config = task1.config;
+				
+				ZWAsyncTask<Result> task3 = new ZWAsyncTask<Result>(RestActivity.this, new DoNothingHandler<Result>());
+				task3.config = task1.config;
+				
+				ZWAsyncTask.addTaskIntoQueueAndExcute(task1,task2,task3);
 			}
 			
 		}
