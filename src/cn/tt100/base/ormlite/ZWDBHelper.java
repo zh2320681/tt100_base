@@ -12,12 +12,10 @@ import android.os.Handler;
 import android.os.Message;
 import cn.tt100.base.ZWApplication;
 import cn.tt100.base.ZWBo;
-import cn.tt100.base.example.bean.Company;
-import cn.tt100.base.example.bean.Employee;
 import cn.tt100.base.ormlite.dao.DBDao;
 import cn.tt100.base.ormlite.dao.DBDaoImpl;
 
-public class ZWDBHelper extends SQLiteOpenHelper {
+public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	private static final int CLOSE_DBOPERATOR = 0x89;
 	
 	private static Map<Class<? extends ZWBo>,DBDao> allDBDaos = new HashMap<Class<? extends ZWBo>, DBDao>();
@@ -57,18 +55,11 @@ public class ZWDBHelper extends SQLiteOpenHelper {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void onCreate(SQLiteDatabase arg0) {
-		// TODO Auto-generated method stub
-		createTables(arg0, Company.class,Employee.class);
-	}
+	public abstract void onCreate(SQLiteDatabase arg0);
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
-		// TODO Auto-generated method stub
-		dropTables(arg0, Company.class,Employee.class);
-		onCreate(arg0);
-	}
+	public  abstract void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2);
 
 	
 	public SQLiteDatabase getDatabase(boolean isReadOnly){

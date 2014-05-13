@@ -44,9 +44,9 @@ public class ImageBo {
 		weakCtx = null;
 		this.url = null;
 		this.mShowView = null;
-		if (defaultImage != null && !defaultImage.isRecycled()) {
-			defaultImage.recycle();
-		}
+//		if (defaultImage != null && !defaultImage.isRecycled()) {
+//			defaultImage.recycle();
+//		}
 		defaultImage = null;
 		this.cachePath = null;
 		this.mHandler = null;

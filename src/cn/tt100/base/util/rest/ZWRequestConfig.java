@@ -18,14 +18,14 @@ public class ZWRequestConfig {
 	private Map<String,Object> maps;  //参数列表
 	private Object body;
 	public HttpMethod httpMethod;
-	public HttpMessageConverter converter;
+	public HttpMessageConverter<?> converter;
 	
 	public String url;
 	public Class<?> parseClazz;
 	//解析时候 是否是列表
 	public boolean isList;
 	
-	public ZWRequestConfig(HttpMethod httpMethod,HttpMessageConverter converter){
+	public ZWRequestConfig(HttpMethod httpMethod,HttpMessageConverter<?> converter){
 		super();
 		headers = new HashMap<String, String>();
 		maps = new HashMap<String, Object>();

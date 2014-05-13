@@ -251,7 +251,22 @@ public class DBTestActivity extends ZWActivity {
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
-		mZWDBHelper = new ZWDBHelper(getApplicationContext());
+		mZWDBHelper = new ZWDBHelper(getApplicationContext()){
+
+			@Override
+			public void onCreate(SQLiteDatabase arg0) {
+				// TODO Auto-generated method stub
+				createTables(arg0, Company.class,Employee.class);
+			}
+
+			@Override
+			public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
+				// TODO Auto-generated method stub
+				dropTables(arg0, Company.class,Employee.class);
+				this.onCreate(arg0);
+			}
+			
+		};
 		
 	}
 

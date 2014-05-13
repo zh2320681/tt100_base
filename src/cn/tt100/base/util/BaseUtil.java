@@ -114,7 +114,7 @@ public class BaseUtil {
 			return;
 		}
 		/* 获取文件的后缀名 */
-		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
+//		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
 		// if (end.indexOf("txt") != -1 || end.indexOf("htm") != -1) {
 		// intent.setClass(context, ShowTxtAndWeb.class);
 		// intent.putExtra("url", file.getPath());
@@ -233,11 +233,13 @@ public class BaseUtil {
 	/**
 	 * 判断 是不是这个类
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T judgeContextToActivity(Object obj,
 			Class<? extends Context> activityClass) {
 		if (obj != null) {
 			Class<?> ctxClass = obj.getClass();
 			if (ctxClass.hashCode() == activityClass.hashCode()) {
+				
 				T futureObj = (T) obj;
 				return futureObj;
 			}
@@ -259,7 +261,7 @@ public class BaseUtil {
 			int imgHeight) throws Exception {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
-		Bitmap localBitmap = BitmapFactory.decodeFile(filePath, options);
+		BitmapFactory.decodeFile(filePath, options);
 		int orgHeight = options.outHeight;
 		int orgWidth = options.outWidth;
 		if (imgWidth == -1) {
@@ -376,7 +378,7 @@ public class BaseUtil {
 			return null;
 		}
 		/* 获取文件的后缀名 */
-		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
+//		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		// 设置intent的Action属性
 		intent.setAction(Intent.ACTION_VIEW);
