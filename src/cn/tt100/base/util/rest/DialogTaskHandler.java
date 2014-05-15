@@ -10,8 +10,8 @@ public abstract class DialogTaskHandler<T> implements AsyncTaskHandler<T> {
 //	private ProgressDialog progressDialog;
 	private ProgressDialog progressDialog;
 	public boolean isTaskSuccess = true;
-	private String title;
-	public String content;
+	protected String title;
+	protected String content;
 	public ZWAsyncTask<T> task;
 	
 	public DialogTaskHandler(String title, String content) {

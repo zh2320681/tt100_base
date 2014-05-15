@@ -17,6 +17,13 @@ public class ZWRequestConfig {
 	private Map<String,String> headers;
 	private Map<String,Object> maps;  //参数列表
 	private Object body;
+	
+	/**
+	 * Spring 支持这样 参数类型
+	 */
+	public Object[] paras;
+	
+	
 	public HttpMethod httpMethod;
 	public HttpMessageConverter<?> converter;
 	

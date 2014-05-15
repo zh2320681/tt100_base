@@ -80,6 +80,15 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		}
 	}
 	
+	/**
+	 * 静态的 请求方法
+	 * @param ctx
+	 * @param url 地址 类似与http://example.com/hotels/{hotel}/bookings/{booking}
+	 * @param method GET POST PUT等
+	 * @param clazz 返回什么类型
+	 * @param paras URL参数
+	 * @param handler 任务回调用
+	 */
 	public static <T> void excuteTask(Context ctx, String url,
 			HttpMethod method, Class<T> clazz, Map<String, String> paras,
 			AsyncTaskHandler<T> handler) {
@@ -98,14 +107,48 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		task.execute(config);
 	}
 
+	/**
+	 * 静态的 请求方法
+	 * @param ctx
+	 * @param url 地址 类似与http://example.com/hotels/{hotel}/bookings/{booking}
+	 * @param method GET POST PUT等
+	 * @param clazz 返回什么类型
+	 * @param paras URL参数
+	 * @param handler 任务回调用
+	 */
+	public static <T> void excuteTaskWithParas(Context ctx, String url,
+			HttpMethod method, Class<T> clazz,
+			AsyncTaskHandler<T> handler,Object... paras) {
+		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
+		task.parseObjClazz = clazz;
+
+		ZWRequestConfig config = ZWRequestConfig.copyDefault();
+		if (method != null) {
+			config.httpMethod = method;
+		}
+
+		config.url = url;
+		if (paras != null) {
+			config.paras = paras;
+		}
+		task.execute(config);
+	}
+	
+	public static <T> void excuteTaskWithOutMethod(Context ctx, String url, Class<T> clazz,
+			AsyncTaskHandler<? extends T> handler,Object... paras) {
+		excuteTaskWithParas(ctx, url, null, clazz, (AsyncTaskHandler<T>)handler, paras);
+		
+	}
+	
+	
 	public static <T> void excuteTask(Context ctx, String urlWithoutPar,
-			HttpMethod method, Class<T> clazz, AsyncTaskHandler<T> handler) {
-		excuteTask(ctx, urlWithoutPar, method, clazz, null, handler);
+			HttpMethod method, Class<T> clazz, AsyncTaskHandler<? extends T> handler) {
+		excuteTask(ctx, urlWithoutPar, method, clazz, null, (AsyncTaskHandler<T>)handler);
 	}
 
 	public static <T> void excuteTask(Context ctx, String urlWithoutPar,
-			Class<T> clazz, AsyncTaskHandler<T> handler) {
-		excuteTask(ctx, urlWithoutPar, null, clazz, null, handler);
+			Class<T> clazz, AsyncTaskHandler<? extends T> handler) {
+		excuteTask(ctx, urlWithoutPar, null, clazz, null, (AsyncTaskHandler<T>)handler);
 	}
 
 	// public static <T> void excuteTask(Context ctx,String
@@ -148,9 +191,22 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 			RestTemplate restTemplate = new RestTemplate();
 			restTemplate.getMessageConverters().add(config.converter);
-			ResponseEntity<PARSEOBJ> responseEntity = restTemplate.exchange(
-					config.url, config.httpMethod, requestEntity,
-					parseObjClazz, config.getMaps());
+			
+			ResponseEntity<PARSEOBJ> responseEntity = null;
+			if(config.paras != null){
+				responseEntity = restTemplate.exchange(
+						config.url, config.httpMethod, requestEntity,
+						parseObjClazz, config.paras );
+			}else if(config.getMaps().size() != 0 ){
+				responseEntity = restTemplate.exchange(
+						config.url, config.httpMethod, requestEntity,
+						parseObjClazz, config.getMaps());
+			}else{
+				responseEntity = restTemplate.exchange(
+						config.url, config.httpMethod, requestEntity,
+						parseObjClazz);
+			}
+			 
 			// String result = responseEntity.getBody();
 			r.requestCode = responseEntity.getStatusCode();
 			r.bodyObj = responseEntity.getBody();
