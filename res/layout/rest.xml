@@ -32,7 +32,16 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="队列任务测试" />
-
+    <Button
+        android:id="@+id/rest_mineTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="队列任务测试" />
+	<Button
+        android:id="@+id/rest_mine1TestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="队列任务测试1" />
     <TextView
         android:id="@+id/rest_infoView"
         android:layout_width="fill_parent"
