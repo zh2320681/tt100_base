@@ -8,11 +8,15 @@ import java.util.Properties;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
+import android.os.Build;
+import android.os.StrictMode;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import cn.tt100.base.exception.ZWAppException;
 import cn.tt100.base.imageLoader.ImageLoader;
+import cn.tt100.base.util.AndroidVersionCheckUtils;
 import cn.tt100.base.util.LogLevel;
 import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.logger.ZWPrintToFileLogger;
@@ -39,6 +43,8 @@ public class ZWApplication extends Application {
 	public static int dbOPeratorAvailTime = 1000;
 	// 是否发出rest 请求
 	public static boolean isLoadRestRequest = false;
+	// 是否开始StrictMode
+	public static boolean isOpenStrictMode = true;
 
 	/** App异常崩溃处理器 */
 	private UncaughtExceptionHandler uncaughtExceptionHandler;
@@ -60,6 +66,30 @@ public class ZWApplication extends Application {
 		Thread.setDefaultUncaughtExceptionHandler(getUncaughtExceptionHandler());
 		onPreCreateApplication();
 		initParameterWithProperties();
+
+		/** ------------------ debug mode ----------------------- */
+		if (isDebugMode) {
+			ApplicationInfo info = getApplicationInfo();
+			info.flags = ApplicationInfo.FLAG_DEBUGGABLE;
+		}
+
+		/** ------------------ isOpenStrictMode 2.3以上支持----------------------- */
+		if (isDebugMode && isOpenStrictMode
+				&& AndroidVersionCheckUtils.hasGingerbread()) {
+			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() // 构造StrictMode
+					.detectDiskReads() // 当发生磁盘读操作时输出
+					.detectDiskWrites()// 当发生磁盘写操作时输出
+					.detectNetwork() // 访问网络时输出，这里可以替换为detectAll()
+										// 就包括了磁盘读写和网络I/O
+					.penaltyLog() // 以日志的方式输出
+					.build());
+			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+					.detectLeakedSqlLiteObjects() // 探测SQLite数据库操作
+					.penaltyLog() // 以日志的方式输出
+					.penaltyDeath().build());
+
+		}
+
 		mActivityManager = ZWActivityManager.getInstance();
 		// 修改System.out输出流
 		System.setOut(new PrintStream(System.out) {
@@ -146,6 +176,8 @@ public class ZWApplication extends Application {
 					.getProperty("dbOPeratorAvailTime"));
 			isLoadRestRequest = Boolean.parseBoolean(prop
 					.getProperty("isLoadRestRequest"));
+			isOpenStrictMode = Boolean.parseBoolean(prop
+					.getProperty("isOpenStrictMode"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

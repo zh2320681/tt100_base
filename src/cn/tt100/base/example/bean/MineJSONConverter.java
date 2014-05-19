@@ -15,7 +15,7 @@ import org.springframework.web.client.HttpMessageConverterExtractor;
 
 import com.alibaba.fastjson.JSON;
 
-public class JSONConverter implements HttpMessageConverter<Result> {
+public class MineJSONConverter implements HttpMessageConverter<MineBo> {
 
 	@Override
 	public boolean canRead(Class<?> arg0, MediaType arg1) {
@@ -42,7 +42,7 @@ public class JSONConverter implements HttpMessageConverter<Result> {
 	}
 
 	@Override
-	public Result read(Class<? extends Result> arg0, HttpInputMessage arg1)
+	public MineBo read(Class<? extends MineBo> arg0, HttpInputMessage arg1)
 			throws IOException, HttpMessageNotReadableException {
 		// TODO Auto-generated method stub
 		BufferedReader reader = new BufferedReader(
@@ -55,13 +55,13 @@ public class JSONConverter implements HttpMessageConverter<Result> {
 		}
 		reader.close();
 		
-		Result result = JSON.parseObject(sb.toString(), arg0);
+		MineBo mMineBo = JSON.parseObject(sb.toString(), arg0);
 		
-		return result;
+		return mMineBo;
 	}
 
 	@Override
-	public void write(Result arg0, MediaType arg1, HttpOutputMessage arg2)
+	public void write(MineBo arg0, MediaType arg1, HttpOutputMessage arg2)
 			throws IOException, HttpMessageNotWritableException {
 		// TODO Auto-generated method stub
 		System.out.println("111111111write");

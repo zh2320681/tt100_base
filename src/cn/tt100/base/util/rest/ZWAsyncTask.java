@@ -3,6 +3,7 @@ package cn.tt100.base.util.rest;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
@@ -13,6 +14,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
 import android.app.Activity;
 import android.content.Context;
@@ -36,7 +40,8 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	private AsyncTaskHandler<PARSEOBJ> handler;
 
 	private AtomicBoolean isCancel;
-	private Class<PARSEOBJ> parseObjClazz;
+	// private Class<PARSEOBJ> parseObjClazz;
+	private TypeReference<PARSEOBJ> reference;
 
 	/**
 	 * 自带请求的config 在队列时候用
@@ -57,43 +62,50 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		}
 
 	}
-	
+
 	/**
 	 * 将任务添加到队列中,并返回队列的第一个任务执行
+	 * 
 	 * @param tasks
 	 * @return
 	 */
-	public static void addTaskIntoQueueAndExcute(ZWAsyncTask<?>... tasks){
+	public static void addTaskIntoQueueAndExcute(ZWAsyncTask<?>... tasks) {
 		Queue<ZWAsyncTask<?>> allTask = new LinkedList<ZWAsyncTask<?>>();
-		for(ZWAsyncTask<?> task : tasks){
-			if(task.config == null){
+		for (ZWAsyncTask<?> task : tasks) {
+			if (task.config == null) {
 				throw new NullPointerException("队列里面任务必须提前设置 Config!");
 			}
 			task.allTask = allTask;
 			allTask.add(task);
 		}
-		if(allTask.size() > 0 ){
+		if (allTask.size() > 0) {
 			ZWAsyncTask<?> task = allTask.poll();
-			if(task != null){
+			if (task != null) {
 				task.execute(task.config);
 			}
 		}
 	}
-	
+
 	/**
 	 * 静态的 请求方法
+	 * 
 	 * @param ctx
-	 * @param url 地址 类似与http://example.com/hotels/{hotel}/bookings/{booking}
-	 * @param method GET POST PUT等
-	 * @param clazz 返回什么类型
-	 * @param paras URL参数
-	 * @param handler 任务回调用
+	 * @param url
+	 *            地址 类似与http://example.com/hotels/{hotel}/bookings/{booking}
+	 * @param method
+	 *            GET POST PUT等
+	 * @param clazz
+	 *            返回什么类型
+	 * @param paras
+	 *            URL参数
+	 * @param handler
+	 *            任务回调用
 	 */
 	public static <T> void excuteTask(Context ctx, String url,
-			HttpMethod method, Class<T> clazz, Map<String, String> paras,
-			AsyncTaskHandler<T> handler) {
+			HttpMethod method, TypeReference<T> reference,
+			Map<String, String> paras, AsyncTaskHandler<T> handler) {
 		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
-		task.parseObjClazz = clazz;
+		task.reference = reference;
 
 		ZWRequestConfig config = ZWRequestConfig.copyDefault();
 		if (method != null) {
@@ -109,18 +121,24 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	/**
 	 * 静态的 请求方法
+	 * 
 	 * @param ctx
-	 * @param url 地址 类似与http://example.com/hotels/{hotel}/bookings/{booking}
-	 * @param method GET POST PUT等
-	 * @param clazz 返回什么类型
-	 * @param paras URL参数
-	 * @param handler 任务回调用
+	 * @param url
+	 *            地址 类似与http://example.com/hotels/{hotel}/bookings/{booking}
+	 * @param method
+	 *            GET POST PUT等
+	 * @param clazz
+	 *            返回什么类型
+	 * @param paras
+	 *            URL参数
+	 * @param handler
+	 *            任务回调用
 	 */
 	public static <T> void excuteTaskWithParas(Context ctx, String url,
-			HttpMethod method, Class<T> clazz,
-			AsyncTaskHandler<T> handler,Object... paras) {
+			HttpMethod method, TypeReference<T> reference,
+			AsyncTaskHandler<T> handler, Object... paras) {
 		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
-		task.parseObjClazz = clazz;
+		task.reference = reference;
 
 		ZWRequestConfig config = ZWRequestConfig.copyDefault();
 		if (method != null) {
@@ -133,22 +151,26 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		}
 		task.execute(config);
 	}
-	
-	public static <T> void excuteTaskWithOutMethod(Context ctx, String url, Class<T> clazz,
-			AsyncTaskHandler<? extends T> handler,Object... paras) {
-		excuteTaskWithParas(ctx, url, null, clazz, (AsyncTaskHandler<T>)handler, paras);
-		
-	}
-	
-	
-	public static <T> void excuteTask(Context ctx, String urlWithoutPar,
-			HttpMethod method, Class<T> clazz, AsyncTaskHandler<? extends T> handler) {
-		excuteTask(ctx, urlWithoutPar, method, clazz, null, (AsyncTaskHandler<T>)handler);
+
+	public static <T> void excuteTaskWithOutMethod(Context ctx, String url,
+			TypeReference<T> reference, AsyncTaskHandler<? extends T> handler,
+			Object... paras) {
+		excuteTaskWithParas(ctx, url, null, reference,
+				(AsyncTaskHandler<T>) handler, paras);
+
 	}
 
 	public static <T> void excuteTask(Context ctx, String urlWithoutPar,
-			Class<T> clazz, AsyncTaskHandler<? extends T> handler) {
-		excuteTask(ctx, urlWithoutPar, null, clazz, null, (AsyncTaskHandler<T>)handler);
+			HttpMethod method, TypeReference<T> reference,
+			AsyncTaskHandler<? extends T> handler) {
+		excuteTask(ctx, urlWithoutPar, method, reference, null,
+				(AsyncTaskHandler<T>) handler);
+	}
+
+	public static <T> void excuteTask(Context ctx, String urlWithoutPar,
+			TypeReference<T> reference, AsyncTaskHandler<? extends T> handler) {
+		excuteTask(ctx, urlWithoutPar, null, reference, null,
+				(AsyncTaskHandler<T>) handler);
 	}
 
 	// public static <T> void excuteTask(Context ctx,String
@@ -191,25 +213,29 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 			RestTemplate restTemplate = new RestTemplate();
 			restTemplate.getMessageConverters().add(config.converter);
-			
-			ResponseEntity<PARSEOBJ> responseEntity = null;
-			if(config.paras != null){
-				responseEntity = restTemplate.exchange(
-						config.url, config.httpMethod, requestEntity,
-						parseObjClazz, config.paras );
-			}else if(config.getMaps().size() != 0 ){
-				responseEntity = restTemplate.exchange(
-						config.url, config.httpMethod, requestEntity,
-						parseObjClazz, config.getMaps());
-			}else{
-				responseEntity = restTemplate.exchange(
-						config.url, config.httpMethod, requestEntity,
-						parseObjClazz);
+
+			ResponseEntity<String> responseEntity = null;
+			if (config.paras != null) {
+				responseEntity = restTemplate.exchange(config.url,
+						config.httpMethod, requestEntity, String.class,
+						config.paras);
+			} else if (config.getMaps().size() != 0) {
+				responseEntity = restTemplate.exchange(config.url,
+						config.httpMethod, requestEntity, String.class,
+						config.getMaps());
+			} else {
+				responseEntity = restTemplate.exchange(config.url,
+						config.httpMethod, requestEntity, String.class);
 			}
-			 
-			// String result = responseEntity.getBody();
+
+			String result = responseEntity.getBody();
+
 			r.requestCode = responseEntity.getStatusCode();
-			r.bodyObj = responseEntity.getBody();
+			// if(List.class.isAssignableFrom(parseObjClazz)){
+			r.bodyObj = JSON.parseObject(result, reference);
+			// }else{
+			// r.bodyObj = JSON.parseObject(result, parseObjClazz);
+			// }
 			r.errorException = null;
 			// if (config.parseClazz != null) {
 			// if (config.isList) {
@@ -222,7 +248,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			// TODO: handle exception
 			e.printStackTrace();
 			r.errorException = e;
-			if(handler != null){
+			if (handler != null) {
 				handler.postError(r, e);
 			}
 		}
@@ -247,10 +273,10 @@ public class ZWAsyncTask<PARSEOBJ> extends
 					// 队列里面任务允许完毕
 
 				} else {
-					if(config == null){
+					if (config == null) {
 						throw new NullPointerException("队列里面任务必须提前设置 Config!");
 					}
-					ZWLogger.printLog(TAG,"队列有任务,继续执行!");
+					ZWLogger.printLog(TAG, "队列有任务,继续执行!");
 					ZWAsyncTask<?> task = allTask.poll();
 					task.execute(config);
 				}

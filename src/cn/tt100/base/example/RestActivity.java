@@ -22,20 +22,27 @@ import android.widget.TextView;
 import cn.tt100.base.ZWActivity;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
+import cn.tt100.base.example.bean.Flavor;
 import cn.tt100.base.example.bean.GalleryDate;
 import cn.tt100.base.example.bean.JSONConverter;
+import cn.tt100.base.example.bean.MineBo;
+import cn.tt100.base.example.bean.MineJSONConverter;
 import cn.tt100.base.example.bean.Result;
+import cn.tt100.base.example.bean.Result1;
 import cn.tt100.base.util.rest.DialogTaskHandler;
 import cn.tt100.base.util.rest.DoNothingHandler;
 import cn.tt100.base.util.rest.ZWAsyncTask;
 import cn.tt100.base.util.rest.ZWRequestConfig;
 import cn.tt100.base.util.rest.ZWResult;
+import cn.tt100.base.util.rest.converter.StringJSONConverter;
+
+import com.alibaba.fastjson.TypeReference;
 
 public class RestActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "rest_?")
 	@AutoOnClick(clickSelector = "mClick")
 	private Button testBtn, jsonTestBtn, custonTestBtn, asyncTestBtn,
-			queneTestBtn;
+			queneTestBtn,mineTestBtn,mine1TestBtn;
 
 	@AutoInitialize(idFormat = "rest_?")
 	private TextView infoView;
@@ -64,13 +71,13 @@ public class RestActivity extends ZWActivity {
 								RestActivity.this,
 								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
 								HttpMethod.GET,
-								Result.class,
+								new TypeReference<Result1<List<GalleryDate>>>(){},
 								map,
-								new DialogTaskHandler<Result>("请求", "请求测试中...") {
+								new DialogTaskHandler<Result1<List<GalleryDate>>>("请求", "请求测试中...") {
 
 									@Override
 									public void postResult(
-											ZWResult<Result> result) {
+											ZWResult<Result1<List<GalleryDate>>> result) {
 										// TODO Auto-generated method stub
 										StringBuffer sb = new StringBuffer();
 										sb.append("请求吗是:"
@@ -84,22 +91,22 @@ public class RestActivity extends ZWActivity {
 									}
 								});
 
-				ZWAsyncTask
-						.excuteTask(
-								RestActivity.this,
-								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
-								List.class,
-								new DialogTaskHandler<List<StringBuffer>>("请求",
-										"请求测试中...") {
-
-											@Override
-											public void postResult(
-													ZWResult<List<StringBuffer>> result) {
-												// TODO Auto-generated method stub
-												
-											}
-
-								});
+//				ZWAsyncTask
+//						.excuteTask(
+//								RestActivity.this,
+//								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
+//								new TypeReference<List>(){},
+//								new DialogTaskHandler<List<StringBuffer>>("请求",
+//										"请求测试中...") {
+//
+//											@Override
+//											public void postResult(
+//													ZWResult<List<StringBuffer>> result) {
+//												// TODO Auto-generated method stub
+//												
+//											}
+//
+//								});
 				// ZWAsyncTask.excuteTask(RestActivity.this,
 				// "http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
 				// HttpMethod.GET,Result.class,map, new
@@ -145,6 +152,34 @@ public class RestActivity extends ZWActivity {
 				task3.config = task1.config;
 
 				ZWAsyncTask.addTaskIntoQueueAndExcute(task1, task2, task3);
+			} else if (arg0 == mineTestBtn) {
+				String url = "http://www.weather.com.cn/data/sk/{cityCode}.html";
+				ZWAsyncTask.excuteTaskWithParas(RestActivity.this, url,HttpMethod.GET, new TypeReference<MineBo[]>(){}, new DialogTaskHandler<MineBo[]>("","") {
+
+					@Override
+					public void postResult(ZWResult<MineBo[]> result) {
+						// TODO Auto-generated method stub
+						MineBo[] bo = result.bodyObj;
+						System.out.println("bo=====>"+bo.toString());
+					}
+				}, "101110101");
+			} else if(arg0 == mine1TestBtn){
+				ZWRequestConfig config = new ZWRequestConfig(HttpMethod.GET, new StringJSONConverter());
+				config.putHeaderValue("accept", "application/json");
+				ZWRequestConfig.setDefault(config); 
+				
+				ZWAsyncTask.excuteTask(RestActivity.this, "http://192.168.1.208:8080/rs/flavors"
+						, new TypeReference<List<Flavor>>(){}, new DialogTaskHandler<List<Flavor>>("","") {
+
+					@Override
+					public void postResult(ZWResult<List<Flavor>> result) {
+						// TODO Auto-generated method stub
+						List<Flavor> bo = result.bodyObj;
+						for(Flavor f : bo){
+							System.out.println("=====>"+f.toString());
+						}
+					}
+				});
 			}
 
 		}
@@ -154,7 +189,7 @@ public class RestActivity extends ZWActivity {
 	protected void initialize() {
 		// TODO Auto-generated method stub
 		ZWRequestConfig config = new ZWRequestConfig(HttpMethod.GET,
-				new JSONConverter());
+				new MineJSONConverter());
 		config.putHeaderValue("accept", "application/json");
 		ZWRequestConfig.setDefault(config);
 	}

@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.HttpMessageConverter;
 
+import cn.tt100.base.util.rest.converter.StringJSONConverter;
+
 /**
  * «Î«Ûµƒ≈‰÷√
  * @author shrek
@@ -39,6 +41,11 @@ public class ZWRequestConfig {
 		
 		this.httpMethod = httpMethod;
 		this.converter = converter;
+	}
+	
+	
+	public ZWRequestConfig(HttpMethod httpMethod){
+		this(httpMethod,new StringJSONConverter());
 	}
 	
 	/**

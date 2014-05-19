@@ -1,4 +1,4 @@
-package cn.tt100.base.example.bean;
+package cn.tt100.base.util.rest.converter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,17 +11,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.springframework.web.client.HttpMessageConverterExtractor;
 
-import com.alibaba.fastjson.JSON;
+import cn.tt100.base.util.ZWLogger;
 
-public class JSONConverter implements HttpMessageConverter<Result> {
+public class StringJSONConverter implements HttpMessageConverter<String> {
 
 	@Override
 	public boolean canRead(Class<?> arg0, MediaType arg1) {
 		// TODO Auto-generated method stub
-		if(arg1 != null && (arg1.includes(MediaType.APPLICATION_JSON) 
-				|| arg1.includes(MediaType.TEXT_HTML)) ){
+		if(arg1 != null && arg1.includes(MediaType.APPLICATION_JSON) ){
 			return true;
 		}
 		return false;
@@ -42,7 +40,7 @@ public class JSONConverter implements HttpMessageConverter<Result> {
 	}
 
 	@Override
-	public Result read(Class<? extends Result> arg0, HttpInputMessage arg1)
+	public String read(Class<? extends String> arg0, HttpInputMessage arg1)
 			throws IOException, HttpMessageNotReadableException {
 		// TODO Auto-generated method stub
 		BufferedReader reader = new BufferedReader(
@@ -55,13 +53,13 @@ public class JSONConverter implements HttpMessageConverter<Result> {
 		}
 		reader.close();
 		
-		Result result = JSON.parseObject(sb.toString(), arg0);
-		
-		return result;
+//		Result result = JSON.parseObject(sb.toString(), arg0);
+		ZWLogger.printLog(this, "接收到的JSON数据:"+sb.toString());
+		return sb.toString();
 	}
 
 	@Override
-	public void write(Result arg0, MediaType arg1, HttpOutputMessage arg2)
+	public void write(String arg0, MediaType arg1, HttpOutputMessage arg2)
 			throws IOException, HttpMessageNotWritableException {
 		// TODO Auto-generated method stub
 		System.out.println("111111111write");
