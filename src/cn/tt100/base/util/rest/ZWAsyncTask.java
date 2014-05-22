@@ -3,7 +3,6 @@ package cn.tt100.base.util.rest;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
@@ -15,14 +14,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import cn.tt100.base.ZWActivity;
 import cn.tt100.base.util.ZWLogger;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
 public class ZWAsyncTask<PARSEOBJ> extends
 		AsyncTask<ZWRequestConfig, Void, ZWResult<PARSEOBJ>> {
