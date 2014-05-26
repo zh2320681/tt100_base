@@ -1,11 +1,15 @@
 package cn.tt100.base.util.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.HttpMessageConverter;
 
+import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.rest.converter.StringJSONConverter;
 
 /**
@@ -14,8 +18,13 @@ import cn.tt100.base.util.rest.converter.StringJSONConverter;
  *
  */
 public class ZWRequestConfig {
-	private static ZWRequestConfig defaultConfig;
+	public static final String UTF8_CHARSET = "utf-8";
+	public static final String GBK_CHARSET = "gbk";
+	public static final String GB2312_CHARSET = "gb2312";
+	public static final String ISO_CHARSET = "ISO-8859-1";
 	
+	private static ZWRequestConfig defaultConfig;
+	private String urlCharset; //编码
 	private Map<String,String> headers;
 	private Map<String,Object> maps;  //参数列表
 	private Object body;
@@ -34,18 +43,28 @@ public class ZWRequestConfig {
 	//解析时候 是否是列表
 	public boolean isList;
 	
-	public ZWRequestConfig(HttpMethod httpMethod,HttpMessageConverter<?> converter){
+	public ZWRequestConfig(HttpMethod httpMethod,HttpMessageConverter<?> converter,String charset){
 		super();
 		headers = new HashMap<String, String>();
 		maps = new HashMap<String, Object>();
 		
 		this.httpMethod = httpMethod;
 		this.converter = converter;
+		
+		if(Charset.isSupported(urlCharset)){
+			this.urlCharset = charset;
+		}else{
+			throw new IllegalArgumentException("不支持的编码方式:"+charset);
+		}
 	}
 	
 	
 	public ZWRequestConfig(HttpMethod httpMethod){
-		this(httpMethod,new StringJSONConverter());
+		this(httpMethod,new StringJSONConverter(),UTF8_CHARSET);
+	}
+	
+	public ZWRequestConfig(HttpMethod httpMethod,HttpMessageConverter<?> converter){
+		this(httpMethod,converter,UTF8_CHARSET);
 	}
 	
 	/**
@@ -69,7 +88,16 @@ public class ZWRequestConfig {
 	}
 	
 	public void putValue(String key,Object value){
-		maps.put(key, value);
+		if(isUrlEnCode() && value instanceof String){
+			try {
+				maps.put(key, URLEncoder.encode(value.toString(), urlCharset));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				ZWLogger.printLog(ZWRequestConfig.this, "添加value时编码出现错误!");
+			}
+		}else{
+			maps.put(key, value);
+		}
 	}
 	
 	public void putHeaderValue(String key,String value){
@@ -94,4 +122,11 @@ public class ZWRequestConfig {
 		this.body = body;
 	}
 
+	/**
+	 * 是否对 url进行编码
+	 * @return
+	 */
+	private boolean isUrlEnCode(){
+		return urlCharset != null && !"".equals(urlCharset);
+	}
 }

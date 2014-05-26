@@ -50,7 +50,7 @@ public class QueryBuilder extends StmtBuilder {
 	 * @param isAsc ÊÇ·ñÉýÐò
 	 */
 	public void addOrderByCon(String fieldName,boolean isAsc){
-		if(orderColumnsMap.containsKey(fieldName)){
+		if(fieldName!= null && !orderColumnsMap.containsKey(fieldName)){
 			orderColumnsMap.put(fieldName, isAsc?"ASC":"DESC");
 			orderColumns.add(fieldName);
 		}

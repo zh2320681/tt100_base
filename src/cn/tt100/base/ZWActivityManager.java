@@ -59,8 +59,8 @@ public class ZWActivityManager {
 			ZWActivity activity = activityStack.lastElement();
 			return activity;
 		}
-		throw new NullPointerException();
-//		return null;
+//		throw new NullPointerException();
+		return null;
 	}
 
 	

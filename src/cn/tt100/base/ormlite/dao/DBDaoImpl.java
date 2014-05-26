@@ -17,6 +17,7 @@ import cn.tt100.base.ormlite.stmt.DeleteBuider;
 import cn.tt100.base.ormlite.stmt.InsertBuider;
 import cn.tt100.base.ormlite.stmt.QueryBuilder;
 import cn.tt100.base.ormlite.stmt.UpdateBuider;
+import cn.tt100.base.util.ZWLogger;
 
 public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 	private Class<T> clazz;
@@ -44,6 +45,19 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 	public long insertObjs(List<T> t) {
 		// TODO Auto-generated method stub
 //		T[] ts = (T[]) t.toArray();
+		return insertObjs(false,t);
+	}
+
+	public long insertObjs(boolean isAddFKObject,T... t){
+		List<T> list = new ArrayList<T>();
+		for(T obj : t){
+			list.add(obj);
+		}
+		return insertObjs(isAddFKObject, list);
+	}
+	
+	@Override
+	public long insertObjs(boolean isAddFKObject,List<T> t){
 		Set<Object> allFKs = new HashSet<Object>();
 		InsertBuider<T> buider = insertBuider();
 		for(T obj : t){
@@ -54,14 +68,22 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 		
 		int optNum = 0;
 		
-		for(Object fkObject : allFKs){
-			if(fkObject instanceof ZWBo){
-				ZWBo bo = (ZWBo)fkObject;
-				Class<? extends ZWBo> fkClazz = (Class<? extends ZWBo>) fkObject.getClass();
-				DBDao dao = helper.getDao(fkClazz);
-				optNum += dao.insertObj(bo);
+		if(isAddFKObject){
+			for(Object fkObject : allFKs){
+				if(fkObject instanceof ZWBo){
+					ZWBo bo = (ZWBo)fkObject;
+					Class<? extends ZWBo> fkClazz = (Class<? extends ZWBo>) fkObject.getClass();
+					DBDao dao = helper.getDao(fkClazz);
+					try {
+						optNum += dao.insertObj(bo);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		}
+	
 		
 		for(T obj : t){
 			buider.addValue(obj);
@@ -70,7 +92,8 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 		}
 		return optNum;
 	}
-
+	
+	
 	@Override
 	public long insertObjs(T... t) {
 		// TODO Auto-generated method stub
@@ -240,10 +263,14 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 
 	public <F extends ZWBo> F parseCurser(Cursor cursor,Class<F> giveClazz){
 		TableInfo info = TableInfo.newInstance(giveClazz);
+		
+		String logColumnName=null;
+		Object logObj = null;
 		try {
 			F obj = giveClazz.getConstructor().newInstance();
 			for (int i = 0; i < info.allColumnNames.size(); i++) {
 				String columnName = info.allColumnNames.get(i);
+				logColumnName = columnName;
 				Field field = info.allField.get(i);
 				
 				//属性类型
@@ -286,30 +313,31 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 //					Object fieldValues =  DBTransforFactory.getFieldValue(columnValue, foreignField.getType());
 //					foreignField.set(forgienObj, fieldValues);
 					Object forgienObj = parseCurser(cursor, (Class<? extends ZWBo>)forgienClazz);
+					//方便log输出
+					logObj = forgienObj;
 					field.set(obj, forgienObj);
 				}else {
 					//从字段的值 转换为 Java里面的值
 					Object fieldValues =  DBTransforFactory.getFieldValue(columnValue, fieldType);
+					//方便log输出
+					logObj = fieldValues;
 					field.set(obj, fieldValues);
 				}
 			}
 			return obj;
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
+			ZWLogger.printLog(DBDaoImpl.this, "给字段名:"+logColumnName+"赋值，值:"+logObj+",失败!");
 			e.printStackTrace();
 		}
+//		catch (IllegalAccessException e) {
+//			e.printStackTrace();
+//		} catch (IllegalArgumentException e) {
+//			e.printStackTrace();
+//		} catch (InvocationTargetException e) {
+//			e.printStackTrace();
+//		} catch (NoSuchMethodException e) {
+//			e.printStackTrace();
+//		}
 		return null;
 	}
 	

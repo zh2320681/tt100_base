@@ -69,7 +69,7 @@ public class RestActivity extends ZWActivity {
 				ZWAsyncTask
 						.excuteTask(
 								RestActivity.this,
-								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
+								"http://119.15.137.138:801/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
 								HttpMethod.GET,
 								new TypeReference<Result1<List<GalleryDate>>>(){},
 								map,

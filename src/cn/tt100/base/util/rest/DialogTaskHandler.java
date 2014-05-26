@@ -31,7 +31,7 @@ public abstract class DialogTaskHandler<T> implements AsyncTaskHandler<T> {
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			progressDialog.setTitle(this.title);
 			progressDialog.setMessage(content);
-			progressDialog.setCancelable(false);
+			progressDialog.setCancelable(true);
 			if (getTask().judgeTaskValid() && progressDialog != null
 					&& !progressDialog.isShowing())
 				progressDialog.show();
@@ -71,7 +71,7 @@ public abstract class DialogTaskHandler<T> implements AsyncTaskHandler<T> {
 									dialog.cancel();
 									errorDoing();
 								}
-							});
+							}).create();
 			if (getTask().judgeTaskValid()) {
 				build.show();
 			}

@@ -2,6 +2,7 @@ package cn.tt100.base.ormlite.task;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import cn.tt100.base.ZWApplication;
 import cn.tt100.base.ormlite.DBUtil;
 import cn.tt100.base.ormlite.ZWDBHelper;
 import cn.tt100.base.util.ZWLogger;
@@ -45,6 +46,9 @@ public abstract class DBAsyncTask extends AsyncTask<Object, Void, Integer> {
 				}
 			} catch (Exception e) {
 				// TODO: handle exception
+				if(ZWApplication.isDebugMode){
+					e.printStackTrace();
+				}
 				ZWLogger.printLog(this, "数据库操作失败 事务回滚!");
 			}finally{
 				if(isTransaction){

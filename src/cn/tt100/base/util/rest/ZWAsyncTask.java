@@ -245,11 +245,10 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			// }
 		} catch (Exception e) {
 			// TODO: handle exception
-			e.printStackTrace();
+//			e.printStackTrace();
+			ZWLogger.printLog(TAG, "请求出现异常:"+e.toString());
 			r.errorException = e;
-			if (handler != null) {
-				handler.postError(r, e);
-			}
+//			return null;
 		}
 		return r;
 	}
@@ -261,6 +260,11 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		if (judgeTaskValid() && handler != null) {
 			handler.afterTaskDoing();
 			// result.bodyStr
+			if (result.errorException != null) {
+				//出现错误的时候
+				handler.postError(result, result.errorException);
+				return;
+			}
 			handler.postResult(result);
 
 			Context context = ctx.get();

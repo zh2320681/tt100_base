@@ -47,6 +47,15 @@ public interface DBDao<T extends ZWBo> {
 	public long insertObjs(T... t);
 	
 	/**
+	 * 插入对象 是否做 外键关联插入
+	 * @param isAddFKObject
+	 * @param t
+	 * @return
+	 */
+	public long insertObjs(boolean isAddFKObject,T... t);
+	
+	public long insertObjs(boolean isAddFKObject,List<T> t);
+	/**
 	 * 删除对象
 	 */
 	public long deleteObjs(DeleteBuider builder);

@@ -64,7 +64,7 @@ public class ImageLoader {
 
 		fileCache = new FileCache(cacheDir);
 
-		stub_id = R.drawable.defaultpic;
+//		stub_id = R.drawable.defaultpic;
 	}
 
 	/**

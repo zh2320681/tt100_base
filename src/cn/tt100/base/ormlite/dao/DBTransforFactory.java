@@ -11,15 +11,15 @@ import cn.tt100.base.util.ZWLogger;
 public class DBTransforFactory {
 	public static SoftReference<HashMap<Class<?>, DBTransforDao<?, ?>>> allTransforMap;
 	
-	static{
-		HashMap<Class<?>,DBTransforDao<?,?>> map = new HashMap<Class<?>, DBTransforDao<?,?>>();
-		map.put(Boolean.class, new BooleanTransfor());
-		map.put(boolean.class, new BooleanTransfor());
-		map.put(Date.class, new DateTransfor());
-		map.put(Calendar.class, new CalendarTransfor());
-		map.put(String.class, new StringTransfor());
-		allTransforMap = new SoftReference<HashMap<Class<?>,DBTransforDao<?,?>>>(map);
-	}
+//	static{
+//		HashMap<Class<?>,DBTransforDao<?,?>> map = new HashMap<Class<?>, DBTransforDao<?,?>>();
+//		map.put(Boolean.class, new BooleanTransfor());
+//		map.put(boolean.class, new BooleanTransfor());
+//		map.put(Date.class, new DateTransfor());
+//		map.put(Calendar.class, new CalendarTransfor());
+//		map.put(String.class, new StringTransfor());
+//		allTransforMap = new SoftReference<HashMap<Class<?>,DBTransforDao<?,?>>>(map);
+//	}
 	
 	/**
 	 * 得到属性值 通过从数据库得到的值
@@ -45,6 +45,9 @@ public class DBTransforFactory {
 				}else if(Double.class.isAssignableFrom(clazzType)
 						|| double.class.isAssignableFrom(clazzType)){
 					return Double.valueOf(column.toString());
+				}else if(Long.class.isAssignableFrom(clazzType)
+						|| long.class.isAssignableFrom(clazzType)){
+					return Long.valueOf(column.toString());
 				}
 				return column;
 			}
@@ -137,10 +140,21 @@ public class DBTransforFactory {
 	
 	
 	private static HashMap<Class<?>, DBTransforDao<?, ?>> getMap() throws Exception{
-		HashMap<Class<?>, DBTransforDao<?, ?>> map = allTransforMap.get();
+		HashMap<Class<?>, DBTransforDao<?, ?>> map = null;
+		if(allTransforMap != null){
+			map = allTransforMap.get();
+		}
 		if(map == null){
 			ZWLogger.printLog("DBTransforFactory", "allTransforMap 已被回收!");
-			throw new Exception("allTransforMap 已被回收!");
+//			throw new Exception("allTransforMap 已被回收!");
+			
+			map = new HashMap<Class<?>, DBTransforDao<?,?>>();
+			map.put(Boolean.class, new BooleanTransfor());
+			map.put(boolean.class, new BooleanTransfor());
+			map.put(Date.class, new DateTransfor());
+			map.put(Calendar.class, new CalendarTransfor());
+			map.put(String.class, new StringTransfor());
+			allTransforMap = new SoftReference<HashMap<Class<?>,DBTransforDao<?,?>>>(map);
 		}
 		return map;
 	}
