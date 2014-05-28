@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.view.View.OnClickListener;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
+import cn.tt100.base.annotation.DatabaseTable;
+import cn.tt100.base.annotation.LayoutSelector;
 import cn.tt100.base.annotation.OberverLoad;
 import cn.tt100.base.exception.ZWAppException;
 import cn.tt100.base.util.BaseUtil;
@@ -57,9 +59,21 @@ public abstract class ZWActivity extends Activity implements Observer {
 	}
 
 	protected void onBaseCreate(Bundle savedInstanceState) {
-		setContentView(getResources().getIdentifier(
-				activityName.toLowerCase().replace("activity", ""), "layout",
-				packageName));
+		Class<? extends Activity> clazz = getClass();
+		LayoutSelector selector = clazz.getAnnotation(LayoutSelector.class);
+		try {
+			if (selector != null) {
+				setContentView(selector.id());
+			} else {
+				setContentView(getResources().getIdentifier(
+						activityName.toLowerCase().replace("activity", ""),
+						"layout", packageName));
+			}
+		} catch (Exception e) {
+			//设置布局失败
+			ZWLogger.printLog(activityName, "Activity名称:"+activityName+"加载布局失败!");
+			e.printStackTrace();
+		}
 	}
 
 	/**

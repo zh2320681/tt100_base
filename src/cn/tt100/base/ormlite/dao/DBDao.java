@@ -98,4 +98,5 @@ public interface DBDao<T extends ZWBo> {
 	 * @return
 	 */
 	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder);
+	
 }

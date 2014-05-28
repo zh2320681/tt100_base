@@ -23,16 +23,23 @@ public class ZWRequestConfig {
 	public static final String GB2312_CHARSET = "gb2312";
 	public static final String ISO_CHARSET = "ISO-8859-1";
 	
+	//超时间
+	/** 读取超时时间,单位:毫秒 */
+	public static final int READ_TIME_OUT = 30000;
+	/** 连接超时时间 ,单位:毫秒 */
+	public static final int CONN_TIME_OUT = 30000;
+	
+	
 	private static ZWRequestConfig defaultConfig;
 	private String urlCharset; //编码
 	private Map<String,String> headers;
 	private Map<String,Object> maps;  //参数列表
 	private Object body;
-	
+	public int connTimeOut,readTimeOut;
 	/**
 	 * Spring 支持这样 参数类型
 	 */
-	public Object[] paras;
+	private Object[] paras;
 	
 	
 	public HttpMethod httpMethod;
@@ -51,7 +58,10 @@ public class ZWRequestConfig {
 		this.httpMethod = httpMethod;
 		this.converter = converter;
 		
-		if(Charset.isSupported(urlCharset)){
+		this.connTimeOut = CONN_TIME_OUT;
+		this.readTimeOut = READ_TIME_OUT;
+		
+		if(Charset.isSupported(charset)){
 			this.urlCharset = charset;
 		}else{
 			throw new IllegalArgumentException("不支持的编码方式:"+charset);
@@ -121,6 +131,32 @@ public class ZWRequestConfig {
 	public void setBody(Object body) {
 		this.body = body;
 	}
+
+	
+	
+	public Object[] getParas() {
+		return paras;
+	}
+
+
+	public void setParas(Object[] paras) {
+		Object[] objs = new Object[paras.length];
+		for (int i = 0; i < paras.length; i++) {
+			Object obj = paras[i];
+			if(obj instanceof String){
+				try {
+					objs[i] = URLEncoder.encode(obj.toString(), urlCharset);
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+//					e.printStackTrace();
+				}
+			}else{
+				objs[i] = obj;
+			}
+		}
+		this.paras = objs;
+	}
+
 
 	/**
 	 * 是否对 url进行编码

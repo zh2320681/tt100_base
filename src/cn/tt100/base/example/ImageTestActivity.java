@@ -6,10 +6,12 @@ import android.widget.ImageView;
 import cn.tt100.base.R;
 import cn.tt100.base.ZWActivity;
 import cn.tt100.base.annotation.AutoInitialize;
+import cn.tt100.base.annotation.LayoutSelector;
 import cn.tt100.base.imageLoader.ImageBo;
 import cn.tt100.base.imageLoader.ImageHandler;
 import cn.tt100.base.imageLoader.ImageLoader;
 
+@LayoutSelector(id=R.layout.image_test)
 public class ImageTestActivity extends ZWActivity {
 
 	@AutoInitialize(idFormat = "it_?")

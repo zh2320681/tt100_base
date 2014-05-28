@@ -315,12 +315,14 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 					Object forgienObj = parseCurser(cursor, (Class<? extends ZWBo>)forgienClazz);
 					//方便log输出
 					logObj = forgienObj;
+					field.setAccessible(true);
 					field.set(obj, forgienObj);
 				}else {
 					//从字段的值 转换为 Java里面的值
 					Object fieldValues =  DBTransforFactory.getFieldValue(columnValue, fieldType);
 					//方便log输出
 					logObj = fieldValues;
+					field.setAccessible(true);
 					field.set(obj, fieldValues);
 				}
 			}

@@ -12,6 +12,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import android.app.Activity;
@@ -146,7 +148,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 		config.url = url;
 		if (paras != null) {
-			config.paras = paras;
+			config.setParas(paras);
 		}
 		task.execute(config);
 	}
@@ -209,15 +211,24 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			// MediaType("application","json")));
 			HttpEntity<?> requestEntity = new HttpEntity<Object>(
 					config.getBody(), requestHeaders);
-
+			
 			RestTemplate restTemplate = new RestTemplate();
+			//…Ë÷√≥¨ ±
+			ClientHttpRequestFactory requestFactory = restTemplate.getRequestFactory();
+			if(requestFactory instanceof HttpComponentsClientHttpRequestFactory ){
+				HttpComponentsClientHttpRequestFactory  mComponentsClientHttpRequestFactory
+				 = (HttpComponentsClientHttpRequestFactory)requestFactory;
+				mComponentsClientHttpRequestFactory.setConnectTimeout(config.connTimeOut);
+				mComponentsClientHttpRequestFactory.setReadTimeout(config.readTimeOut);
+			}
+//			requestFactory.
 			restTemplate.getMessageConverters().add(config.converter);
 
 			ResponseEntity<String> responseEntity = null;
-			if (config.paras != null) {
+			if (config.getParas() != null) {
 				responseEntity = restTemplate.exchange(config.url,
 						config.httpMethod, requestEntity, String.class,
-						config.paras);
+						config.getParas());
 			} else if (config.getMaps().size() != 0) {
 				responseEntity = restTemplate.exchange(config.url,
 						config.httpMethod, requestEntity, String.class,
