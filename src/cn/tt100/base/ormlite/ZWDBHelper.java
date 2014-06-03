@@ -25,7 +25,8 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	private static final int CLOSE_DBOPERATOR = 0x89;
 
 	private static Map<Class<? extends ZWBo>, DBDao> allDBDaos = new HashMap<Class<? extends ZWBo>, DBDao>();
-	private static DatabaseErrorHandler mErrorHandler = new DefaultDatabaseErrorHandler();
+	//DatabaseErrorHandlerÊÇAPI 11µÄ
+//	private static DatabaseErrorHandler mErrorHandler = new DefaultDatabaseErrorHandler();
 	private static SQLiteDatabase currentDBOperator;
 
 	private static final Object SQLITEDATABASE_LOCK = new Object();
@@ -33,8 +34,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	private static Handler mHandler;
 
 	public ZWDBHelper(Context context) {
-		super(context, ZWApplication.dbName, null, ZWApplication.dbVersion,
-				mErrorHandler);
+		super(context, ZWApplication.dbName, null, ZWApplication.dbVersion);
 		// TODO Auto-generated constructor stub
 		if (mHandler == null) {
 			mHandler = new Handler() {

@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.os.Build;
-import android.os.StrictMode;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import cn.tt100.base.exception.ZWAppException;
@@ -76,14 +75,14 @@ public class ZWApplication extends Application {
 		/** ------------------ isOpenStrictMode 2.3以上支持----------------------- */
 		if (isDebugMode && isOpenStrictMode
 				&& AndroidVersionCheckUtils.hasGingerbread()) {
-			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() // 构造StrictMode
+			android.os.StrictMode.setThreadPolicy(new android.os.StrictMode.ThreadPolicy.Builder() // 构造StrictMode
 					.detectDiskReads() // 当发生磁盘读操作时输出
 					.detectDiskWrites()// 当发生磁盘写操作时输出
 					.detectNetwork() // 访问网络时输出，这里可以替换为detectAll()
 										// 就包括了磁盘读写和网络I/O
 					.penaltyLog() // 以日志的方式输出
 					.build());
-			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+			android.os.StrictMode.setVmPolicy(new android.os.StrictMode.VmPolicy.Builder()
 					.detectLeakedSqlLiteObjects() // 探测SQLite数据库操作
 					.penaltyLog() // 以日志的方式输出
 					.penaltyDeath().build());
