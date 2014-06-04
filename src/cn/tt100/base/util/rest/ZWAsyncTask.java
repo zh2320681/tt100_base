@@ -102,11 +102,12 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	 * @param handler
 	 *            任务回调用
 	 */
-	public static <T> void excuteTask(Context ctx, String url,
-			HttpMethod method, TypeReference<T> reference,
-			Map<String, String> paras, AsyncTaskHandler<T> handler) {
+	public static <T> void excuteTaskWithMap(Context ctx, String url,
+			HttpMethod method, AsyncTaskHandler<T> handler,
+			Map<String, String> paras) {
 		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
-		task.reference = reference;
+		task.reference = new TypeReference<T>() {
+		};
 
 		ZWRequestConfig config = ZWRequestConfig.copyDefault();
 		if (method != null) {
@@ -136,10 +137,10 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	 *            任务回调用
 	 */
 	public static <T> void excuteTaskWithParas(Context ctx, String url,
-			HttpMethod method, TypeReference<T> reference,
-			AsyncTaskHandler<T> handler, Object... paras) {
+			HttpMethod method, AsyncTaskHandler<T> handler, Object... paras) {
 		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
-		task.reference = reference;
+		task.reference = new TypeReference<T>() {
+		};
 
 		ZWRequestConfig config = ZWRequestConfig.copyDefault();
 		if (method != null) {
@@ -153,25 +154,24 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		task.execute(config);
 	}
 
-	public static <T> void excuteTaskWithOutMethod(Context ctx, String url,
-			TypeReference<T> reference, AsyncTaskHandler<? extends T> handler,
+	public static <T> void excuteTaskWithParas(Context ctx, String url,AsyncTaskHandler<? extends T> handler,
 			Object... paras) {
-		excuteTaskWithParas(ctx, url, null, reference,
-				(AsyncTaskHandler<T>) handler, paras);
+		excuteTaskWithParas(ctx, url, null, (AsyncTaskHandler<T>) handler,
+				paras);
 
 	}
 
-	public static <T> void excuteTask(Context ctx, String urlWithoutPar,
+	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,
 			HttpMethod method, TypeReference<T> reference,
 			AsyncTaskHandler<? extends T> handler) {
-		excuteTask(ctx, urlWithoutPar, method, reference, null,
-				(AsyncTaskHandler<T>) handler);
+		excuteTaskWithMap(ctx, urlWithoutPar, method,
+				(AsyncTaskHandler<T>) handler,null);
 	}
 
-	public static <T> void excuteTask(Context ctx, String urlWithoutPar,
-			TypeReference<T> reference, AsyncTaskHandler<? extends T> handler) {
-		excuteTask(ctx, urlWithoutPar, null, reference, null,
-				(AsyncTaskHandler<T>) handler);
+	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,
+			AsyncTaskHandler<? extends T> handler) {
+		excuteTaskWithMap(ctx, urlWithoutPar, null, (AsyncTaskHandler<T>) handler,
+				null);
 	}
 
 	// public static <T> void excuteTask(Context ctx,String
@@ -211,17 +211,19 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			// MediaType("application","json")));
 			HttpEntity<?> requestEntity = new HttpEntity<Object>(
 					config.getBody(), requestHeaders);
-			
+
 			RestTemplate restTemplate = new RestTemplate();
-			//设置超时
-			ClientHttpRequestFactory requestFactory = restTemplate.getRequestFactory();
-			if(requestFactory instanceof HttpComponentsClientHttpRequestFactory ){
-				HttpComponentsClientHttpRequestFactory  mComponentsClientHttpRequestFactory
-				 = (HttpComponentsClientHttpRequestFactory)requestFactory;
-				mComponentsClientHttpRequestFactory.setConnectTimeout(config.connTimeOut);
-				mComponentsClientHttpRequestFactory.setReadTimeout(config.readTimeOut);
+			// 设置超时
+			ClientHttpRequestFactory requestFactory = restTemplate
+					.getRequestFactory();
+			if (requestFactory instanceof HttpComponentsClientHttpRequestFactory) {
+				HttpComponentsClientHttpRequestFactory mComponentsClientHttpRequestFactory = (HttpComponentsClientHttpRequestFactory) requestFactory;
+				mComponentsClientHttpRequestFactory
+						.setConnectTimeout(config.connTimeOut);
+				mComponentsClientHttpRequestFactory
+						.setReadTimeout(config.readTimeOut);
 			}
-//			requestFactory.
+			// requestFactory.
 			restTemplate.getMessageConverters().add(config.converter);
 
 			ResponseEntity<String> responseEntity = null;
@@ -256,10 +258,10 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			// }
 		} catch (Exception e) {
 			// TODO: handle exception
-//			e.printStackTrace();
-			ZWLogger.printLog(TAG, "请求出现异常:"+e.toString());
+			// e.printStackTrace();
+			ZWLogger.printLog(TAG, "请求出现异常:" + e.toString());
 			r.errorException = e;
-//			return null;
+			// return null;
 		}
 		return r;
 	}
@@ -272,7 +274,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			handler.afterTaskDoing();
 			// result.bodyStr
 			if (result.errorException != null) {
-				//出现错误的时候
+				// 出现错误的时候
 				handler.postError(result, result.errorException);
 				return;
 			}
