@@ -35,3 +35,19 @@ ZWAsyncTask
 ZWCache缓存类
 ==========
 (主要用户的网络请求的缓存)
+new DialogTaskHandler<String>("", "") {
+
+							@Override
+							public void preDoing() {
+								// TODO Auto-generated method stub
+								super.preDoing();
+								//开启缓存时间.....
+								getTask().cacheSaveTime = 60;
+							}
+
+							@Override
+							public void postResult(ZWResult<String> result) {
+								// TODO Auto-generated method stub
+							
+							}
+						}
