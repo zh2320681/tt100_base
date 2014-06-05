@@ -17,6 +17,7 @@ import cn.tt100.base.exception.ZWAppException;
 import cn.tt100.base.imageLoader.ImageLoader;
 import cn.tt100.base.util.AndroidVersionCheckUtils;
 import cn.tt100.base.util.LogLevel;
+import cn.tt100.base.util.ZWCache;
 import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.logger.ZWPrintToFileLogger;
 import cn.tt100.base.util.net.ZWNetChangeObserver;
@@ -248,4 +249,7 @@ public class ZWApplication extends Application {
 		mPrintLogger.close();
 		mPrintLogger = null;
 	}
+	
+	
+	
 }

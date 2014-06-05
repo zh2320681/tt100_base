@@ -1,6 +1,7 @@
 package cn.tt100.base.util.rest;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -20,6 +21,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import cn.tt100.base.ZWActivity;
+import cn.tt100.base.ZWApplication;
+import cn.tt100.base.util.ZWCache;
 import cn.tt100.base.util.ZWLogger;
 
 import com.alibaba.fastjson.JSON;
@@ -35,6 +38,10 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	public static final byte PRE_TASK_CUSTOM = 0x02;
 	public static final byte PRE_TASK_DONOTHING = 0x03;
 
+	public static int NO_CACHE = -0x01;
+
+	private static ZWCache restCache; // 用于请求的
+
 	private String taskGuid;
 	public WeakReference<Context> ctx;
 	// 请求处理器
@@ -43,6 +50,8 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	private AtomicBoolean isCancel;
 	// private Class<PARSEOBJ> parseObjClazz;
 	private TypeReference<PARSEOBJ> reference;
+	// 缓存保存时间(单位:s) 如果为NO_CACHE 不开启缓存
+	public int cacheSaveTime;
 
 	/**
 	 * 自带请求的config 在队列时候用
@@ -54,7 +63,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		this.ctx = new WeakReference<Context>(ctx);
 		this.handler = handler;
 		isCancel = new AtomicBoolean(false);
-
+		cacheSaveTime = NO_CACHE;
 		if (handler != null) {
 			handler.setTask(this);
 		}
@@ -103,11 +112,10 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	 *            任务回调用
 	 */
 	public static <T> void excuteTaskWithMap(Context ctx, String url,
-			HttpMethod method, AsyncTaskHandler<T> handler,
+			HttpMethod method, TypeReference<T> reference,AsyncTaskHandler<T> handler,
 			Map<String, String> paras) {
 		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
-		task.reference = new TypeReference<T>() {
-		};
+		task.reference = reference;
 
 		ZWRequestConfig config = ZWRequestConfig.copyDefault();
 		if (method != null) {
@@ -137,10 +145,9 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	 *            任务回调用
 	 */
 	public static <T> void excuteTaskWithParas(Context ctx, String url,
-			HttpMethod method, AsyncTaskHandler<T> handler, Object... paras) {
+			HttpMethod method,TypeReference<T> reference, AsyncTaskHandler<T> handler, Object... paras) {
 		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
-		task.reference = new TypeReference<T>() {
-		};
+		task.reference = reference;
 
 		ZWRequestConfig config = ZWRequestConfig.copyDefault();
 		if (method != null) {
@@ -154,8 +161,8 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		task.execute(config);
 	}
 
-	public static <T> void excuteTaskWithParas(Context ctx, String url,AsyncTaskHandler<? extends T> handler,
-			Object... paras) {
+	public static <T> void excuteTaskWithParas(Context ctx, String url,
+			AsyncTaskHandler<? extends T> handler, Object... paras) {
 		excuteTaskWithParas(ctx, url, null, (AsyncTaskHandler<T>) handler,
 				paras);
 
@@ -164,14 +171,14 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,
 			HttpMethod method, TypeReference<T> reference,
 			AsyncTaskHandler<? extends T> handler) {
-		excuteTaskWithMap(ctx, urlWithoutPar, method,
-				(AsyncTaskHandler<T>) handler,null);
+		excuteTaskWithMap(ctx, urlWithoutPar, method,reference,
+				(AsyncTaskHandler<T>) handler, null);
 	}
 
-	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,
+	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,TypeReference<T> reference,
 			AsyncTaskHandler<? extends T> handler) {
-		excuteTaskWithMap(ctx, urlWithoutPar, null, (AsyncTaskHandler<T>) handler,
-				null);
+		excuteTaskWithMap(ctx, urlWithoutPar, null,reference,
+				(AsyncTaskHandler<T>) handler, null);
 	}
 
 	// public static <T> void excuteTask(Context ctx,String
@@ -196,11 +203,33 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	protected ZWResult<PARSEOBJ> doInBackground(ZWRequestConfig... params) {
 		// TODO Auto-generated method stub
 		ZWRequestConfig config = params[0];
+		this.config = config;
 		if (config == null) {
 			throw new NullPointerException(
 					"excute task parameter（ZWRequestConfig） must not null");
 		}
+		// 判断 task是否被终结
+		if (!judgeTaskValid()) {
+			return null;
+		}
+
 		ZWResult<PARSEOBJ> r = new ZWResult<PARSEOBJ>();
+
+		Context context = ctx.get();
+		// 判断是否开启缓存
+		if (isOpenCache()) {
+			ZWCache cache = getRestCache(context);
+			PARSEOBJ parserObj = cache.getAsJsonObject(config.getUniqueKey(),
+					reference);
+			if (parserObj != null) {
+				r.bodyObj = parserObj;
+				ZWLogger.printLog(this, "有效的缓存数据,不必请求网络!");
+				return r;
+			}else{
+				ZWLogger.printLog(this, "缓存数据已经超时,需请求网络!");
+			}
+		}
+
 		try {
 			HttpHeaders requestHeaders = new HttpHeaders();
 			for (Map.Entry<String, String> entry : config.getHeaders()
@@ -243,19 +272,14 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			String result = responseEntity.getBody();
 
 			r.requestCode = responseEntity.getStatusCode();
-			// if(List.class.isAssignableFrom(parseObjClazz)){
-			r.bodyObj = JSON.parseObject(result, reference);
-			// }else{
-			// r.bodyObj = JSON.parseObject(result, parseObjClazz);
-			// }
+			
+//			if(reference.getType().getClass().isAssignableFrom(String.class)){
+//				r.bodyObj = (PARSEOBJ) result;
+//			}else{
+//				
+//			}
+			r.bodyObj = JSON.parseObject(result, reference);		
 			r.errorException = null;
-			// if (config.parseClazz != null) {
-			// if (config.isList) {
-			// r.bodyObj = JSON.parseArray(result, config.parseClazz);
-			// } else {
-			// r.bodyObj = JSON.parseObject(result, config.parseClazz);
-			// }
-			// }
 		} catch (Exception e) {
 			// TODO: handle exception
 			// e.printStackTrace();
@@ -278,6 +302,14 @@ public class ZWAsyncTask<PARSEOBJ> extends
 				handler.postError(result, result.errorException);
 				return;
 			}
+			// 判断是否开始缓存
+			if (isOpenCache() && result.bodyObj != null) {
+				ZWCache cache = getRestCache(ctx.get());
+				cache.putJson(config.getUniqueKey(), result.bodyObj,
+						cacheSaveTime);
+				ZWLogger.printLog(this, "网络的数据已缓存,缓存时间为:"+cacheSaveTime+"秒");
+			}
+
 			handler.postResult(result);
 
 			Context context = ctx.get();
@@ -337,6 +369,31 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	public void setCancel(boolean isCancel) {
 		this.isCancel.set(isCancel);
 	}
+
+	/**
+	 * 判断是否开启缓存
+	 * @return
+	 */
+	public boolean isOpenCache(){
+		return cacheSaveTime != NO_CACHE;
+	}
+	
+	/**
+	 * 得到 缓存 管理类
+	 * 
+	 * @param ctx
+	 * @return
+	 */
+	public static ZWCache getRestCache(Context ctx) {
+		if (restCache == null) {
+			restCache = ZWCache.get(ctx);
+		}
+		return restCache;
+	}
+
+	// public static void setRestCache(ZWCache restCache) {
+	// ZWApplication.restCache = restCache;
+	// }
 
 	/**
 	 * 清空数据

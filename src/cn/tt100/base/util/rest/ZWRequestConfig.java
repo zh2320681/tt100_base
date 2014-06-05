@@ -22,7 +22,6 @@ public class ZWRequestConfig {
 	public static final String GBK_CHARSET = "gbk";
 	public static final String GB2312_CHARSET = "gb2312";
 	public static final String ISO_CHARSET = "ISO-8859-1";
-	
 	//超时间
 	/** 读取超时时间,单位:毫秒 */
 	public static final int READ_TIME_OUT = 30000;
@@ -31,11 +30,16 @@ public class ZWRequestConfig {
 	
 	
 	private static ZWRequestConfig defaultConfig;
+	
+	private String uniqueKey;//唯一识别码
+	
 	private String urlCharset; //编码
 	private Map<String,String> headers;
 	private Map<String,Object> maps;  //参数列表
 	private Object body;
 	public int connTimeOut,readTimeOut;
+	
+	
 	/**
 	 * Spring 支持这样 参数类型
 	 */
@@ -48,7 +52,7 @@ public class ZWRequestConfig {
 	public String url;
 	public Class<?> parseClazz;
 	//解析时候 是否是列表
-	public boolean isList;
+//	public boolean isList;
 	
 	public ZWRequestConfig(HttpMethod httpMethod,HttpMessageConverter<?> converter,String charset){
 		super();
@@ -164,5 +168,27 @@ public class ZWRequestConfig {
 	 */
 	private boolean isUrlEnCode(){
 		return urlCharset != null && !"".equals(urlCharset);
+	}
+	
+	/**
+	 * 得到唯一 识别码
+	 * 请求的 "UniqueKey"+（URL+（所有参数）+body.toString）.hashCode()
+	 * @return
+	 */
+	public String getUniqueKey(){
+		if(uniqueKey == null){
+			StringBuffer sb = new StringBuffer();
+			if(paras != null){
+				for(Object obj : paras){
+					sb.append("$"+obj.toString()+"$");
+				}
+			}else{
+				for(Map.Entry<String, Object> entry : maps.entrySet()){
+					sb.append("$"+entry.getValue().toString()+"$");
+				}
+			}
+			uniqueKey ="UniqueKey"+(url+sb.toString()+(body!=null?body.toString():"")).hashCode();
+		}
+		return uniqueKey;
 	}
 }

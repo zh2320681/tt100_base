@@ -56,7 +56,12 @@ public class ZWAppException implements UncaughtExceptionHandler {
 		new Thread() {
 			@Override
 			public void run() {
-				Looper.prepareMainLooper();
+				try {
+					Looper.prepareMainLooper();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext)
 						.setTitle("最唗推壓賸").setCancelable(false)
 						.setMessage("最唗推壓賸...")

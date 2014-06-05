@@ -36,16 +36,20 @@ import cn.tt100.base.util.rest.ZWRequestConfig;
 import cn.tt100.base.util.rest.ZWResult;
 import cn.tt100.base.util.rest.converter.StringJSONConverter;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 public class RestActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "rest_?")
 	@AutoOnClick(clickSelector = "mClick")
 	private Button testBtn, jsonTestBtn, custonTestBtn, asyncTestBtn,
-			queneTestBtn,mineTestBtn,mine1TestBtn;
+			queneTestBtn, mineTestBtn, mine1TestBtn, cacheTestBtn,
+			cacheTestBtn11;
 
 	@AutoInitialize(idFormat = "rest_?")
 	private TextView infoView;
+
+	private int pageNo;
 
 	private OnClickListener mClick = new OnClickListener() {
 
@@ -67,13 +71,14 @@ public class RestActivity extends ZWActivity {
 				map.put("pageSize", "2");
 
 				ZWAsyncTask
-						.excuteTask(
+						.excuteTaskWithMap(
 								RestActivity.this,
 								"http://119.15.137.138:801/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
 								HttpMethod.GET,
-								new TypeReference<Result1<List<GalleryDate>>>(){},
-								map,
-								new DialogTaskHandler<Result1<List<GalleryDate>>>("请求", "请求测试中...") {
+								new TypeReference<Result1<List<GalleryDate>>>() {
+								},
+								new DialogTaskHandler<Result1<List<GalleryDate>>>(
+										"请求", "请求测试中...") {
 
 									@Override
 									public void postResult(
@@ -89,24 +94,24 @@ public class RestActivity extends ZWActivity {
 										}
 										infoView.setText(sb.toString());
 									}
-								});
+								}, map);
 
-//				ZWAsyncTask
-//						.excuteTask(
-//								RestActivity.this,
-//								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
-//								new TypeReference<List>(){},
-//								new DialogTaskHandler<List<StringBuffer>>("请求",
-//										"请求测试中...") {
-//
-//											@Override
-//											public void postResult(
-//													ZWResult<List<StringBuffer>> result) {
-//												// TODO Auto-generated method stub
-//												
-//											}
-//
-//								});
+				// ZWAsyncTask
+				// .excuteTask(
+				// RestActivity.this,
+				// "http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
+				// new TypeReference<List>(){},
+				// new DialogTaskHandler<List<StringBuffer>>("请求",
+				// "请求测试中...") {
+				//
+				// @Override
+				// public void postResult(
+				// ZWResult<List<StringBuffer>> result) {
+				// // TODO Auto-generated method stub
+				//
+				// }
+				//
+				// });
 				// ZWAsyncTask.excuteTask(RestActivity.this,
 				// "http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
 				// HttpMethod.GET,Result.class,map, new
@@ -154,32 +159,93 @@ public class RestActivity extends ZWActivity {
 				ZWAsyncTask.addTaskIntoQueueAndExcute(task1, task2, task3);
 			} else if (arg0 == mineTestBtn) {
 				String url = "http://www.weather.com.cn/data/sk/{cityCode}.html";
-				ZWAsyncTask.excuteTaskWithParas(RestActivity.this, url,HttpMethod.GET, new TypeReference<MineBo[]>(){}, new DialogTaskHandler<MineBo[]>("","") {
+				ZWAsyncTask.excuteTaskWithParas(RestActivity.this, url,
+						HttpMethod.GET, new TypeReference<MineBo[]>() {
+						}, new DialogTaskHandler<MineBo[]>("", "") {
 
-					@Override
-					public void postResult(ZWResult<MineBo[]> result) {
-						// TODO Auto-generated method stub
-						MineBo[] bo = result.bodyObj;
-						System.out.println("bo=====>"+bo.toString());
-					}
-				}, "101110101");
-			} else if(arg0 == mine1TestBtn){
-				ZWRequestConfig config = new ZWRequestConfig(HttpMethod.GET, new StringJSONConverter());
+							@Override
+							public void postResult(ZWResult<MineBo[]> result) {
+								// TODO Auto-generated method stub
+								MineBo[] bo = result.bodyObj;
+								System.out.println("bo=====>" + bo.toString());
+							}
+						}, "101110101");
+			} else if (arg0 == mine1TestBtn) {
+				ZWRequestConfig config = new ZWRequestConfig(HttpMethod.GET,
+						new StringJSONConverter());
 				config.putHeaderValue("accept", "application/json");
-				ZWRequestConfig.setDefault(config); 
-				
-				ZWAsyncTask.excuteTask(RestActivity.this, "http://192.168.1.208:8080/rs/flavors"
-						, new TypeReference<List<Flavor>>(){}, new DialogTaskHandler<List<Flavor>>("","") {
+				ZWRequestConfig.setDefault(config);
 
-					@Override
-					public void postResult(ZWResult<List<Flavor>> result) {
-						// TODO Auto-generated method stub
-						List<Flavor> bo = result.bodyObj;
-						for(Flavor f : bo){
-							System.out.println("=====>"+f.toString());
-						}
-					}
-				});
+				ZWAsyncTask.excuteTaskWithMap(RestActivity.this,
+						"http://192.168.1.208:8080/rs/flavors",
+						new TypeReference<List<Flavor>>() {
+						}, new DialogTaskHandler<List<Flavor>>("", "") {
+
+							@Override
+							public void postResult(ZWResult<List<Flavor>> result) {
+								// TODO Auto-generated method stub
+								List<Flavor> bo = result.bodyObj;
+								for (Flavor f : bo) {
+									System.out.println("=====>" + f.toString());
+								}
+							}
+						});
+			} else if (arg0 == cacheTestBtn) {
+				ZWRequestConfig config = new ZWRequestConfig(HttpMethod.GET,
+						new StringJSONConverter());
+				config.putHeaderValue("accept", "application/json");
+				ZWRequestConfig.setDefault(config);
+
+				ZWAsyncTask.excuteTaskWithMap(RestActivity.this,
+						"http://192.168.1.208:8080/rs/flavors",
+						new TypeReference<String>() {
+						}, new DialogTaskHandler<String>("", "") {
+
+							@Override
+							public void preDoing() {
+								// TODO Auto-generated method stub
+								super.preDoing();
+								getTask().cacheSaveTime = 60;
+							}
+
+							@Override
+							public void postResult(ZWResult<String> result) {
+								// TODO Auto-generated method stub
+								List<Flavor> bo = JSON.parseArray(
+										result.bodyObj, Flavor.class);
+								for (Flavor f : bo) {
+									System.out.println("=====>" + f.toString());
+								}
+							}
+						});
+
+			} else if (arg0 == cacheTestBtn11) {
+				Map<String, String> map = new HashMap<String, String>();
+				pageNo++;
+				map.put("pageNo", pageNo + "");
+				map.put("pageSize", "2");
+
+				ZWAsyncTask
+						.excuteTaskWithMap(
+								RestActivity.this,
+								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
+								HttpMethod.GET, new TypeReference<String>() {
+								}, new DialogTaskHandler<String>("请求",
+										"请求测试中...") {
+									@Override
+									public void preDoing() {
+										// TODO Auto-generated method stub
+										super.preDoing();
+										getTask().cacheSaveTime = 60;
+									}
+
+									@Override
+									public void postResult(
+											ZWResult<String> result) {
+										// TODO Auto-generated method stub
+										infoView.setText(result.bodyObj);
+									}
+								}, map);
 			}
 
 		}
@@ -189,7 +255,7 @@ public class RestActivity extends ZWActivity {
 	protected void initialize() {
 		// TODO Auto-generated method stub
 		ZWRequestConfig config = new ZWRequestConfig(HttpMethod.GET,
-				new MineJSONConverter());
+				new StringJSONConverter());
 		config.putHeaderValue("accept", "application/json");
 		ZWRequestConfig.setDefault(config);
 	}

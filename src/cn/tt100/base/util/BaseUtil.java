@@ -1,5 +1,6 @@
 package cn.tt100.base.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,6 +12,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -231,7 +236,7 @@ public class BaseUtil {
 	}
 
 	/**
-	 * 判断 是不是这个类
+	 * 判断 是不是这个Activity
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T judgeContextToActivity(Object obj,
@@ -247,6 +252,13 @@ public class BaseUtil {
 		return null;
 	}
 
+	
+	/**
+	 * #########################################################################
+	 * ############################ 图片处理类 ###################################
+	 * #########################################################################
+	 */
+	
 	/**
 	 * 通过用户指定的 大小 加载图片
 	 * 
@@ -301,6 +313,66 @@ public class BaseUtil {
 		return bitmap;
 	}
 
+	
+	/**
+	 * Bitmap → Drawable
+	 */
+	@SuppressWarnings("deprecation")
+	public static Drawable bitmap2Drawable(Bitmap bm) {
+		if (bm == null) {
+			return null;
+		}
+		BitmapDrawable bd=new BitmapDrawable(bm);
+		bd.setTargetDensity(bm.getDensity());
+		return new BitmapDrawable(bm);
+	}
+	
+	/**
+	 * Drawable → Bitmap
+	 */
+	@SuppressWarnings("deprecation")
+	public static Bitmap drawable2Bitmap(Drawable drawable) {
+		if (drawable == null) {
+			return null;
+		}
+		// 取 drawable 的长宽
+		int w = drawable.getIntrinsicWidth();
+		int h = drawable.getIntrinsicHeight();
+		// 取 drawable 的颜色格式
+		Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
+		// 建立对应 bitmap
+		Bitmap bitmap = Bitmap.createBitmap(w, h, config);
+		// 建立对应 bitmap 的画布
+		Canvas canvas = new Canvas(bitmap);
+		drawable.setBounds(0, 0, w, h);
+		// 把 drawable 内容画到画布中
+		drawable.draw(canvas);
+		return bitmap;
+	}
+	
+	/**
+	 * byte[] → Bitmap
+	 */
+	public static Bitmap Bytes2Bimap(byte[] b) {
+		if (b.length == 0) {
+			return null;
+		}
+		return BitmapFactory.decodeByteArray(b, 0, b.length);
+	}
+	
+	
+	/**
+	 * Bitmap → byte[]
+	 */
+	public static byte[] Bitmap2Bytes(Bitmap bm) {
+		if (bm == null) {
+			return null;
+		}
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+		return baos.toByteArray();
+	}
+	
 	// public static void downloadFile(Context context, DLTask mDLTask,
 	// DLHandler handler){
 	// if (handler != null ){
