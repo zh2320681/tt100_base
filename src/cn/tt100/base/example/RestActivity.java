@@ -49,7 +49,7 @@ public class RestActivity extends ZWActivity {
 	@AutoInitialize(idFormat = "rest_?")
 	private TextView infoView;
 
-	private int pageNo;
+	private int pageNo;//≤‚ ‘1
 
 	private OnClickListener mClick = new OnClickListener() {
 
