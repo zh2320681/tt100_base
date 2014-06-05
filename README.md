@@ -51,3 +51,7 @@ new DialogTaskHandler<String>("", "") {
 							
 							}
 						}
+
+多个任务同一个队列请求
+==========
+ZWAsyncTask.addTaskIntoQueueAndExcute(task1, task2, task3);						
