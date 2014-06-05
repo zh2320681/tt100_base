@@ -42,6 +42,16 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="队列任务测试1" />
+	<Button
+        android:id="@+id/rest_cacheTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="队列缓存测试" />
+	<Button
+        android:id="@+id/rest_cacheTestBtn11"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="队列缓存测试(请求参数不一样)" />
     <TextView
         android:id="@+id/rest_infoView"
         android:layout_width="fill_parent"
