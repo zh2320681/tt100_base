@@ -44,7 +44,7 @@ public class RestActivity extends ZWActivity {
 	@AutoOnClick(clickSelector = "mClick")
 	private Button testBtn, jsonTestBtn, custonTestBtn, asyncTestBtn,
 			queneTestBtn, mineTestBtn, mine1TestBtn, cacheTestBtn,
-			cacheTestBtn11;
+			cacheTestBtn11,sameTestBtn;
 
 	@AutoInitialize(idFormat = "rest_?")
 	private TextView infoView;
@@ -246,6 +246,55 @@ public class RestActivity extends ZWActivity {
 										infoView.setText(result.bodyObj);
 									}
 								}, map);
+			}else if(arg0 == sameTestBtn){
+				Map<String, String> map = new HashMap<String, String>();
+				pageNo++;
+				map.put("pageNo", pageNo + "");
+				map.put("pageSize", "2");
+
+				ZWAsyncTask
+						.excuteTaskWithMap(
+								RestActivity.this,
+								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
+								HttpMethod.GET, new TypeReference<String>() {
+								}, new DialogTaskHandler<String>("请求",
+										"请求测试中...") {
+									@Override
+									public void preDoing() {
+										// TODO Auto-generated method stub
+										super.preDoing();
+										getTask().cacheSaveTime = 60;
+									}
+
+									@Override
+									public void postResult(
+											ZWResult<String> result) {
+										// TODO Auto-generated method stub
+										infoView.setText(result.bodyObj);
+									}
+								}, map);
+				
+				ZWAsyncTask
+				.excuteTaskWithMap(
+						RestActivity.this,
+						"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
+						HttpMethod.GET, new TypeReference<String>() {
+						}, new DialogTaskHandler<String>("请求",
+								"请求测试中...") {
+							@Override
+							public void preDoing() {
+								// TODO Auto-generated method stub
+								super.preDoing();
+								getTask().cacheSaveTime = 60;
+							}
+
+							@Override
+							public void postResult(
+									ZWResult<String> result) {
+								// TODO Auto-generated method stub
+								infoView.setText(result.bodyObj);
+							}
+						}, map);
 			}
 
 		}

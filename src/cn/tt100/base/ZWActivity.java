@@ -3,9 +3,10 @@ package cn.tt100.base;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.Application;
@@ -13,7 +14,6 @@ import android.os.Bundle;
 import android.view.View.OnClickListener;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
-import cn.tt100.base.annotation.DatabaseTable;
 import cn.tt100.base.annotation.LayoutSelector;
 import cn.tt100.base.annotation.OberverLoad;
 import cn.tt100.base.exception.ZWAppException;
@@ -24,7 +24,7 @@ import cn.tt100.base.util.rest.ZWAsyncTask;
 
 public abstract class ZWActivity extends Activity implements Observer {
 	// private LinkedList<WeakReference<ZWAsyncTask<?>>> taskList;
-	private LinkedList<ZWAsyncTask<?>> taskList;
+	private Set<ZWAsyncTask<?>> taskList;
 
 	private static String packageName;
 	private String activityName;
@@ -47,7 +47,7 @@ public abstract class ZWActivity extends Activity implements Observer {
 		}
 
 		if (ZWApplication.isLoadRestRequest) {
-			taskList = new LinkedList<ZWAsyncTask<?>>();
+			taskList = new HashSet<ZWAsyncTask<?>>();
 		}
 
 		onBaseCreate(savedInstanceState);
@@ -169,9 +169,7 @@ public abstract class ZWActivity extends Activity implements Observer {
 					// TODO Auto-generated catch block
 					ZWLogger.printLog(BaseUtil.class, f.getName() + "赋值时访问失败!");
 				}
-
 			}
-
 		}
 	}
 
@@ -206,10 +204,23 @@ public abstract class ZWActivity extends Activity implements Observer {
 	 * 
 	 * @param task
 	 */
-	public void addTask(ZWAsyncTask<?> task) {
+	public boolean addTask(ZWAsyncTask<?> task) {
 		if (ZWApplication.isLoadRestRequest) {
-			taskList.add(task);
+			boolean isExist = false;
+			for(ZWAsyncTask<?> zwTask : taskList){
+				if(zwTask.equals(task)){
+					isExist = true;
+					break;
+				}
+			}
+			if(isExist){
+				ZWLogger.printLog(this, "任务:"+task.getTaskGuid()+"已经存在了,不能再执行!");
+			}else{
+				taskList.add(task);
+				return true;
+			}
 		}
+		return false;
 	}
 
 	@Override

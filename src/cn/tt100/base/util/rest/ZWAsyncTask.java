@@ -1,7 +1,6 @@
 package cn.tt100.base.util.rest;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -21,7 +20,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import cn.tt100.base.ZWActivity;
-import cn.tt100.base.ZWApplication;
 import cn.tt100.base.util.ZWCache;
 import cn.tt100.base.util.ZWLogger;
 
@@ -67,10 +65,6 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		if (handler != null) {
 			handler.setTask(this);
 		}
-		if (ctx instanceof ZWActivity) {
-			((ZWActivity) ctx).addTask(this);
-		}
-
 	}
 
 	/**
@@ -91,6 +85,9 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		if (allTask.size() > 0) {
 			ZWAsyncTask<?> task = allTask.poll();
 			if (task != null) {
+				if(task.config != null){
+					task.taskGuid = task.config.getUniqueKey();
+				}
 				task.execute(task.config);
 			}
 		}
@@ -126,6 +123,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		if (paras != null) {
 			config.getMaps().putAll(paras);
 		}
+		task.taskGuid = config.getUniqueKey();
 		task.execute(config);
 	}
 
@@ -158,6 +156,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		if (paras != null) {
 			config.setParas(paras);
 		}
+		task.taskGuid = config.getUniqueKey();
 		task.execute(config);
 	}
 
@@ -190,14 +189,31 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	protected void onPreExecute() {
 		// 任务执行前
 		super.onPreExecute();
-		taskGuid = UUID.randomUUID().toString();
+		if(taskGuid == null){
+			taskGuid = UUID.randomUUID().toString();
+		}
+		
+		if(judgeTaskValid()){
+			Context context = ctx.get();
+			if (context instanceof ZWActivity) {
+				if(!((ZWActivity) context).addTask(this)){
+					isCancel.set(true);
+					setCancel(true);
+					cycle();
+					return;
+				}
+				
+			}
+			if ( handler != null) {
+				handler.preDoing();
+			}
+		}
+		
 		ZWLogger.printLog(TAG, "任务开始,任务ID为:" + taskGuid);
 		timeingMap.put(taskGuid, System.currentTimeMillis());
-
-		if (judgeTaskValid() && handler != null) {
-			handler.preDoing();
-		}
 	}
+	
+	
 
 	@Override
 	protected ZWResult<PARSEOBJ> doInBackground(ZWRequestConfig... params) {
@@ -331,18 +347,23 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			} else {
 				cycle();
 			}
+			
+			ZWLogger.printLog(
+					TAG,
+					"任务Over,任务ID为:"
+							+ taskGuid
+							+ "  耗时:"
+							+ (System.currentTimeMillis() - timeingMap
+									.remove(taskGuid)) + "毫秒!");
 		}
 
-		ZWLogger.printLog(
-				TAG,
-				"任务Over,任务ID为:"
-						+ taskGuid
-						+ "  耗时:"
-						+ (System.currentTimeMillis() - timeingMap
-								.remove(taskGuid)) + "毫秒!");
+		
 	}
 
 	public final boolean judgeTaskValid() {
+		if(ctx == null){
+			return false;
+		}
 		Context mContext = ctx.get();
 		return mContext != null && !((Activity) mContext).isFinishing()
 				&& !isCancel();
@@ -394,6 +415,27 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	// public static void setRestCache(ZWCache restCache) {
 	// ZWApplication.restCache = restCache;
 	// }
+	
+	@Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		if(o instanceof ZWAsyncTask){
+			ZWAsyncTask<?> objTask = (ZWAsyncTask)o;
+			if(taskGuid != null && taskGuid.equals(objTask.taskGuid)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
+	public String getTaskGuid() {
+		return taskGuid;
+	}
+
+	public void setTaskGuid(String taskGuid) {
+		this.taskGuid = taskGuid;
+	}
 
 	/**
 	 * 清空数据
