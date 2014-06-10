@@ -1,0 +1,56 @@
+package cn.tt100.base.imageLoader.cache.memory;
+
+import java.lang.ref.Reference;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import android.graphics.Bitmap;
+
+/**
+ * Base memory cache. Implements common functionality for memory cache. Provides object references (
+ * {@linkplain Reference not strong}) storing.
+ */
+public abstract class BaseMemoryCache implements MemoryCache {
+
+	/** Stores not strong references to objects */
+	private final Map<String, Reference<Bitmap>> softMap = Collections.synchronizedMap(new HashMap<String, Reference<Bitmap>>());
+
+	@Override
+	public Bitmap get(String key) {
+		Bitmap result = null;
+		Reference<Bitmap> reference = softMap.get(key);
+		if (reference != null) {
+			result = reference.get();
+		}
+		return result;
+	}
+
+	@Override
+	public boolean put(String key, Bitmap value) {
+		softMap.put(key, createReference(value));
+		return true;
+	}
+
+	@Override
+	public void remove(String key) {
+		softMap.remove(key);
+	}
+
+	@Override
+	public Collection<String> keys() {
+		synchronized (softMap) {
+			return new HashSet<String>(softMap.keySet());
+		}
+	}
+
+	@Override
+	public void clear() {
+		softMap.clear();
+	}
+
+	/** Creates {@linkplain Reference not strong} reference of value */
+	protected abstract Reference<Bitmap> createReference(Bitmap value);
+}
