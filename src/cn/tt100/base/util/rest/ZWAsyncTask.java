@@ -39,8 +39,11 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	public static int NO_CACHE = -0x01;
 
 	private static ZWCache restCache; // 用于请求的
-
-	private String taskGuid;
+	/**
+	 * taskGuid用于识别task是否为同一个
+	 * taskUUID 为任务的UUID
+	 */
+	private String taskGuid,taskUUID;
 	public WeakReference<Context> ctx;
 	// 请求处理器
 	private AsyncTaskHandler<PARSEOBJ> handler;
@@ -189,8 +192,9 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	protected void onPreExecute() {
 		// 任务执行前
 		super.onPreExecute();
+		taskUUID = UUID.randomUUID().toString();
 		if(taskGuid == null){
-			taskGuid = UUID.randomUUID().toString();
+			taskGuid = taskUUID;
 		}
 		
 		if(judgeTaskValid()){
@@ -209,8 +213,8 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			}
 		}
 		
-		ZWLogger.printLog(TAG, "任务开始,任务ID为:" + taskGuid);
-		timeingMap.put(taskGuid, System.currentTimeMillis());
+		ZWLogger.printLog(TAG, "任务开始,任务ID为:" + taskGuid+"  任务UUID为:"+taskUUID);
+		timeingMap.put(taskUUID, System.currentTimeMillis());
 	}
 	
 	
@@ -354,7 +358,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 							+ taskGuid
 							+ "  耗时:"
 							+ (System.currentTimeMillis() - timeingMap
-									.remove(taskGuid)) + "毫秒!");
+									.remove(taskUUID)) + "毫秒!");
 		}
 
 		

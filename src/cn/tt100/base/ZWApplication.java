@@ -10,14 +10,11 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
-import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import cn.tt100.base.exception.ZWAppException;
-import cn.tt100.base.imageLoader.ImageLoader;
 import cn.tt100.base.util.AndroidVersionCheckUtils;
 import cn.tt100.base.util.LogLevel;
-import cn.tt100.base.util.ZWCache;
 import cn.tt100.base.util.ZWLogger;
 import cn.tt100.base.util.logger.ZWPrintToFileLogger;
 import cn.tt100.base.util.net.ZWNetChangeObserver;
@@ -43,6 +40,8 @@ public class ZWApplication extends Application {
 	public static int dbOPeratorAvailTime = 1000;
 	// 是否发出rest 请求
 	public static boolean isLoadRestRequest = false;
+	// 同一个 activity 是否允许同时执行同一个请求
+	public static boolean isInterceptSameRequest = true;
 	// 是否开始StrictMode
 	public static boolean isOpenStrictMode = true;
 
@@ -146,7 +145,7 @@ public class ZWApplication extends Application {
 		screenWidth = dm.widthPixels;
 		screenHight = dm.heightPixels;
 
-		ImageLoader.getLoader(this);
+//		ImageLoader.getLoader(this);
 
 		onAfterCreateApplication();
 	}
@@ -178,6 +177,8 @@ public class ZWApplication extends Application {
 					.getProperty("isLoadRestRequest"));
 			isOpenStrictMode = Boolean.parseBoolean(prop
 					.getProperty("isOpenStrictMode"));
+			isInterceptSameRequest = Boolean.parseBoolean(prop
+					.getProperty("isInterceptSameRequest"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

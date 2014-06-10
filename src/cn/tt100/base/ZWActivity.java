@@ -3,7 +3,9 @@ package cn.tt100.base;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -24,7 +26,7 @@ import cn.tt100.base.util.rest.ZWAsyncTask;
 
 public abstract class ZWActivity extends Activity implements Observer {
 	// private LinkedList<WeakReference<ZWAsyncTask<?>>> taskList;
-	private Set<ZWAsyncTask<?>> taskList;
+	private Collection<ZWAsyncTask<?>> taskList;
 
 	private static String packageName;
 	private String activityName;
@@ -47,7 +49,8 @@ public abstract class ZWActivity extends Activity implements Observer {
 		}
 
 		if (ZWApplication.isLoadRestRequest) {
-			taskList = new HashSet<ZWAsyncTask<?>>();
+			taskList = ZWApplication.isInterceptSameRequest ? new HashSet<ZWAsyncTask<?>>()
+					: new LinkedList<ZWAsyncTask<?>>();
 		}
 
 		onBaseCreate(savedInstanceState);
@@ -70,8 +73,9 @@ public abstract class ZWActivity extends Activity implements Observer {
 						"layout", packageName));
 			}
 		} catch (Exception e) {
-			//设置布局失败
-			ZWLogger.printLog(activityName, "Activity名称:"+activityName+"加载布局失败!");
+			// 设置布局失败
+			ZWLogger.printLog(activityName, "Activity名称:" + activityName
+					+ "加载布局失败!");
 			e.printStackTrace();
 		}
 	}
@@ -205,17 +209,23 @@ public abstract class ZWActivity extends Activity implements Observer {
 	 * @param task
 	 */
 	public boolean addTask(ZWAsyncTask<?> task) {
+		if(!ZWApplication.isInterceptSameRequest){
+			taskList.add(task);
+			return true;
+		}
+		
 		if (ZWApplication.isLoadRestRequest) {
 			boolean isExist = false;
-			for(ZWAsyncTask<?> zwTask : taskList){
-				if(zwTask.equals(task)){
+			for (ZWAsyncTask<?> zwTask : taskList) {
+				if (zwTask.equals(task)) {
 					isExist = true;
 					break;
 				}
 			}
-			if(isExist){
-				ZWLogger.printLog(this, "任务:"+task.getTaskGuid()+"已经存在了,不能再执行!");
-			}else{
+			if (isExist) {
+				ZWLogger.printLog(this, "任务:" + task.getTaskGuid()
+						+ "已经存在了,不能再执行!");
+			} else {
 				taskList.add(task);
 				return true;
 			}
