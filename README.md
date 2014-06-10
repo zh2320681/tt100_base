@@ -5,7 +5,7 @@ tt100_base
 
 
 rest请求
-==========
+=======
 ZWAsyncTask
 						.excuteTask(
 								RestActivity.this,
@@ -33,7 +33,7 @@ ZWAsyncTask
 支持请求数据有效时间内缓存处理
 
 ZWCache缓存类
-==========
+=======
 (主要用户的网络请求的缓存)
 new DialogTaskHandler<String>("", "") {
 
@@ -53,5 +53,7 @@ new DialogTaskHandler<String>("", "") {
 						}
 
 多个任务同一个队列请求
-==========
-ZWAsyncTask.addTaskIntoQueueAndExcute(task1, task2, task3);						
+=======
+ZWAsyncTask.addTaskIntoQueueAndExcute(task1, task2, task3);	
+
+相同任务在同一个activity  能否同时执行 设置assets的isInterceptSameRequest					
