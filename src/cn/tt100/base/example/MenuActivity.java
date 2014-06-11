@@ -2,6 +2,7 @@ package cn.tt100.base.example;
 
 import android.content.Intent;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -16,6 +17,9 @@ public class MenuActivity extends ZWActivity {
 	@AutoOnClick(clickSelector = "mClick")
 	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn;
 
+	@AutoInitialize
+	private LayoutInflater mInflater;
+	
 	private OnClickListener mClick = new OnClickListener() {
 		
 		@Override
@@ -54,6 +58,7 @@ public class MenuActivity extends ZWActivity {
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
+		System.out.println("==================>"+mInflater);
 	}
 
 	@Override

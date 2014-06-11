@@ -3,16 +3,19 @@ package cn.tt100.base;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
 import cn.tt100.base.annotation.AutoInitialize;
 import cn.tt100.base.annotation.AutoOnClick;
@@ -94,86 +97,127 @@ public abstract class ZWActivity extends Activity implements Observer {
 		// Class<? extends View> viewClazz = Class.forName("android.view.View");
 
 		Class<? extends Activity> clazz = getClass();
-		Field[] fields = clazz.getDeclaredFields();
-		for (Field f : fields) {
-			// 自动初始化
-			AutoInitialize autoInitialize = f
-					.getAnnotation(AutoInitialize.class);
-			if (autoInitialize != null) {
-				String idFormat = autoInitialize.idFormat().replace("?",
-						f.getName()); // main_textBtn
-				int value = getIdValueIntoR(idFormat);
-				f.setAccessible(true);
-				try {
-					f.set(this, findViewById(value));
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					ZWLogger.printLog(this, f.getName() + "赋值失败!");
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					ZWLogger.printLog(this, f.getName() + "赋值时访问失败!");
+		//得到所有属性(不包括子类)
+		Field[] declaredFields = clazz.getDeclaredFields();
+		Field[] publicFields = clazz.getFields();
+		List<Field> allFields = new ArrayList<Field>();
+		for(Field f : declaredFields){
+			allFields.add(f);
+		}
+		
+		for(Field f : publicFields){
+			boolean isExist = false;
+			for(int i = 0;i<declaredFields.length;i++){
+				if(declaredFields[i].getName().equals(f.getName())){
+					isExist = true;
+					break;
 				}
 			}
-
-			// 自动设置OnClcikListener
-			AutoOnClick autoOnClick = f.getAnnotation(AutoOnClick.class);
-			if (autoOnClick != null) {
-				Class<?> viewClazz = f.getType();
-				// Object subView = f.get(this);
-				Method clickMethod = null;
-				try {
-					clickMethod = viewClazz.getMethod("setOnClickListener",
-							OnClickListener.class);
-				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					ZWLogger.printLog(this, f.getName()
-							+ "设置setOnClickListener()方法失败!");
-				}
-				if (clickMethod != null) {
-					Field clickField;
+			
+			if(!isExist){
+				allFields.add(f);
+			}
+		}
+		
+		for (Field f : allFields) {
+			if(View.class.isAssignableFrom(f.getType())){
+				//view的子类
+				// 自动初始化
+				AutoInitialize autoInitialize = f
+						.getAnnotation(AutoInitialize.class);
+				if (autoInitialize != null) {
+					String idFormat = autoInitialize.idFormat().replace("?",
+							f.getName()); // main_textBtn
+					int value = getIdValueIntoR(idFormat);
+					f.setAccessible(true);
 					try {
-						clickField = clazz.getDeclaredField(autoOnClick
-								.clickSelector());
-						clickField.setAccessible(true);
-						clickMethod.invoke(f.get(this), clickField.get(this));
-					} catch (NoSuchFieldException e) {
+						f.set(this, findViewById(value));
+					} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block
-						ZWLogger.printLog(this,
-								"没有找到方法:" + autoOnClick.clickSelector());
+						ZWLogger.printLog(this, f.getName() + "赋值失败!");
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						ZWLogger.printLog(this, f.getName() + "赋值时访问失败!");
+					}
+				}
+
+				// 自动设置OnClcikListener
+				AutoOnClick autoOnClick = f.getAnnotation(AutoOnClick.class);
+				if (autoOnClick != null) {
+					Class<?> viewClazz = f.getType();
+					// Object subView = f.get(this);
+					Method clickMethod = null;
+					try {
+						clickMethod = viewClazz.getMethod("setOnClickListener",
+								OnClickListener.class);
+					} catch (NoSuchMethodException e) {
+						// TODO Auto-generated catch block
+						ZWLogger.printLog(this, f.getName()
+								+ "设置setOnClickListener()方法失败!");
+					}
+					if (clickMethod != null) {
+						Field clickField;
+						try {
+							clickField = clazz.getDeclaredField(autoOnClick
+									.clickSelector());
+							clickField.setAccessible(true);
+							clickMethod.invoke(f.get(this), clickField.get(this));
+						} catch (NoSuchFieldException e) {
+							// TODO Auto-generated catch block
+							ZWLogger.printLog(this,
+									"没有找到方法:" + autoOnClick.clickSelector());
+						} catch (IllegalArgumentException e) {
+							// TODO Auto-generated catch block
+							ZWLogger.printLog(BaseUtil.class, f.getName() + "赋值失败!");
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							ZWLogger.printLog(BaseUtil.class, f.getName()
+									+ "赋值时访问失败!");
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+				}
+
+				// 自动设置观察绑定
+				OberverLoad oberverLoad = f.getAnnotation(OberverLoad.class);
+				if (oberverLoad != null) {
+					f.setAccessible(true);
+					Object obj;
+					try {
+						obj = f.get(this);
+						ModelObservable mModelObservable = new ModelObservable(obj);
+						mModelObservable.addObserver(this);
+						ObserverContainer.addObservable(f.getName(),
+								mModelObservable);
 					} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block
 						ZWLogger.printLog(BaseUtil.class, f.getName() + "赋值失败!");
 					} catch (IllegalAccessException e) {
 						// TODO Auto-generated catch block
-						ZWLogger.printLog(BaseUtil.class, f.getName()
-								+ "赋值时访问失败!");
-					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						ZWLogger.printLog(BaseUtil.class, f.getName() + "赋值时访问失败!");
 					}
-
+				}
+			}else if(LayoutInflater.class.isAssignableFrom(f.getType())){
+				//LayoutInflater 加载
+				AutoInitialize autoInitialize = f
+						.getAnnotation(AutoInitialize.class);
+				if (autoInitialize != null) {
+					f.setAccessible(true);
+					try {
+						f.set(this, LayoutInflater.from(getApplicationContext()));
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						ZWLogger.printLog(this, f.getName() + "赋值失败!");
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						ZWLogger.printLog(this, f.getName() + "赋值时访问失败!");
+					}
 				}
 			}
-
-			// 自动设置观察绑定
-			OberverLoad oberverLoad = f.getAnnotation(OberverLoad.class);
-			if (oberverLoad != null) {
-				f.setAccessible(true);
-				Object obj;
-				try {
-					obj = f.get(this);
-					ModelObservable mModelObservable = new ModelObservable(obj);
-					mModelObservable.addObserver(this);
-					ObserverContainer.addObservable(f.getName(),
-							mModelObservable);
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					ZWLogger.printLog(BaseUtil.class, f.getName() + "赋值失败!");
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					ZWLogger.printLog(BaseUtil.class, f.getName() + "赋值时访问失败!");
-				}
-			}
+			
 		}
 	}
 

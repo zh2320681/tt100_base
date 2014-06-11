@@ -1,5 +1,6 @@
 package cn.tt100.base;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -13,6 +14,17 @@ import android.content.res.AssetManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import cn.tt100.base.exception.ZWAppException;
+import cn.tt100.base.imageLoader.cache.disc.impl.UnlimitedDiscCache;
+import cn.tt100.base.imageLoader.cache.disc.naming.Md5FileNameGenerator;
+import cn.tt100.base.imageLoader.cache.memory.impl.LruMemoryCache;
+import cn.tt100.base.imageLoader.core.DisplayImageOptions;
+import cn.tt100.base.imageLoader.core.ImageLoader;
+import cn.tt100.base.imageLoader.core.ImageLoaderConfiguration;
+import cn.tt100.base.imageLoader.core.ImageLoaderConfiguration.Builder;
+import cn.tt100.base.imageLoader.core.assist.QueueProcessingType;
+import cn.tt100.base.imageLoader.core.decode.BaseImageDecoder;
+import cn.tt100.base.imageLoader.core.download.BaseImageDownloader;
+import cn.tt100.base.imageLoader.utils.StorageUtils;
 import cn.tt100.base.util.AndroidVersionCheckUtils;
 import cn.tt100.base.util.LogLevel;
 import cn.tt100.base.util.ZWLogger;
@@ -44,6 +56,23 @@ public class ZWApplication extends Application {
 	public static boolean isInterceptSameRequest = true;
 	// 是否开始StrictMode
 	public static boolean isOpenStrictMode = true;
+	
+	/**
+	 * -----------------------
+	 * 图片加载
+	 * -----------------------
+	 */
+	//是否初始化 imageLoader
+	public static boolean isInitImageLoader = false;
+	//缓存本地格式  PNG OR JPEG   default JPEG
+	public static String imageSaveFormat = "JPEG";
+	//加载的线程数量
+	public static int imageThreadPoolSize = 3;
+	//内存缓存大小 单位MB  2*1024*1024
+	public static int memoryCacheSize = 2;
+	public static String imageDiscCacheDir= "/mnt/sdcard/uil_test";
+	//disc缓存大小 单位MB  2*1024*1024
+	public static int discCacheSize = 50;
 
 	/** App异常崩溃处理器 */
 	private UncaughtExceptionHandler uncaughtExceptionHandler;
@@ -54,7 +83,9 @@ public class ZWApplication extends Application {
 
 	public int screenWidth, screenHight;
 	public float density;
-
+	//配置 必须在application中
+	protected ImageLoaderConfiguration.Builder imageLoaderConfigBuilder;
+	
 	private ZWNetChangeObserver zwNetChangeObserver;
 
 	@Override
@@ -146,7 +177,41 @@ public class ZWApplication extends Application {
 		screenHight = dm.heightPixels;
 
 //		ImageLoader.getLoader(this);
-
+		if(isInitImageLoader){
+			File cacheDir = null;
+			if(imageDiscCacheDir == null || "".equals(imageDiscCacheDir)){
+				cacheDir = StorageUtils.getCacheDirectory(this);
+			}else{
+				cacheDir = new File(imageDiscCacheDir);
+				if(!cacheDir.exists()){
+					try {
+						cacheDir.mkdir();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						cacheDir = StorageUtils.getCacheDirectory(this);
+					}
+				}
+			}
+			
+			imageLoaderConfigBuilder = new ImageLoaderConfiguration.Builder(getApplicationContext())
+	        .threadPoolSize(imageThreadPoolSize) // default
+	        .threadPriority(Thread.NORM_PRIORITY - 1) // default
+	        .tasksProcessingOrder(QueueProcessingType.FIFO) // default
+	        .denyCacheImageMultipleSizesInMemory()
+	        .memoryCache(new LruMemoryCache(memoryCacheSize * 1024 * 1024))
+	        .memoryCacheSize(memoryCacheSize * 1024 * 1024)
+	        .memoryCacheSizePercentage(13) // default
+	        .discCache(new UnlimitedDiscCache(cacheDir)) // default
+	        .discCacheSize(discCacheSize * 1024 * 1024)
+	        .discCacheFileNameGenerator(new Md5FileNameGenerator()) // default
+	        .imageDownloader(new BaseImageDownloader(this)) // default
+	        .imageDecoder(new BaseImageDecoder(false)) // default
+	        .defaultDisplayImageOptions(DisplayImageOptions.createSimple()) // default
+	        ;
+			
+			initImageLoaderConfig(imageLoaderConfigBuilder);
+			setImageLoaderConfig();
+		}
 		onAfterCreateApplication();
 	}
 
@@ -179,6 +244,17 @@ public class ZWApplication extends Application {
 					.getProperty("isOpenStrictMode"));
 			isInterceptSameRequest = Boolean.parseBoolean(prop
 					.getProperty("isInterceptSameRequest"));
+			
+			isInitImageLoader =  Boolean.parseBoolean(prop
+					.getProperty("isInitImageLoader"));
+			imageSaveFormat = prop.getProperty("imageSaveFormat");
+			imageThreadPoolSize = Integer.parseInt(prop
+					.getProperty("imageThreadPoolSize"));
+			memoryCacheSize = Integer.parseInt(prop
+					.getProperty("memoryCacheSize"));
+			imageDiscCacheDir = prop.getProperty("imageDiscCacheDir");
+			discCacheSize = Integer.parseInt(prop
+					.getProperty("discCacheSize"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -208,6 +284,21 @@ public class ZWApplication extends Application {
 	protected void onAfterCreateApplication() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	/**
+	 * 初始化builder
+	 * @param builder
+	 */
+	protected void initImageLoaderConfig(Builder builder){
+		
+	}
+	
+	/**
+	 * 设置config
+	 */
+	public void setImageLoaderConfig(){
+		ImageLoader.getInstance().init(imageLoaderConfigBuilder.build());
 	}
 
 	@Override
