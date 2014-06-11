@@ -16,7 +16,6 @@ import cn.tt100.base.util.LogLevel;
 import cn.tt100.base.util.ZWLogger;
 
 /**
- * @Title TAPrintToFileLogger
  * @Description ZWPrintToFileLogger是打印到sdcard上面的日志类
  * @author Shrek
  * @date 2014-5-8
