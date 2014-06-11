@@ -3,10 +3,84 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
+	<ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/it_imgView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+			<cn.tt100.base.example.custom.MyImageView
+			    android:id="@+id/it_imageView"
+			    android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/defaultpic"
+			    />
+            <Button
+                android:id="@+id/it_configSetBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="每次记得设置下Config" />
 
+            <Button
+                android:id="@+id/it_normalLoadBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="正常加载图片" />
+
+            <Button
+                android:id="@+id/it_sizeLoadBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="加载图片限制大小" />
+
+            <Button
+                android:id="@+id/it_clearMCacheBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="清空内存缓存" />
+
+            <Button
+                android:id="@+id/it_clearDiscCacheBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="清除磁盘缓存" />
+
+            <Button
+                android:id="@+id/it_proLoadBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="进度加载测试" />
+
+            <Button
+                android:id="@+id/rest_mine1TestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="队列任务测试1" />
+
+            <Button
+                android:id="@+id/rest_cacheTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="队列缓存测试" />
+
+            <Button
+                android:id="@+id/rest_cacheTestBtn11"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="队列缓存测试(请求参数不一样)" />
+
+            <Button
+                android:id="@+id/rest_sameTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="2个同样任务一起提交" />
+
+            <TextView
+                android:id="@+id/rest_infoView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
