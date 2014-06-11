@@ -56,4 +56,43 @@ new DialogTaskHandler<String>("", "") {
 =======
 ZWAsyncTask.addTaskIntoQueueAndExcute(task1, task2, task3);	
 
-相同任务在同一个activity  能否同时执行 设置assets的isInterceptSameRequest					
+相同任务在同一个activity  能否同时执行 设置assets的isInterceptSameRequest			
+
+图片加载用的是网上的框架
+========
+第一步：设置Loader的Config
+
+ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+				.threadPriority(Thread.NORM_PRIORITY - 2)
+				.denyCacheImageMultipleSizesInMemory()
+				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
+				.tasksProcessingOrder(QueueProcessingType.LIFO)
+				.writeDebugLogs() // Remove for release app
+				.build();
+		// Initialize ImageLoader with configuration.
+		ImageLoader.getInstance().init(config);
+
+第二步 设置显示的配置
+
+DisplayImageOptions options = new DisplayImageOptions.Builder()
+        .showImageOnLoading(R.drawable.ic_stub) // resource or drawable
+        .showImageForEmptyUri(R.drawable.ic_empty) // resource or drawable
+        .showImageOnFail(R.drawable.ic_error) // resource or drawable
+        .resetViewBeforeLoading(false)  // default
+        .delayBeforeLoading(1000)
+        .cacheInMemory(false) // default
+        .cacheOnDisc(false) // default
+        .preProcessor(...)
+        .postProcessor(...)
+        .extraForDownloader(...)
+        .considerExifParams(false) // default
+        .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
+        .bitmapConfig(Bitmap.Config.ARGB_8888) // default
+        .decodingOptions(...)
+        .displayer(new SimpleBitmapDisplayer()) // default
+        .handler(new Handler()) // default
+        .build();
+        
+第三步 调用 Loader的显示方法
+https://github.com/zh2320681/Android-Universal-Image-Loader
+		
