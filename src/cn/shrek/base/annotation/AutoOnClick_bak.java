@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({java.lang.annotation.ElementType.FIELD})
-public @interface AutoInitialize
+public @interface AutoOnClick_bak
 {
-	String idFormat() default "";
+   String clickSelector();
 }
