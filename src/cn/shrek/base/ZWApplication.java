@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Properties;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -30,8 +31,8 @@ import cn.shrek.base.util.LogLevel;
 import cn.shrek.base.util.ZWLogger;
 import cn.shrek.base.util.logger.ZWPrintToFileLogger;
 import cn.shrek.base.util.net.ZWNetChangeObserver;
-import cn.shrek.base.util.net.ZWNetworkStateReceiver;
 import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
+import cn.shrek.base.util.net.ZWNetworkStateReceiver;
 
 public class ZWApplication extends Application {
 	// 是否开启debug模式
@@ -140,19 +141,22 @@ public class ZWApplication extends Application {
 					@Override
 					public void onConnect(NetType type) {
 						// TODO Auto-generated method stub
-						super.onConnect(type);
-						ZWActivity currActivity = mActivityManager
+						Activity currActivity = mActivityManager
 								.currentActivity();
-						currActivity.onConnect(type);
+						if(currActivity instanceof ZWNetChangeObserver){
+							((ZWNetChangeObserver)currActivity).onConnect(type);
+						}
+						
 					}
 
 					@Override
 					public void onDisConnect() {
 						// TODO Auto-generated method stub
-						super.onDisConnect();
-						ZWActivity currActivity = mActivityManager
+						Activity currActivity = mActivityManager
 								.currentActivity();
-						currActivity.onDisConnect();
+						if(currActivity instanceof ZWNetChangeObserver){
+							((ZWNetChangeObserver)currActivity).onDisConnect();
+						}
 					}
 				};
 				ZWNetworkStateReceiver.registerObserver(zwNetChangeObserver);

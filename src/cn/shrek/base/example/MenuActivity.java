@@ -1,23 +1,21 @@
 package cn.shrek.base.example;
 
 import android.content.Intent;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
-import cn.shrek.base.ZWActivity;
 import cn.shrek.base.ZWApplication;
-import cn.shrek.base.annotation.AutoInitialize;
-import cn.shrek.base.annotation.AutoOnClick;
+import cn.shrek.base.annotation.AutoInject;
+import cn.shrek.base.ui.ZWActivity;
 
 public class MenuActivity extends ZWActivity {
-	@AutoInitialize(idFormat = "menu_?")
-	@AutoOnClick(clickSelector = "mClick")
-	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn;
+	@AutoInject(idFormat = "menu_?",clickSelector = "mClick")
+	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn
+		,fragmentTestBtn;
 
-	@AutoInitialize
+	@AutoInject
 	private LayoutInflater mInflater;
 	
 	private OnClickListener mClick = new OnClickListener() {
@@ -50,6 +48,10 @@ public class MenuActivity extends ZWActivity {
 			}else if(arg0 == netTestBtn){
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), NetTestActivity.class);
+			    startActivity(intent);
+			}else if(arg0 == fragmentTestBtn){
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), FragmentTestActivity.class);
 			    startActivity(intent);
 			}
 		}

@@ -2,19 +2,20 @@ package cn.shrek.base;
 
 import java.util.Stack;
 
+import cn.shrek.base.ui.ZWActivity;
 import android.app.Activity;
 
-public class ZWActivityManager {
-	private Stack<ZWActivity> activityStack;
-	private static ZWActivityManager instance;
+public class ZWActivityManager<T extends Activity> {
+	private Stack<T> activityStack;
+	private static ZWActivityManager<? extends Activity> instance;
 
 	private ZWActivityManager() {
-		activityStack = new Stack<ZWActivity>();
+		activityStack = new Stack<T>();
 	}
 
-	public static ZWActivityManager getInstance() {
+	public static ZWActivityManager<? extends Activity> getInstance() {
 		if (instance == null) {
-			instance = new ZWActivityManager();
+			instance = new ZWActivityManager<Activity>();
 		}
 		return instance;
 	}
@@ -54,9 +55,9 @@ public class ZWActivityManager {
 	 * 得到当前 activity
 	 * @return
 	 */
-	public ZWActivity currentActivity() throws NullPointerException{
+	public T currentActivity() throws NullPointerException{
 		if(activityStack.size() > 0){
-			ZWActivity activity = activityStack.lastElement();
+			T activity = activityStack.lastElement();
 			return activity;
 		}
 //		throw new NullPointerException();
@@ -68,9 +69,9 @@ public class ZWActivityManager {
 	 * 添加 新的 activity
 	 * @param activity
 	 */
-	public void pushActivity(ZWActivity activity) {
+	public void pushActivity(T activity) {
 		if (activityStack == null) {
-			activityStack = new Stack<ZWActivity>();
+			activityStack = new Stack<T>();
 		}
 		activityStack.add(activity);
 	}

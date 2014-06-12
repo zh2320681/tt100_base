@@ -4,9 +4,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import cn.shrek.base.ZWActivity;
-import cn.shrek.base.annotation.AutoInitialize;
-import cn.shrek.base.annotation.AutoOnClick;
+import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.annotation.LayoutSelector;
 import cn.shrek.base.example.custom.MyImageView;
 import cn.shrek.base.imageLoader.core.DisplayImageOptions;
@@ -14,16 +12,16 @@ import cn.shrek.base.imageLoader.core.ImageLoader;
 import cn.shrek.base.imageLoader.core.assist.ImageSize;
 import cn.shrek.base.imageLoader.core.listener.ImageLoadingProgressListener;
 import cn.shrek.base.imageLoader.core.listener.SimpleImageLoadingListener;
+import cn.shrek.base.ui.ZWActivity;
 import cn.tt100.base.R;
 
 @LayoutSelector(id=R.layout.image_test)
 public class ImageTestActivity extends ZWActivity {
 
-	@AutoInitialize(idFormat = "it_?")
-	@AutoOnClick(clickSelector="myClick")
+	@AutoInject(idFormat = "it_?",clickSelector = "myClick")
 	private Button configSetBtn,normalLoadBtn,sizeLoadBtn,clearMCacheBtn,clearDiscCacheBtn,proLoadBtn;
 	
-	@AutoInitialize(idFormat = "it_?")
+	@AutoInject(idFormat = "it_?")
 	private MyImageView imageView;
 	
 	DisplayImageOptions options;
@@ -31,7 +29,7 @@ public class ImageTestActivity extends ZWActivity {
 	
 	String url = "http://e.hiphotos.baidu.com/image/w%3D2048/sign=3e994137718da9774e2f812b8469f819/8b13632762d0f703e58617d80afa513d2697c5fa.jpg";
 	String bigUrl = "http://news.yzz.cn/public/images/100730/93_140710_1.jpg";
-	private OnClickListener myClick = new OnClickListener() {
+	OnClickListener myClick = new OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {

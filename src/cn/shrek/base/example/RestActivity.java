@@ -19,16 +19,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import cn.shrek.base.ZWActivity;
-import cn.shrek.base.annotation.AutoInitialize;
-import cn.shrek.base.annotation.AutoOnClick;
+import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.example.bean.Flavor;
 import cn.shrek.base.example.bean.GalleryDate;
 import cn.shrek.base.example.bean.JSONConverter;
 import cn.shrek.base.example.bean.MineBo;
-import cn.shrek.base.example.bean.MineJSONConverter;
 import cn.shrek.base.example.bean.Result;
 import cn.shrek.base.example.bean.Result1;
+import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.util.rest.DialogTaskHandler;
 import cn.shrek.base.util.rest.DoNothingHandler;
 import cn.shrek.base.util.rest.ZWAsyncTask;
@@ -40,13 +38,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 public class RestActivity extends ZWActivity {
-	@AutoInitialize(idFormat = "rest_?")
-	@AutoOnClick(clickSelector = "mClick")
+	@AutoInject(idFormat = "rest_?", clickSelector = "mClick")
 	private Button testBtn, jsonTestBtn, custonTestBtn, asyncTestBtn,
 			queneTestBtn, mineTestBtn, mine1TestBtn, cacheTestBtn,
 			cacheTestBtn11,sameTestBtn;
 
-	@AutoInitialize(idFormat = "rest_?")
+	@AutoInject(idFormat = "rest_?")
 	private TextView infoView;
 
 	private int pageNo;//≤‚ ‘1

@@ -3,17 +3,15 @@ package cn.shrek.base.example;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import cn.shrek.base.ZWActivity;
-import cn.shrek.base.annotation.AutoInitialize;
-import cn.shrek.base.annotation.AutoOnClick;
+import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.download.DLHandler;
 import cn.shrek.base.download.DialogDLHandler;
 import cn.shrek.base.download.bo.DLTask;
+import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.util.BaseUtil;
 
 public class DLTestActivity extends ZWActivity {
-	@AutoInitialize(idFormat = "dl_?")
-	@AutoOnClick(clickSelector = "mClick")
+	@AutoInject(idFormat = "dl_?",clickSelector = "mClick")
 	Button downTestBtn,downDialogTestBtn;
 	
 	public OnClickListener mClick = new OnClickListener() {

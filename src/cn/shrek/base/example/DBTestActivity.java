@@ -12,9 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.shrek.base.ZWActivity;
-import cn.shrek.base.annotation.AutoInitialize;
-import cn.shrek.base.annotation.AutoOnClick;
+import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.example.bean.Company;
 import cn.shrek.base.example.bean.Employee;
 import cn.shrek.base.ormlite.DBUtil;
@@ -24,19 +22,19 @@ import cn.shrek.base.ormlite.stmt.DeleteBuider;
 import cn.shrek.base.ormlite.stmt.QueryBuilder;
 import cn.shrek.base.ormlite.stmt.UpdateBuider;
 import cn.shrek.base.ormlite.task.DBAsyncTask;
+import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.util.ZWLogger;
 
 public class DBTestActivity extends ZWActivity {
 
-	@AutoInitialize(idFormat = "dt_?")
-	@AutoOnClick(clickSelector = "mClick")
+	@AutoInject(idFormat = "dt_?",clickSelector = "mClick")
 	private Button createBtn, insertBtn, delConBtn, delAllBtn, updateAllBtn,
 			updateConBtn, updateMapBtn, queryAllBtn, queryAllBtn1, queryConBtn,
 			queryCountBtn, delConAliBtn, queryConAliBtn, queryJoinBtn,
 			updateCaceadeBtn, deleteCaceadeBtn, asyncBtn, sqlToMapBtn,
 			sqlToObjectBtn;
 
-	@AutoInitialize(idFormat = "dt_?")
+	@AutoInject(idFormat = "dt_?")
 	private TextView infoView;
 
 	ZWDBHelper mZWDBHelper;

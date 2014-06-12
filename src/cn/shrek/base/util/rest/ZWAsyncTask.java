@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import cn.shrek.base.ZWActivity;
+import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.util.ZWCache;
 import cn.shrek.base.util.ZWLogger;
 

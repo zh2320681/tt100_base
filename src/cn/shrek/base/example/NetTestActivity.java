@@ -1,8 +1,8 @@
 package cn.shrek.base.example;
 
 import android.widget.TextView;
-import cn.shrek.base.ZWActivity;
-import cn.shrek.base.annotation.AutoInitialize;
+import cn.shrek.base.annotation.AutoInject;
+import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.util.net.ZWNetworkStateReceiver;
 import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
 
@@ -12,7 +12,7 @@ import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
  *
  */
 public class NetTestActivity extends ZWActivity {
-	@AutoInitialize(idFormat = "nt_?")
+	@AutoInject(idFormat = "nt_?")
 	private TextView infoView;
 	
 	

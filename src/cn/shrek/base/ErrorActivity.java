@@ -1,5 +1,6 @@
 package cn.shrek.base;
 
+import cn.shrek.base.ui.ZWActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
