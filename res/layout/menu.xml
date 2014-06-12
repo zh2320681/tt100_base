@@ -42,4 +42,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="网络环境变化测试" />
+    
+    <Button
+        android:id="@+id/menu_fragmentTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="fragment测试" />
 </LinearLayout>
