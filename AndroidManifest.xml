@@ -19,9 +19,9 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" 
-        android:name="cn.tt100.base.ZWApplication">
+        android:name="cn.shrek.base.ZWApplication">
         <activity
-            android:name="cn.tt100.base.example.MenuActivity"
+            android:name="cn.shrek.base.example.MenuActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -31,31 +31,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="cn.tt100.base.example.ImageTestActivity"
+            android:name="cn.shrek.base.example.ImageTestActivity"
             android:screenOrientation="portrait" />
         
         <activity
-            android:name="cn.tt100.base.example.RestActivity"
+            android:name="cn.shrek.base.example.RestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="cn.tt100.base.example.DBTestActivity"
+            android:name="cn.shrek.base.example.DBTestActivity"
             android:screenOrientation="portrait" />
         
         <activity
-            android:name="cn.tt100.base.example.NetTestActivity"
+            android:name="cn.shrek.base.example.NetTestActivity"
             android:screenOrientation="portrait" />
         
         <activity
-            android:name="cn.tt100.base.example.DLTestActivity"
+            android:name="cn.shrek.base.example.DLTestActivity"
             android:screenOrientation="portrait" />
-        
+        <activity
+            android:name="cn.shrek.base.example.FragmentTestActivity"
+            android:screenOrientation="portrait" />
         
         <!-- 一定要加  -->
         <activity
-            android:name="cn.tt100.base.ErrorActivity"
+            android:name="cn.shrek.base.ErrorActivity"
             android:screenOrientation="portrait" />
         
-        <service android:name=".download.DownloadService" />
+        <service android:name="cn.shrek.base.download.DownloadService" />
         
     </application>
 
