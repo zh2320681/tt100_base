@@ -13,7 +13,7 @@ import cn.shrek.base.ui.ZWActivity;
 public class MenuActivity extends ZWActivity {
 	@AutoInject(idFormat = "menu_?",clickSelector = "mClick")
 	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn
-		,fragmentTestBtn;
+		,fragmentTestBtn,listTestBtn;
 
 	@AutoInject
 	private LayoutInflater mInflater;
@@ -52,6 +52,10 @@ public class MenuActivity extends ZWActivity {
 			}else if(arg0 == fragmentTestBtn){
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), FragmentTestActivity.class);
+			    startActivity(intent);
+			}else if(arg0 == listTestBtn){
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), ListTestActivity.class);
 			    startActivity(intent);
 			}
 		}
