@@ -45,7 +45,7 @@ public class ListTestActivity extends ZWActivity {
 	}
 
 	class TestAdapter extends BaseAdapter {
-		String[] s = new String[] { "张三", "李四", "王五", "赵六", "田七", "五八" };
+		String[] s = new String[] { "张三", "李四", "王五", "赵六", "田七", "五八" ,"马九"};
 
 		@Override
 		public int getCount() {
