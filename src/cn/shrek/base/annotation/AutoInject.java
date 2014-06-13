@@ -18,5 +18,5 @@ public @interface AutoInject
 	String clickSelector() default NULL_STR_VALUE; 
 	
 	//对 fragment的 支持 布局ID R.layout.fragment11
-	int fragmentLayoutId() default NULL_INT_VALUE;
+//	int fragmentLayoutId() default NULL_INT_VALUE;
 }

@@ -11,7 +11,7 @@ import cn.tt100.base.R;
 
 public class FragmentTestActivity extends ZWFragmentActivity {
 	@AutoInject(idFormat="ft_?")
-	TestFragment1 f1;
+	TestFragment1 fragment;
 	
 	@AutoInject(idFormat="ft_?",clickSelector="myClick")
 	Button addBtn;

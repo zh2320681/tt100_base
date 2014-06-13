@@ -17,6 +17,7 @@ public class FragmentInjectTransfor implements InjectTransfor {
 	public void setValue(Activity act, Field field, Object objInstance) {
 		// TODO Auto-generated method stub
 		if (act instanceof FragmentActivity) {
+			this.act = act;
 			FragmentActivity fAct = (FragmentActivity) act;
 
 			AutoInject autoInject = field.getAnnotation(AutoInject.class);
@@ -25,15 +26,16 @@ public class FragmentInjectTransfor implements InjectTransfor {
 			}
 			
 			Object fragment = null;
-			if (autoInject.fragmentLayoutId() != AutoInject.NULL_INT_VALUE) {
+			if (autoInject.idFormat() != AutoInject.NULL_STR_VALUE) {
 				String idFormat = autoInject.idFormat().replace("?",
 						field.getName()); // main_textBtn
 				int value = getIdValueIntoR(idFormat);
-				fragment = fAct.getSupportFragmentManager()
-						.findFragmentById(value);
 				if(value == 0){
 					//未通过 idFormat找到  尝试用类名字直接找
 					fragment = getFragment(field);
+				}else{
+					fragment = fAct.getSupportFragmentManager()
+							.findFragmentById(value);
 				}
 				
 			}else{
@@ -55,7 +57,7 @@ public class FragmentInjectTransfor implements InjectTransfor {
 
 	
 	private Object getFragment(Field field){
-		ZWLogger.printLog(this, "尝试用Fragment的名字查找");
+		ZWLogger.printLog(this, "属性名:"+field.getName()+"尝试用Fragment的名字查找");
 		Class<?> clazz = field.getType();
 		try {
 			return clazz.getConstructor().newInstance();
