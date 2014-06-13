@@ -48,4 +48,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="fragment测试" />
+    
+    <Button
+        android:id="@+id/menu_listTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="List Holder测试" />
 </LinearLayout>
