@@ -44,7 +44,7 @@ public class MenuActivity extends ZWActivity {
 				throw new NullPointerException();
 			}else if(arg0 == logPrintTestBtn){
 				((ZWApplication)getApplication()).closeLoggerPrint();
-				Toast.makeText(getApplicationContext(), "»’÷æ¥Ú”°“—πÿ±’!", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "Êó•ÂøóÊâìÂç∞Â∑≤ÂÖ≥Èó≠!", Toast.LENGTH_LONG).show();
 			}else if(arg0 == netTestBtn){
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), NetTestActivity.class);

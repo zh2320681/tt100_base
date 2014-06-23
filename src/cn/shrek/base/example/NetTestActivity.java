@@ -7,7 +7,7 @@ import cn.shrek.base.util.net.ZWNetworkStateReceiver;
 import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
 
 /**
- * ÍøÂç²âÊÔ
+ * ç½‘ç»œæµ‹è¯•
  * @author shrek
  *
  */
@@ -48,7 +48,7 @@ public class NetTestActivity extends ZWActivity {
 	public void onConnect(NetType type) {
 		// TODO Auto-generated method stub
 		super.onConnect(type);
-		sb.append("ÍøÂçÒÑ¾­Á¬½Ó,Á¬½ÓÀàĞÍÎª:"+ type.toString()+ "\n");
+		sb.append("ç½‘ç»œå·²ç»è¿æ¥,è¿æ¥ç±»å‹ä¸º:"+ type.toString()+ "\n");
 		infoView.setText(sb.toString());
 	}
 
@@ -56,7 +56,7 @@ public class NetTestActivity extends ZWActivity {
 	public void onDisConnect() {
 		// TODO Auto-generated method stub
 		super.onDisConnect();
-		sb.append("ÍøÂç¶Ï¿ªÁ¬½Ó!\n");
+		sb.append("ç½‘ç»œæ–­å¼€è¿æ¥!\n");
 		infoView.setText(sb.toString());
 	}
 	

@@ -2,22 +2,22 @@ package cn.shrek.base.example.bean;
 
 public class Page {
 	/**
-	 * µ±Ç°µÚ¼¸Ò³
+	 * å½“å‰ç¬¬å‡ é¡µ
 	 */
 	public int pageNo;
 	
 	/**
-	 * ×ÜÊı
+	 * æ€»æ•°
 	 */
 	public int total;
 	
 	/**
-	 * Ã¿Ò³ÊıÁ¿
+	 * æ¯é¡µæ•°é‡
 	 */
 	public int pageSize;
 	
 	/**
-	 * Ò³Êı
+	 * é¡µæ•°
 	 */
 	public int pages;
 
@@ -42,7 +42,7 @@ public class Page {
 
 	@Override
 	public String toString() {
-		return "µ±Ç°µÚ"+pageNo+"/"+pages+"Ò³,¹²"+total+"ÌõÊı¾İ";
+		return "å½“å‰ç¬¬"+pageNo+"/"+pages+"é¡µ,å…±"+total+"æ¡æ•°æ®";
 	}
 	
 	

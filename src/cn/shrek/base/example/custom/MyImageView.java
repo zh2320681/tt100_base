@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 public class MyImageView extends ImageView {
 	boolean isShowText;
-	String showText="²âÊÔ";
+	String showText="æµ‹è¯•";
 	Paint paint;
 	
 	public MyImageView(Context context, AttributeSet attrs) {
@@ -28,10 +28,10 @@ public class MyImageView extends ImageView {
 	protected void onDraw(Canvas canvas) {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
-		//»­ÎÄ×Ö1
+		//ç”»æ–‡å­—1
 		if(isShowText){
 			Rect rect = new Rect();
-			//·µ»Ø°üÎ§Õû¸ö×Ö·û´®µÄ×îĞ¡µÄÒ»¸öRectÇøÓò
+			//è¿”å›åŒ…å›´æ•´ä¸ªå­—ç¬¦ä¸²çš„æœ€å°çš„ä¸€ä¸ªRectåŒºåŸŸ
 			paint.getTextBounds(showText, 0, 1, rect); 
 			canvas.drawText(showText, getWidth()/2-rect.width()/2, getHeight()/2-rect.height()/2, paint);
 		}

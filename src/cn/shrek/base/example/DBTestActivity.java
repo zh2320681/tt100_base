@@ -54,7 +54,7 @@ public class DBTestActivity extends ZWActivity {
 				// for (int i = 0; i < 30; i++) {
 				// Company c = new Company();
 				// c.id = i;
-				// c.companyName="¹«Ë¾Ãû³Æ"+i;
+				// c.companyName="å…¬å¸åç§°"+i;
 				// if(i%10 == 0){
 				// c.info = StmtBuilder.NULL_STR;
 				// }else{
@@ -72,8 +72,8 @@ public class DBTestActivity extends ZWActivity {
 
 				Company company = new Company();
 				company.id = 100;
-				company.companyName = "ÌìÌìÒ»°ÙÍøÂç¿Æ¼¼";
-				company.info = "ºÃ¹«Ë¾";
+				company.companyName = "å¤©å¤©ä¸€ç™¾ç½‘ç»œç§‘æŠ€";
+				company.info = "å¥½å…¬å¸";
 				company.isITCompany = true;
 
 				DBDao<Company> companyDao = mZWDBHelper.getDao(Company.class);
@@ -83,7 +83,7 @@ public class DBTestActivity extends ZWActivity {
 					Employee e = new Employee();
 					e.id = i;
 					e.company = company;
-					e.name = "Ç®É§»õ" + i + "ºÅ";
+					e.name = "é’±éªšè´§" + i + "å·";
 					e.isNew = (i % 2 == 1);
 					coms.add(e);
 				}
@@ -95,7 +95,7 @@ public class DBTestActivity extends ZWActivity {
 				deleteBuider.leftBrackets().between("id", 10, 15).and()
 						.like("info", "12", true, true).rightBrackets().or()
 						.in("id", 22, 24, 26);
-				ZWLogger.printLog(DBTestActivity.this, "É¾³ıSQL²âÊÔ:::"
+				ZWLogger.printLog(DBTestActivity.this, "åˆ é™¤SQLæµ‹è¯•:::"
 						+ deleteBuider.getSql());
 				long optNum = comDao.deleteObjs(deleteBuider);
 				showToast(optNum);
@@ -106,7 +106,7 @@ public class DBTestActivity extends ZWActivity {
 				deleteBuider.leftBrackets().between("id", 10, 15).and()
 						.like("info", "12", true, true).rightBrackets().or()
 						.in("id", 22, 24, 26);
-				ZWLogger.printLog(DBTestActivity.this, "É¾³ıSQL²âÊÔ:::"
+				ZWLogger.printLog(DBTestActivity.this, "åˆ é™¤SQLæµ‹è¯•:::"
 						+ deleteBuider.getSql());
 				long optNum = comDao.deleteObjs(deleteBuider);
 				showToast(optNum);
@@ -122,7 +122,7 @@ public class DBTestActivity extends ZWActivity {
 				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
 				Company c = new Company();
 				comDao.clearObj(c);
-				c.info = "¸üĞÂ²âÊÔ¿´¿´";
+				c.info = "æ›´æ–°æµ‹è¯•çœ‹çœ‹";
 				long optNum = comDao.updateAllObjs(c);
 				showToast(optNum);
 			} else if (v == updateConBtn) {
@@ -133,7 +133,7 @@ public class DBTestActivity extends ZWActivity {
 						.in("id", 22, 24, 26);
 				Company c = new Company();
 				comDao.clearObj(c);
-				c.companyName = "¸üĞÂÈ¥³ıBooleanÌØÊâ";
+				c.companyName = "æ›´æ–°å»é™¤Booleanç‰¹æ®Š";
 				c.isExpired = true;
 				updateBuider.addValue(c, "isITCompany");
 				long optNum = comDao.updateObjs(updateBuider);
@@ -189,7 +189,7 @@ public class DBTestActivity extends ZWActivity {
 				queryBuilder.limitIndex = 5;
 				queryBuilder.offsetIndex = 1;
 				int num = comDao.queryCount(queryBuilder);
-				infoView.setText("²éÑ¯µ½µÄÊıÁ¿:" + num);
+				infoView.setText("æŸ¥è¯¢åˆ°çš„æ•°é‡:" + num);
 			} else if (v == queryConAliBtn) {
 				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);
 				QueryBuilder queryBuilder = comDao.queryBuilder();
@@ -231,14 +231,14 @@ public class DBTestActivity extends ZWActivity {
 
 						Company company = new Company();
 						company.id = 100;
-						company.companyName = "ÌìÌìÒ»°ÙÍøÂç¿Æ¼¼";
-						company.info = "ºÃ¹«Ë¾";
+						company.companyName = "å¤©å¤©ä¸€ç™¾ç½‘ç»œç§‘æŠ€";
+						company.info = "å¥½å…¬å¸";
 						company.isITCompany = true;
 						for (int i = 0; i < 100; i++) {
 							Employee e = new Employee();
 							e.id = i;
 							e.company = company;
-							e.name = "Ç®É§»õ" + i + "ºÅ";
+							e.name = "é’±éªšè´§" + i + "å·";
 							e.isNew = (i % 2 == 1);
 							coms.add(e);
 						}
@@ -314,7 +314,7 @@ public class DBTestActivity extends ZWActivity {
 	}
 
 	private void showToast(long num) {
-		Toast.makeText(getApplicationContext(), num + "Ìõ¼ÇÂ¼±»Ó°Ïì",
+		Toast.makeText(getApplicationContext(), num + "æ¡è®°å½•è¢«å½±å“",
 				Toast.LENGTH_SHORT).show();
 	}
 

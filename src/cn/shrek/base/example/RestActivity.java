@@ -46,7 +46,7 @@ public class RestActivity extends ZWActivity {
 	@AutoInject(idFormat = "rest_?")
 	private TextView infoView;
 
-	private int pageNo;//²âÊÔ1
+	private int pageNo;//æµ‹è¯•1
 
 	private OnClickListener mClick = new OnClickListener() {
 
@@ -75,18 +75,18 @@ public class RestActivity extends ZWActivity {
 								new TypeReference<Result1<List<GalleryDate>>>() {
 								},
 								new DialogTaskHandler<Result1<List<GalleryDate>>>(
-										"ÇëÇó", "ÇëÇó²âÊÔÖĞ...") {
+										"è¯·æ±‚", "è¯·æ±‚æµ‹è¯•ä¸­...") {
 
 									@Override
 									public void postResult(
 											ZWResult<Result1<List<GalleryDate>>> result) {
 										// TODO Auto-generated method stub
 										StringBuffer sb = new StringBuffer();
-										sb.append("ÇëÇóÂğÊÇ:"
+										sb.append("è¯·æ±‚å—æ˜¯:"
 												+ result.requestCode.value()
 												+ "\n");
 										for (GalleryDate g : result.bodyObj.data) {
-											sb.append("Êı¾İ£º£º:" + g.toString()
+											sb.append("æ•°æ®ï¼šï¼š:" + g.toString()
 													+ "\n");
 										}
 										infoView.setText(sb.toString());
@@ -98,8 +98,8 @@ public class RestActivity extends ZWActivity {
 				// RestActivity.this,
 				// "http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
 				// new TypeReference<List>(){},
-				// new DialogTaskHandler<List<StringBuffer>>("ÇëÇó",
-				// "ÇëÇó²âÊÔÖĞ...") {
+				// new DialogTaskHandler<List<StringBuffer>>("è¯·æ±‚",
+				// "è¯·æ±‚æµ‹è¯•ä¸­...") {
 				//
 				// @Override
 				// public void postResult(
@@ -119,9 +119,9 @@ public class RestActivity extends ZWActivity {
 				// // TODO Auto-generated method stub
 				// super.postResult(result);
 				// StringBuffer sb = new StringBuffer();
-				// sb.append("ÇëÇóÂğÊÇ:"+result.requestCode.value()+"\n");
+				// sb.append("è¯·æ±‚å—æ˜¯:"+result.requestCode.value()+"\n");
 				// for(GalleryDate g : result.bodyObj.data){
-				// sb.append("Êı¾İ£º£º:"+g.toString() +"\n");
+				// sb.append("æ•°æ®ï¼šï¼š:"+g.toString() +"\n");
 				// }
 				// infoView.setText(sb.toString());
 				// }
@@ -138,8 +138,8 @@ public class RestActivity extends ZWActivity {
 				task1.config.getMaps().putAll(map);
 
 				ZWAsyncTask<Result> task2 = new ZWAsyncTask<Result>(
-						RestActivity.this, new DialogTaskHandler<Result>("²âÊÔ",
-								"²âÊÔ²âÊÔ") {
+						RestActivity.this, new DialogTaskHandler<Result>("æµ‹è¯•",
+								"æµ‹è¯•æµ‹è¯•") {
 
 							@Override
 							public void postResult(ZWResult<Result> result) {
@@ -227,8 +227,8 @@ public class RestActivity extends ZWActivity {
 								RestActivity.this,
 								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
 								HttpMethod.GET, new TypeReference<String>() {
-								}, new DialogTaskHandler<String>("ÇëÇó",
-										"ÇëÇó²âÊÔÖĞ...") {
+								}, new DialogTaskHandler<String>("è¯·æ±‚",
+										"è¯·æ±‚æµ‹è¯•ä¸­...") {
 									@Override
 									public void preDoing() {
 										// TODO Auto-generated method stub
@@ -254,8 +254,8 @@ public class RestActivity extends ZWActivity {
 								RestActivity.this,
 								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
 								HttpMethod.GET, new TypeReference<String>() {
-								}, new DialogTaskHandler<String>("ÇëÇó",
-										"ÇëÇó²âÊÔÖĞ...") {
+								}, new DialogTaskHandler<String>("è¯·æ±‚",
+										"è¯·æ±‚æµ‹è¯•ä¸­...") {
 									@Override
 									public void preDoing() {
 										// TODO Auto-generated method stub
@@ -276,8 +276,8 @@ public class RestActivity extends ZWActivity {
 						RestActivity.this,
 						"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
 						HttpMethod.GET, new TypeReference<String>() {
-						}, new DialogTaskHandler<String>("ÇëÇó",
-								"ÇëÇó²âÊÔÖĞ...") {
+						}, new DialogTaskHandler<String>("è¯·æ±‚",
+								"è¯·æ±‚æµ‹è¯•ä¸­...") {
 							@Override
 							public void preDoing() {
 								// TODO Auto-generated method stub
@@ -339,7 +339,7 @@ public class RestActivity extends ZWActivity {
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			infoView.setText("ÇëÇó½á¹û£º\n" + result);
+			infoView.setText("è¯·æ±‚ç»“æœï¼š\n" + result);
 		}
 	}
 
@@ -367,7 +367,7 @@ public class RestActivity extends ZWActivity {
 		protected void onPostExecute(Result result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			infoView.setText("ÇëÇó½á¹û£º\n" + result);
+			infoView.setText("è¯·æ±‚ç»“æœï¼š\n" + result);
 		}
 	}
 
@@ -394,7 +394,7 @@ public class RestActivity extends ZWActivity {
 		protected void onPostExecute(Result result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			infoView.setText("ÇëÇó½á¹û£º\n" + result);
+			infoView.setText("è¯·æ±‚ç»“æœï¼š\n" + result);
 		}
 	}
 }

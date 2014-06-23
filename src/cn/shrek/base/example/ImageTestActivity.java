@@ -99,7 +99,7 @@ public class ImageTestActivity extends ZWActivity {
 //		mImageBo.afterLoadHeight = 200;
 //		mImageBo.afterLoadWidth = 400;
 //		mImageBo.cachePath = new File(
-//				Environment.getExternalStorageDirectory(), "²âÊÔ¿´¿´");
+//				Environment.getExternalStorageDirectory(), "æµ‹è¯•çœ‹çœ‹");
 //		mImageBo.cachePath.mkdir();
 //		Bitmap mBitmap = ((BitmapDrawable) getResources().getDrawable(
 //				R.drawable.ic_launcher)).getBitmap();

@@ -1,7 +1,7 @@
 package cn.shrek.base.example.bean;
 
 /**
- * ²ΛΖ·ΏΪΞ¶ΚµΜεΐΰ
+ * θε“ε£ε‘³ε®δ½“η±»
  * 
  * @author david
  * 
