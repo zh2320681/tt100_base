@@ -10,14 +10,14 @@ import cn.shrek.base.util.ZWLogger;
 import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
 
 /**
- * @Description ÊÇÒ»¸ö¼ì²âÍøÂç×´Ì¬¸Ä±äµÄ£¬ĞèÒªÅäÖÃ <receiver
+ * @Description æ˜¯ä¸€ä¸ªæ£€æµ‹ç½‘ç»œçŠ¶æ€æ”¹å˜çš„ï¼Œéœ€è¦é…ç½® <receiver
  *              android:name="cn.tt100.base.util.net.ZWNetworkStateReceiver" >
  *              <intent-filter> <action
  *              android:name="android.net.conn.CONNECTIVITY_CHANGE" /> <action
  *              android:name="android.gzcpc.conn.CONNECTIVITY_CHANGE" />
  *              </intent-filter> </receiver>
  * 
- *              ĞèÒª¿ªÆôÈ¨ÏŞ <uses-permission
+ *              éœ€è¦å¼€å¯æƒé™ <uses-permission
  *              android:name="android.permission.CHANGE_NETWORK_STATE" />
  *              <uses-permission
  *              android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -48,12 +48,12 @@ public class ZWNetworkStateReceiver extends BroadcastReceiver {
 		if (intent.getAction().equalsIgnoreCase(ANDROID_NET_CHANGE_ACTION)
 				|| intent.getAction().equalsIgnoreCase(
 						TA_ANDROID_NET_CHANGE_ACTION)) {
-			ZWLogger.printLog(ZWNetworkStateReceiver.this, "ÍøÂç×´Ì¬¸Ä±ä.");
+			ZWLogger.printLog(ZWNetworkStateReceiver.this, "ç½‘ç»œçŠ¶æ€æ”¹å˜.");
 			if (!ZWNetWorkUtil.isNetworkAvailable(context)) {
-				ZWLogger.printLog(ZWNetworkStateReceiver.this, "Ã»ÓĞÍøÂçÁ¬½Ó.");
+				ZWLogger.printLog(ZWNetworkStateReceiver.this, "æ²¡æœ‰ç½‘ç»œè¿æ¥.");
 				networkAvailable = false;
 			} else {
-				ZWLogger.printLog(ZWNetworkStateReceiver.this, "ÍøÂçÁ¬½Ó³É¹¦.");
+				ZWLogger.printLog(ZWNetworkStateReceiver.this, "ç½‘ç»œè¿æ¥æˆåŠŸ.");
 				netType = ZWNetWorkUtil.getAPNType(context);
 				networkAvailable = true;
 			}
@@ -62,7 +62,7 @@ public class ZWNetworkStateReceiver extends BroadcastReceiver {
 	}
 
 	/**
-	 * ×¢²áÍøÂç×´Ì¬¹ã²¥
+	 * æ³¨å†Œç½‘ç»œçŠ¶æ€å¹¿æ’­
 	 * 
 	 * @param mContext
 	 */
@@ -75,7 +75,7 @@ public class ZWNetworkStateReceiver extends BroadcastReceiver {
 	}
 
 	/**
-	 * ¼ì²éÍøÂç×´Ì¬
+	 * æ£€æŸ¥ç½‘ç»œçŠ¶æ€
 	 * 
 	 * @param mContext
 	 */
@@ -86,7 +86,7 @@ public class ZWNetworkStateReceiver extends BroadcastReceiver {
 	}
 
 	/**
-	 * ×¢ÏúÍøÂç×´Ì¬¹ã²¥
+	 * æ³¨é”€ç½‘ç»œçŠ¶æ€å¹¿æ’­
 	 * 
 	 * @param mContext
 	 */
@@ -103,7 +103,7 @@ public class ZWNetworkStateReceiver extends BroadcastReceiver {
 	}
 
 	/**
-	 * »ñÈ¡µ±Ç°ÍøÂç×´Ì¬£¬trueÎªÍøÂçÁ¬½Ó³É¹¦£¬·ñÔòÍøÂçÁ¬½ÓÊ§°Ü
+	 * è·å–å½“å‰ç½‘ç»œçŠ¶æ€ï¼Œtrueä¸ºç½‘ç»œè¿æ¥æˆåŠŸï¼Œå¦åˆ™ç½‘ç»œè¿æ¥å¤±è´¥
 	 * 
 	 * @return
 	 */
@@ -129,7 +129,7 @@ public class ZWNetworkStateReceiver extends BroadcastReceiver {
 	}
 
 	/**
-	 * ×¢²áÍøÂçÁ¬½Ó¹Û²ìÕß
+	 * æ³¨å†Œç½‘ç»œè¿æ¥è§‚å¯Ÿè€…
 	 * 
 	 * @param observerKey
 	 *            observerKey
@@ -142,7 +142,7 @@ public class ZWNetworkStateReceiver extends BroadcastReceiver {
 	}
 
 	/**
-	 * ×¢ÏúÍøÂçÁ¬½Ó¹Û²ìÕß
+	 * æ³¨é”€ç½‘ç»œè¿æ¥è§‚å¯Ÿè€…
 	 * 
 	 * @param resID
 	 *            observerKey

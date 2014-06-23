@@ -4,12 +4,12 @@ import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
 
 public interface ZWNetChangeObserver {
 	/**
-	 * ÍøÂçÁ¬½ÓÁ¬½ÓÊ±µ÷ÓÃ
+	 * ç½‘ç»œè¿æ¥è¿æ¥æ—¶è°ƒç”¨
 	 */
 	public void onConnect(NetType type);
 
 	/**
-	 * µ±Ç°Ã»ÓĞÍøÂçÁ¬½Ó
+	 * å½“å‰æ²¡æœ‰ç½‘ç»œè¿æ¥
 	 */
 	public void onDisConnect();
 }

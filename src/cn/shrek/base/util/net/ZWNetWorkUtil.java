@@ -10,7 +10,7 @@ public class ZWNetWorkUtil {
 	}
 
 	/**
-	 * ÍøÂçÊÇ·ñ¿ÉÓÃ
+	 * ç½‘ç»œæ˜¯å¦å¯ç”¨
 	 * 
 	 * @param context
 	 * @return
@@ -30,7 +30,7 @@ public class ZWNetWorkUtil {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñÓĞÍøÂçÁ¬½Ó
+	 * åˆ¤æ–­æ˜¯å¦æœ‰ç½‘ç»œè¿æ¥
 	 * 
 	 * @param context
 	 * @return
@@ -49,7 +49,7 @@ public class ZWNetWorkUtil {
 	}
 
 	/**
-	 * ÅĞ¶ÏWIFIÍøÂçÊÇ·ñ¿ÉÓÃ
+	 * åˆ¤æ–­WIFIç½‘ç»œæ˜¯å¦å¯ç”¨
 	 * 
 	 * @param context
 	 * @return
@@ -68,7 +68,7 @@ public class ZWNetWorkUtil {
 	}
 
 	/**
-	 * ÅĞ¶ÏMOBILEÍøÂçÊÇ·ñ¿ÉÓÃ
+	 * åˆ¤æ–­MOBILEç½‘ç»œæ˜¯å¦å¯ç”¨
 	 * 
 	 * @param context
 	 * @return
@@ -87,7 +87,7 @@ public class ZWNetWorkUtil {
 	}
 
 	/**
-	 * »ñÈ¡µ±Ç°ÍøÂçÁ¬½ÓµÄÀàĞÍĞÅÏ¢
+	 * è·å–å½“å‰ç½‘ç»œè¿æ¥çš„ç±»å‹ä¿¡æ¯
 	 * 
 	 * @param context
 	 * @return
@@ -106,7 +106,7 @@ public class ZWNetWorkUtil {
 	}
 
 	/**
-	 * »ñÈ¡µ±Ç°µÄÍøÂç×´Ì¬ -1£ºÃ»ÓĞÍøÂç 1£ºWIFIÍøÂç2£ºwap ÍøÂç3£ºnetÍøÂç
+	 * è·å–å½“å‰çš„ç½‘ç»œçŠ¶æ€ -1ï¼šæ²¡æœ‰ç½‘ç»œ 1ï¼šWIFIç½‘ç»œ2ï¼šwap ç½‘ç»œ3ï¼šnetç½‘ç»œ
 	 * 
 	 * @author Shrek
 	 * @param context

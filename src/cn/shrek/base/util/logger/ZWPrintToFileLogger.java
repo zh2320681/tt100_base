@@ -16,7 +16,7 @@ import cn.shrek.base.util.LogLevel;
 import cn.shrek.base.util.ZWLogger;
 
 /**
- * @Description ZWPrintToFileLoggerÊÇ´òÓ¡µ½sdcardÉÏÃæµÄÈÕÖ¾Àà
+ * @Description ZWPrintToFileLoggeræ˜¯æ‰“å°åˆ°sdcardä¸Šé¢çš„æ—¥å¿—ç±»
  * @author Shrek
  * @date 2014-5-8
  * @version V1.0
@@ -58,7 +58,7 @@ public class ZWPrintToFileLogger implements ILogger {
 		}
 //		basePath = logDir.getAbsolutePath() + "/"
 //				+ ;
-		//¼ì²âµ±Ç°ÎÄ¼şÊÇ·ñ³¬¹ıÊ±¼ä
+		//æ£€æµ‹å½“å‰æ–‡ä»¶æ˜¯å¦è¶…è¿‡æ—¶é—´
 		File[] timeoutFiles = logDir.listFiles();
 		Date nowDate = new Date();
 		for(File file : timeoutFiles){
@@ -83,7 +83,7 @@ public class ZWPrintToFileLogger implements ILogger {
 				}
 				
 				if(isDel){
-					ZWLogger.printLog(this, "ÈÕÖ¾ÎÄ¼ş"+ file.getName() +"ÓĞĞ§ÆÚ³¬Ê±£¬ÒÑÉ¾³ı!");
+					ZWLogger.printLog(this, "æ—¥å¿—æ–‡ä»¶"+ file.getName() +"æœ‰æ•ˆæœŸè¶…æ—¶ï¼Œå·²åˆ é™¤!");
 					file.delete();
 				}
 			}
