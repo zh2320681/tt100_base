@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     2014年6月18日 上午9:27:40                                                        
+
+     Hello NDK    
+     My first NDK project!! Woo~~~
+                   
+     shrek                                                                
+     ====================================================================== -->
+<project name="Hello NDK" default="BuildHeaders">
+	<description>
+            My first NDK project
+    </description>
+
+	<!-- ================================= 
+          target: default              
+         ================================= -->
+	<target name="BuildHeaders">
+		<antcall target="BuildGetString" />
+
+	</target>
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: depends                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="BuildGetString">
+		<javah class="cn.shrek.base.util.data.ZWAppData" destdir="./jni" classpath="./bin/classes/">
+		</javah>
+	</target>
+
+	<target name="BuildGetInt">
+		<javah class="com.example.hellondk.Getint" destdir="./jni" classpath="./bin/classes/">
+		</javah>
+	</target>
+</project>

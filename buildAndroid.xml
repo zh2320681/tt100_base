@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="HelloAPK" default="begin">
+
+	<!-- 使用第三方的ant包，使ant支持for循环 -->
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="libs/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<property file="build.properties" />
+
+	<!--
+    The local.properties file is created and updated by the 'android' tool.
+         It contains the path to the SDK. It should *NOT* be checked into
+         Version Control Systems.
+    <property file="local.properties" />
+    -->
+
+
+	<!--
+    The ant.properties file can be created by you. It is only edited by the
+         'android' tool to add properties to it.
+         This is the place to change some Ant specific build properties.
+         Here are some properties you may want to change/update:
+
+         source.dir
+             The name of the source directory. Default is 'src'.
+         out.dir
+             The name of the output directory. Default is 'bin'.
+
+         For other overridable properties, look at the beginning of the rules
+         files in the SDK, at tools/ant/build.xml
+
+         Properties related to the SDK location or the project target should
+         be updated using the 'android' tool with the 'update' action.
+
+         This file is an integral part of the build system for your
+         application and should be checked into Version Control Systems.
+
+    <property file="ant.properties" />
+    -->
+
+	<property name="jar.libs.dir" value="${jar.libs.dir}" />
+
+	<!--
+         The project.properties file is created and updated by the 'android'
+         tool, as well as ADT.
+
+         This contains project specific properties such as project target, and library
+         dependencies. Lower level build properties are stored in ant.properties
+         (or in .classpath for Eclipse projects).
+
+         This file is an integral part of the build system for your
+         application and should be checked into Version Control Systems.
+    -->
+
+	<!-- <loadproperties srcFile="${project.dir}/project.properties" /> -->
+	<loadproperties srcFile="./project.properties" />
+	<!-- quick check on sdk.dir -->
+
+	<fail message="sdk.dir is missing. Make sure to generate local.properties using &apos;android update project&apos; or to inject it through an env var" unless="sdk.dir" />
+
+	<property name="channelname" value="pateo" />
+
+	<property name="channelkey" value="12347" />
+
+	<target name="begin">
+		<antcall target="-ndk-build" />
+		<antcall target="deploy" />
+		<!-- <antcall target="clean" />-->
+		<antcall target="clean" />
+	</target>
+
+	<condition property="isInstall">
+		<istrue value="${isInstall}" />
+	</condition>
+
+	<!-- clean -->
+	<target name="clean">
+		<delete dir="./bin" verbose="true">
+			<exclude name="classes.dex"/>
+			<exclude name="AndroidManifest.xml"/>
+			<exclude name="proguard.txt"/>
+		</delete>
+	</target>
+
+
+	<!-- 循环打包 -->
+	<target name="deploy">
+		<foreach delimiter="," list="${channel.list}" param="nameandchannel" target="modify_manifest">
+		</foreach>
+	</target>
+
+	<target name="modify_manifest">
+		<!-- 获取渠道名字 -->
+		<propertyregex input="${nameandchannel}" override="true" property="channelname" regexp="(.*):" select="\1" />
+		<!-- 获取渠道号码 -->
+		<propertyregex input="${nameandchannel}" override="true" property="channelkey" regexp=":(.*)" select="\1" />
+		<!--
+        正则匹配替换渠道号 
+		<replaceregexp flags="g" byline="false" encoding="UTF-8">  
+			<regexp pattern='meta-data android:name="CHANNEL" android:value="(.*)"' />		
+			<substitution expression='meta-data android:name="CHANNEL" android:value="${channelkey}"' />  
+			<fileset dir="" includes="AndroidManifest.xml" />  
+		</replaceregexp>
+        -->
+		<property name="out.final.file" location="${apk.out.dir}/${project.name}_${channelname}_${project.version}.apk" />
+		<echo>删除原来APK文件</echo>
+		<delete file="${apk.out.dir}/${project.name}_${channelname}_${project.version}.apk" />
+		<antcall target="release" />
+		<echo>#################################################</echo>
+		<echo>################  APK已经生成！  ##################</echo>
+		<echo>#################################################</echo>
+		<echo>路径: ${apk.out.dir}/${project.name}_${channelname}_${project.version}.apk</echo>
+
+		<antcall target="install">
+			<param name="apkPath" value="${apk.out.dir}/${project.name}_${channelname}_${project.version}.apk" />
+		</antcall>
+
+		<echo>打开程序！</echo>
+		<antcall target="openAPK" />
+	</target>
+
+
+	<!-- 安装 -->
+	<target name="install" if="isInstall">
+		<echo>开始安装:${apkPath}</echo>
+		<exec executable="${sdk.dir}/platform-tools/adb" failonerror="true">
+			<arg value="uninstall" />
+			<arg value="${apkPath}" />
+		</exec>
+		<exec executable="${sdk.dir}/platform-tools/adb" failonerror="true">
+			<arg value="install" />
+			<arg value="${apkPath}" />
+		</exec>
+	</target>
+
+	<target name="openAPK">
+		<!-- <xmltask source="AndroidManifest.xml">
+			<copy path="/manifest/@android:versionCode" property="androidVersionCode" />
+			<copy path="/manifest/@android:versionName" property="androidVersionName" />
+			<copy path="/manifest/@package" property="androidPackage" />
+		</xmltask>
+		<echo message="Version code: ${androidVersionCode}" />
+		<echo message="Version name: ${androidVersionName}" />
+		<echo message="package: ${androidPackage}" />-->
+
+		<xmlproperty file="AndroidManifest.xml" prefix="mymanifest" collapseAttributes="true" />
+		<echo message="Package code: ${mymanifest.manifest.package}" />
+		<echo message="Package code: ${mymanifest.manifest.application.activity.android:name}" />
+		<!-- shell am start -n breakan.test/breakan.test.TestActivity -->
+		<exec executable="${sdk.dir}/platform-tools/adb" failonerror="true">
+			<arg value="shell" />
+			<arg value="am" />
+			<arg value="start" />
+			<arg value="-n" />
+			<arg value="${mymanifest.manifest.package}/${mymanifest.manifest.application.activity.android:name}" />
+		</exec>
+	</target>
+	<!--
+     extension targets. Uncomment the ones where you want to do custom work
+     in between standard targets
+    -->
+	<!--
+    <target name="-pre-build">
+    </target>
+    <target name="-pre-compile">
+    </target>
+
+    /* This is typically used for code obfuscation.
+       Compiled code location: ${out.classes.absolute.dir}
+       If this is not done in place, override ${out.dex.input.absolute.dir} */
+    <target name="-post-compile">
+    </target>
+    -->
+
+
+	<!--
+    	如果项目包含了jni代码，希望在打包时自动重新编译so库，可以修改build.xml文件。
+		修改方法为，在引用sdk的build.xml文件之前添加如下target：
+    -->
+	<target name="-ndk-build">
+		<echo>开始执行ndk-build</echo>
+		<exec executable="${ndk.dir}" failonerror="true">
+			<arg value="clean" />
+		</exec>
+		<exec executable="${ndk.dir}" failonerror="true" />
+	</target>
+
+
+	<!--
+         Import the actual build file.
+
+         To customize existing targets, there are two options:
+         - Customize only one target:
+             - copy/paste the target into this file, *before* the
+               <import> task.
+             - customize it to your needs.
+         - Customize the whole content of build.xml
+             - copy/paste the content of the rules files (minus the top node)
+               into this file, replacing the <import> task.
+             - customize to your needs.
+
+         ***********************
+         ****** IMPORTANT ******
+         ***********************
+         In all cases you must update the value of version-tag below to read 'custom' instead of an integer,
+         in order to avoid having your file be overridden by tools such as "android update project"
+    -->
+	<!-- version-tag: 导入anroid sdk 默认的ant写好的build.xml -->
+	<echo>导入build.xml</echo>
+	<import file="${sdk.dir}/tools/ant/build.xml" />
+
+</project>
