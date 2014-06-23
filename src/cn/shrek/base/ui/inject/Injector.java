@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 /**
- * ×¢ÈëÆ÷
+ * æ³¨å…¥å™¨
  * @author shrek
  *
  */
@@ -39,7 +39,7 @@ public class Injector {
 //		Class<?> clazz = field.getClass();
 		
 		Class<?> clazz = objIntance.getClass();
-		//µÃµ½ËùÓĞÊôĞÔ(²»°üÀ¨×ÓÀà)
+		//å¾—åˆ°æ‰€æœ‰å±æ€§(ä¸åŒ…æ‹¬å­ç±»)
 		Field[] declaredFields = clazz.getDeclaredFields();
 		Field[] publicFields = clazz.getFields();
 		List<Field> allFields = new ArrayList<Field>();

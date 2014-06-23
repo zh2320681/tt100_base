@@ -35,16 +35,16 @@ public abstract class ZWFragment extends Fragment {
 						"layout", getActivity().getPackageName());
 			}
 		} catch (Exception e) {
-			// ÉèÖÃ²¼¾ÖÊ§°Ü
-			ZWLogger.printLog(this, "FragmentÃû³Æ:" + clazz.getSimpleName()
-					+ "¼ÓÔØ²¼¾ÖÊ§°Ü!");
+			// è®¾ç½®å¸ƒå±€å¤±è´¥
+			ZWLogger.printLog(this, "Fragmentåç§°:" + clazz.getSimpleName()
+					+ "åŠ è½½å¸ƒå±€å¤±è´¥!");
 			e.printStackTrace();
 		}
 		
 		if(layoutId == 0){
-			ZWLogger.printLog(this, "FragmentÃû³Æ:" + clazz.getSimpleName()
-					+ "¼ÓÔØ²¼¾ÖÊ§°Ü!");
-			throw new InstantiationError("¹¹½¨Fragment²¼¾ÖÊ§°Ü£¡");
+			ZWLogger.printLog(this, "Fragmentåç§°:" + clazz.getSimpleName()
+					+ "åŠ è½½å¸ƒå±€å¤±è´¥!");
+			throw new InstantiationError("æ„å»ºFragmentå¸ƒå±€å¤±è´¥ï¼");
 		}
 		rootView = inflater.inflate(layoutId, container, false);
 		Injector.instance().injectValue(getActivity(), this);
@@ -55,7 +55,7 @@ public abstract class ZWFragment extends Fragment {
 	public abstract void onCreateView(Bundle savedInstanceState);
 	
 	/**
-	 * µÃµ½tagµÄ×Ó´®
+	 * å¾—åˆ°tagçš„å­ä¸²
 	 * @return
 	 */
 	public String getTagInfo(){

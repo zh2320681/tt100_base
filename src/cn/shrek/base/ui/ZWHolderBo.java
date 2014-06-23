@@ -43,12 +43,12 @@ public class ZWHolderBo extends ZWBo {
 	}
 
 	/**
-	 * ÊµÀı»¯ µÃµ½listHolder
-	 * ×¢Òâ Èç¹ûZWHolderBoÄÚ²¿Àà  ÒªÌîĞ´ class¶ÔÏó ºÍ ÔÚË­µÄÄÚ²¿ÀàÀïÃæhostObj
-	 * ±ØĞëÌá¹©ÎŞ²ÎÊıµÄ¹¹Ôì·½·¨
+	 * å®ä¾‹åŒ– å¾—åˆ°listHolder
+	 * æ³¨æ„ å¦‚æœZWHolderBoå†…éƒ¨ç±»  è¦å¡«å†™ classå¯¹è±¡ å’Œ åœ¨è°çš„å†…éƒ¨ç±»é‡Œé¢hostObj
+	 * å¿…é¡»æä¾›æ— å‚æ•°çš„æ„é€ æ–¹æ³•
 	 * @param ctx
-	 * @param clazz Íâ²¿Àà ZWHolderBo.class  ÄÚ²¿Àà xxx.xxx.ZWHolderBo.class
-	 * @param hostObj  null ²»ÊÇÄÚ²¿Àà   ÄÚ²¿Àà ÎªÍâ²¿ÀàµÄÊ¾Àı
+	 * @param clazz å¤–éƒ¨ç±» ZWHolderBo.class  å†…éƒ¨ç±» xxx.xxx.ZWHolderBo.class
+	 * @param hostObj  null ä¸æ˜¯å†…éƒ¨ç±»   å†…éƒ¨ç±» ä¸ºå¤–éƒ¨ç±»çš„ç¤ºä¾‹
 	 * @param layoutId
 	 * @param parentView
 	 * @param regex
@@ -83,7 +83,7 @@ public class ZWHolderBo extends ZWBo {
 		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			ZWLogger.printLog(clazz.getSimpleName(), "ZWHolderBoµÄ×ÓÀà ±ØĞëÓĞ×ÓÀàµÄ¹¹Ôì·½·¨");
+			ZWLogger.printLog(clazz.getSimpleName(), "ZWHolderBoçš„å­ç±» å¿…é¡»æœ‰å­ç±»çš„æ„é€ æ–¹æ³•");
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

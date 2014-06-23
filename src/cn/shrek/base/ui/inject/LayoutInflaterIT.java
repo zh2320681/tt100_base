@@ -20,10 +20,10 @@ public class LayoutInflaterIT implements InjectTransfor {
 				field.set(objInstance, LayoutInflater.from(act));
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(this, field.getName() + "¸³ÖµÊ§°Ü!");
+				ZWLogger.printLog(this, field.getName() + "èµ‹å€¼å¤±è´¥!");
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(this, field.getName() + "¸³ÖµÊ±·ÃÎÊÊ§°Ü!");
+				ZWLogger.printLog(this, field.getName() + "èµ‹å€¼æ—¶è®¿é—®å¤±è´¥!");
 			}
 		}
 	}

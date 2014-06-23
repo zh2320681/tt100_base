@@ -7,7 +7,7 @@ import android.app.Activity;
 public interface InjectTransfor {
 	
 	/**
-	 * ÉèÖÃÖµ
+	 * è®¾ç½®å€¼
 	 * @param ctx
 	 * @param field
 	 * @param objInstance 

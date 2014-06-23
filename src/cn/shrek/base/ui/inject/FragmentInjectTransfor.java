@@ -31,7 +31,7 @@ public class FragmentInjectTransfor implements InjectTransfor {
 						field.getName()); // main_textBtn
 				int value = getIdValueIntoR(idFormat);
 				if(value == 0){
-					//Î´Í¨¹ı idFormatÕÒµ½  ³¢ÊÔÓÃÀàÃû×ÖÖ±½ÓÕÒ
+					//æœªé€šè¿‡ idFormatæ‰¾åˆ°  å°è¯•ç”¨ç±»åå­—ç›´æ¥æ‰¾
 					fragment = getFragment(field);
 				}else{
 					fragment = fAct.getSupportFragmentManager()
@@ -46,10 +46,10 @@ public class FragmentInjectTransfor implements InjectTransfor {
 				field.set(objInstance, fragment);
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(this, field.getName() + "¸³ÖµÊ§°Ü!");
+				ZWLogger.printLog(this, field.getName() + "èµ‹å€¼å¤±è´¥!");
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(this, field.getName() + "¸³ÖµÊ±·ÃÎÊÊ§°Ü!");
+				ZWLogger.printLog(this, field.getName() + "èµ‹å€¼æ—¶è®¿é—®å¤±è´¥!");
 			}
 			
 		}
@@ -57,7 +57,7 @@ public class FragmentInjectTransfor implements InjectTransfor {
 
 	
 	private Object getFragment(Field field){
-		ZWLogger.printLog(this, "ÊôĞÔÃû:"+field.getName()+"³¢ÊÔÓÃFragmentµÄÃû×Ö²éÕÒ");
+		ZWLogger.printLog(this, "å±æ€§å:"+field.getName()+"å°è¯•ç”¨Fragmentçš„åå­—æŸ¥æ‰¾");
 		Class<?> clazz = field.getType();
 		try {
 			return clazz.getConstructor().newInstance();

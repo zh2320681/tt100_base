@@ -68,20 +68,20 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 						"layout", packageName));
 			}
 		} catch (Exception e) {
-			// ÉèÖÃ²¼¾ÖÊ§°Ü
-			ZWLogger.printLog(activityName, "ActivityÃû³Æ:" + activityName
-					+ "¼ÓÔØ²¼¾ÖÊ§°Ü!");
+			// è®¾ç½®å¸ƒå±€å¤±è´¥
+			ZWLogger.printLog(activityName, "Activityåç§°:" + activityName
+					+ "åŠ è½½å¸ƒå±€å¤±è´¥!");
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * ³õÊ¼»¯
+	 * åˆå§‹åŒ–
 	 */
 	protected abstract void initialize();
 
 	/**
-	 * Ìí¼Ó¼àÌıÆ÷
+	 * æ·»åŠ ç›‘å¬å™¨
 	 */
 	protected abstract void addListener();
 
@@ -93,9 +93,9 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 		// Field f = clazz.getField(idName);
 		// value = f.getInt(null);
 		// } catch (NoSuchFieldException e) {
-		// System.out.println("Î´ÕÒµ½id:["+idName+"]µÄ¿Ø¼ş");
+		// System.out.println("æœªæ‰¾åˆ°id:["+idName+"]çš„æ§ä»¶");
 		// } catch (Exception e) {
-		// System.out.println("Î´ÕÒµ½id:["+idName+"]µÄ¿Ø¼ş");
+		// System.out.println("æœªæ‰¾åˆ°id:["+idName+"]çš„æ§ä»¶");
 		// }
 		// return value;
 		return getResources().getIdentifier(idName, "id", packageName);
@@ -113,7 +113,7 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 	}
 
 	/**
-	 * Ìí¼ÓÈÎÎñ
+	 * æ·»åŠ ä»»åŠ¡
 	 * 
 	 * @param task
 	 */
@@ -132,8 +132,8 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 				}
 			}
 			if (isExist) {
-				ZWLogger.printLog(this, "ÈÎÎñ:" + task.getTaskGuid()
-						+ "ÒÑ¾­´æÔÚÁË,²»ÄÜÔÙÖ´ĞĞ!");
+				ZWLogger.printLog(this, "ä»»åŠ¡:" + task.getTaskGuid()
+						+ "å·²ç»å­˜åœ¨äº†,ä¸èƒ½å†æ‰§è¡Œ!");
 			} else {
 				taskList.add(task);
 				return true;
@@ -164,7 +164,7 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 	}
 
 	/**
-	 * ÒÆ³ıÈÎÎñ
+	 * ç§»é™¤ä»»åŠ¡
 	 * 
 	 * @param task
 	 */
@@ -177,14 +177,14 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 	public abstract void notifyObserver(Object oldObj, Object newObj);
 
 	/**
-	 * ÍøÂçÁ¬½ÓÁ¬½ÓÊ±µ÷ÓÃ
+	 * ç½‘ç»œè¿æ¥è¿æ¥æ—¶è°ƒç”¨
 	 */
 	public void onConnect(NetType type) {
 
 	}
 
 	/**
-	 * µ±Ç°Ã»ÓĞÍøÂçÁ¬½Ó
+	 * å½“å‰æ²¡æœ‰ç½‘ç»œè¿æ¥
 	 */
 	public void onDisConnect() {
 

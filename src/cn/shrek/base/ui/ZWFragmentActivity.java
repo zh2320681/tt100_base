@@ -70,20 +70,20 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 						"layout", packageName));
 			}
 		} catch (Exception e) {
-			// ÉèÖÃ²¼¾ÖÊ§°Ü
-			ZWLogger.printLog(activityName, "ActivityÃû³Æ:" + activityName
-					+  "  ¼ÓÔØ²¼¾ÖÃû£ºR.layout."+ activityName.toLowerCase().replace("activity", "") +" ¼ÓÔØ²¼¾ÖÊ§°Ü!");
+			// è®¾ç½®å¸ƒå±€å¤±è´¥
+			ZWLogger.printLog(activityName, "Activityåç§°:" + activityName
+					+  "  åŠ è½½å¸ƒå±€åï¼šR.layout."+ activityName.toLowerCase().replace("activity", "") +" åŠ è½½å¸ƒå±€å¤±è´¥!");
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * ³õÊ¼»¯
+	 * åˆå§‹åŒ–
 	 */
 	protected abstract void initialize();
 
 	/**
-	 * Ìí¼Ó¼àÌıÆ÷
+	 * æ·»åŠ ç›‘å¬å™¨
 	 */
 	protected abstract void addListener();
 
@@ -99,7 +99,7 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 	}
 
 	/**
-	 * Ìí¼ÓÈÎÎñ
+	 * æ·»åŠ ä»»åŠ¡
 	 * 
 	 * @param task
 	 */
@@ -108,7 +108,7 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 			taskList.add(task);
 			return true;
 		}
-		
+
 		if (ZWApplication.isLoadRestRequest) {
 			boolean isExist = false;
 			for (ZWAsyncTask<?> zwTask : taskList) {
@@ -118,8 +118,8 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 				}
 			}
 			if (isExist) {
-				ZWLogger.printLog(this, "ÈÎÎñ:" + task.getTaskGuid()
-						+ "ÒÑ¾­´æÔÚÁË,²»ÄÜÔÙÖ´ĞĞ!");
+				ZWLogger.printLog(this, "ä»»åŠ¡:" + task.getTaskGuid()
+						+ "å·²ç»å­˜åœ¨äº†,ä¸èƒ½å†æ‰§è¡Œ!");
 			} else {
 				taskList.add(task);
 				return true;
@@ -127,9 +127,9 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 		}
 		return false;
 	}
-	
+
 	/**
-	 * fragmentµÄ²Ù×÷
+	 * fragmentçš„æ“ä½œ
 	 */
 	public void fragmentOpt(FragmentOperator run){
 		FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
@@ -139,7 +139,7 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 
 	public void addFragment(final int parentId , final ZWFragment fragment){
 		fragmentOpt(new FragmentOperator() {
-			
+
 			@Override
 			public void operator(FragmentTransaction trans) {
 				// TODO Auto-generated method stub
@@ -147,7 +147,7 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 			}
 		});
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
@@ -170,7 +170,7 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 	}
 
 	/**
-	 * ÒÆ³ıÈÎÎñ
+	 * ç§»é™¤ä»»åŠ¡
 	 * 
 	 * @param task
 	 */
@@ -183,21 +183,21 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 	public abstract void notifyObserver(Object oldObj, Object newObj);
 
 	/**
-	 * ÍøÂçÁ¬½ÓÁ¬½ÓÊ±µ÷ÓÃ
+	 * ç½‘ç»œè¿æ¥è¿æ¥æ—¶è°ƒç”¨
 	 */
 	public void onConnect(NetType type) {
 
 	}
 
 	/**
-	 * µ±Ç°Ã»ÓĞÍøÂçÁ¬½Ó
+	 * å½“å‰æ²¡æœ‰ç½‘ç»œè¿æ¥
 	 */
 	public void onDisConnect() {
 
 	}
-	
+
 	/**
-	 * fragment²Ù×÷
+	 * fragmentæ“ä½œ
 	 * @author shrek
 	 *
 	 */

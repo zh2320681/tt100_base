@@ -40,13 +40,13 @@ public class ViewInjectTransfor implements InjectTransfor {
 				}
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(this, field.getName() + "¸³ÖµÊ§°Ü!");
+				ZWLogger.printLog(this, field.getName() + "èµ‹å€¼å¤±è´¥!");
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(this, field.getName() + "¸³ÖµÊ±·ÃÎÊÊ§°Ü!");
+				ZWLogger.printLog(this, field.getName() + "èµ‹å€¼æ—¶è®¿é—®å¤±è´¥!");
 			}
 
-			// ×Ô¶¯ÉèÖÃOnClcikListener
+			// è‡ªåŠ¨è®¾ç½®OnClcikListener
 			if (autoInject != null
 					&& autoInject.clickSelector() != AutoInject.NULL_STR_VALUE) {
 				Class<?> viewClazz = field.getType();
@@ -58,7 +58,7 @@ public class ViewInjectTransfor implements InjectTransfor {
 				} catch (NoSuchMethodException e) {
 					// TODO Auto-generated catch block
 					ZWLogger.printLog(this, field.getName()
-							+ "ÉèÖÃsetOnClickListener()·½·¨Ê§°Ü!");
+							+ "è®¾ç½®setOnClickListener()æ–¹æ³•å¤±è´¥!");
 				}
 				if (clickMethod != null) {
 					Field clickField;
@@ -71,15 +71,15 @@ public class ViewInjectTransfor implements InjectTransfor {
 					} catch (NoSuchFieldException e) {
 						// TODO Auto-generated catch block
 						ZWLogger.printLog(this,
-								"Ã»ÓÐÕÒµ½·½·¨:" + autoInject.clickSelector());
+								"æ²¡æœ‰æ‰¾åˆ°æ–¹æ³•:" + autoInject.clickSelector());
 					} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block
 						ZWLogger.printLog(BaseUtil.class, field.getName()
-								+ "¸³ÖµÊ§°Ü!");
+								+ "èµ‹å€¼å¤±è´¥!");
 					} catch (IllegalAccessException e) {
 						// TODO Auto-generated catch block
 						ZWLogger.printLog(BaseUtil.class, field.getName()
-								+ "¸³ÖµÊ±·ÃÎÊÊ§°Ü!");
+								+ "èµ‹å€¼æ—¶è®¿é—®å¤±è´¥!");
 					} catch (InvocationTargetException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -89,7 +89,7 @@ public class ViewInjectTransfor implements InjectTransfor {
 			}
 		}
 
-		// ×Ô¶¯ÉèÖÃ¹Û²ì°ó¶¨
+		// è‡ªåŠ¨è®¾ç½®è§‚å¯Ÿç»‘å®š
 		OberverLoad oberverLoad = field.getAnnotation(OberverLoad.class);
 		if (oberverLoad != null) {
 			field.setAccessible(true);
@@ -104,10 +104,10 @@ public class ViewInjectTransfor implements InjectTransfor {
 						mModelObservable);
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(BaseUtil.class, field.getName() + "¸³ÖµÊ§°Ü!");
+				ZWLogger.printLog(BaseUtil.class, field.getName() + "èµ‹å€¼å¤±è´¥!");
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(BaseUtil.class, field.getName() + "¸³ÖµÊ±·ÃÎÊÊ§°Ü!");
+				ZWLogger.printLog(BaseUtil.class, field.getName() + "èµ‹å€¼æ—¶è®¿é—®å¤±è´¥!");
 			}
 		}
 	}
