@@ -17,6 +17,6 @@ public @interface AutoInject
 	
 	String clickSelector() default NULL_STR_VALUE; 
 	
-	//¶Ô fragmentµÄ Ö§³Ö ²¼¾ÖID R.layout.fragment11
+	//å¯¹ fragmentçš„ æ”¯æŒ å¸ƒå±€ID R.layout.fragment11
 //	int fragmentLayoutId() default NULL_INT_VALUE;
 }

@@ -15,7 +15,7 @@ public @interface DatabaseField {
 	boolean allowGeneratedIdInsert() default true;
 
 	/**
-	 * ÊÇ·ñ¿ÉÒÔÎª¿Õ
+	 * æ˜¯å¦å¯ä»¥ä¸ºç©º
 	 * 
 	 * @return
 	 */
@@ -24,50 +24,50 @@ public @interface DatabaseField {
 //	String columnDefinition();
 
 	/**
-	 * È±Ê¡µÄ ×Ö¶ÎÃû
+	 * ç¼ºçœçš„ å­—æ®µå
 	 * 
 	 * @return
 	 */
 	String columnName() default "";
 
 	/**
-	 * Êı¾İÀàĞÍ
+	 * æ•°æ®ç±»å‹
 	 * 
 	 * @return
 	 */
 //	DataType dataType();
 
 	/**
-	 * Ä¬ÈÏÖµ
+	 * é»˜è®¤å€¼
 	 * 
 	 * @return
 	 */
 	String defaultValue() default DEFAULT_STRING;
 
 	/**
-	 * ÊÇ·ñÊÇÍâ¼ü 
+	 * æ˜¯å¦æ˜¯å¤–é”® 
 	 * @return
 	 */
 	boolean foreign() default false;
 	/**
-	 * ½¨±íµÄÊ±ºò ÊÇ·ñ×Ô¶¯´´½¨
+	 * å»ºè¡¨çš„æ—¶å€™ æ˜¯å¦è‡ªåŠ¨åˆ›å»º
 	 * @return
 	 */
 	boolean foreignAutoCreate() default false;
 	/**
-	 * ¼¶Áª²Ù×÷
+	 * çº§è”æ“ä½œ
 	 * @return
 	 */
 	boolean foreignAutoRefresh() default false;
 
 	/**
-	 * Íâ¼ü ¶ÔÓÚÊôĞÔÃû ÀıÈç Student.javaÖĞ Teacher¶ÔÏó  Ö¸Ïò TeacherµÄidµÄÊôĞÔÃû
+	 * å¤–é”® å¯¹äºå±æ€§å ä¾‹å¦‚ Student.javaä¸­ Teacherå¯¹è±¡  æŒ‡å‘ Teacherçš„idçš„å±æ€§å
 	 * @return
 	 */
 	String foreignColumnName() default "";
 	
 	/**
-	 * ÔİÊ±ÓÃÔÚÈÕÆÚµÄ ¸ñÊ½»¯
+	 * æš‚æ—¶ç”¨åœ¨æ—¥æœŸçš„ æ ¼å¼åŒ–
 	 * @return
 	 */
 	String format() default "";
@@ -82,13 +82,13 @@ public @interface DatabaseField {
 	/**
 	 * Whether the field is the id field or not. Default is false. Only one
 	 * field can have this set in a class.
-	 * Ö§³ÖÁªºÏÖ÷¼ü
+	 * æ”¯æŒè”åˆä¸»é”®
 	 */
 	boolean id() default false;
 	
 	/**
-	 * ÊÇ·ñ ´´½¨ Ë÷Òı
-	 * Ôİ²»Ö§³Ö 
+	 * æ˜¯å¦ åˆ›å»º ç´¢å¼•
+	 * æš‚ä¸æ”¯æŒ 
 	 * @return
 	 */
 	boolean index() default false;
@@ -100,7 +100,7 @@ public @interface DatabaseField {
 	public boolean throwIfNull() default false;
 
 	/**
-	 * ÊÇ·ñÎ¨Ò»
+	 * æ˜¯å¦å”¯ä¸€
 	 * @return
 	 */
 	boolean unique() default false;
@@ -108,7 +108,7 @@ public @interface DatabaseField {
 //	public String unknownEnumName();
 
 	/**
-	 * ÊÇ·ñÊÔÓÃ get set·½·¨
+	 * æ˜¯å¦è¯•ç”¨ get setæ–¹æ³•
 	 * @return
 	 */
 	boolean useGetSet() default false;
