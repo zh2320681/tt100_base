@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013  WhiteCat 白猫 (www.thinkandroid.cn)
+ * Copyright (C) 2013  WhiteCat 鐧界尗 (www.thinkandroid.cn)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 
 /**
- * @Description ZWRequest是提交的数据
+ * @Description ZWRequest鏄彁浜ょ殑鏁版嵁
  */
 public class ZWRequest implements Serializable {
 	private static final long serialVersionUID = 444834403356593608L;

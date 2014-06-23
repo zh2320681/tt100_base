@@ -5,7 +5,7 @@ import cn.shrek.base.mvc.common.ZWRequest;
 import cn.shrek.base.mvc.common.ZWResponse;
 
 /**
- * @Description ZWICommandÒ»¸öÃüÁî½Ó¿ÚËùÓĞÃüÁîĞèÒª´Ó´ËÊµÏÖ
+ * @Description ZWICommandä¸€ä¸ªå‘½ä»¤æ¥å£æ‰€æœ‰å‘½ä»¤éœ€è¦ä»æ­¤å®ç°
  * @author Shrek
  */
 public interface ZWICommand{

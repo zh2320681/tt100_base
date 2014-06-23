@@ -5,13 +5,9 @@ import cn.shrek.base.util.ZWLogger;
 /**
  * @Title ThreadPool
  * @package com.ta.mvc.command
- * @Description ThreadPoolÊÇcommandµÄÏß³Ì³Ø
- * @author °×Ã¨
- * @date 2013-1-16 ÏÂÎç 16:51
- * @version V1.0
  */
 public class ZWThreadPool {
-	// Ïß³ÌµÄ×î´óÊıÁ¿
+	// çº¿ç¨‹çš„æœ€å¤§æ•°é‡
 	private static final int MAX_THREADS_COUNT = 2;
 	private ZWCommandThread threads[] = null;
 	private boolean started = false;
@@ -30,7 +26,7 @@ public class ZWThreadPool {
 
 	public void start() {
 		if (!started) {
-			ZWLogger.printLog(ZWThreadPool.this, "Ïß³Ì³Ø¿ªÊ¼ÔËĞĞ£¡");
+			ZWLogger.printLog(ZWThreadPool.this, "çº¿ç¨‹æ± å¼€å§‹è¿è¡Œï¼");
 			int threadCount = MAX_THREADS_COUNT;
 
 			threads = new ZWCommandThread[threadCount];
@@ -39,12 +35,12 @@ public class ZWThreadPool {
 				threads[threadId].start();
 			}
 			started = true;
-			ZWLogger.printLog(ZWThreadPool.this, "Ïß³Ì³ØÔËĞĞÍê³É£¡");
+			ZWLogger.printLog(ZWThreadPool.this, "çº¿ç¨‹æ± è¿è¡Œå®Œæˆï¼");
 		}
 	}
 
 	public void shutdown() {
-		ZWLogger.printLog(ZWThreadPool.this, "¹Ø±ÕËùÓĞÏß³Ì£¡");
+		ZWLogger.printLog(ZWThreadPool.this, "å…³é—­æ‰€æœ‰çº¿ç¨‹ï¼");
 		if (started) {
 			for (ZWCommandThread thread : threads) {
 				thread.stop();
@@ -52,6 +48,6 @@ public class ZWThreadPool {
 			threads = null;
 			started = false;
 		}
-		ZWLogger.printLog(ZWThreadPool.this, "¹Ø±ÕÍêËùÓĞÏß³Ì£¡");
+		ZWLogger.printLog(ZWThreadPool.this, "å…³é—­å®Œæ‰€æœ‰çº¿ç¨‹ï¼");
 	}
 }

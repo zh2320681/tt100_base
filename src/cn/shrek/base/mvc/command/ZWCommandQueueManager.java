@@ -4,7 +4,7 @@ import cn.shrek.base.util.ZWLogger;
 
 
 /**
- * @Description ZWCommandQueueManagerÊÇcommand¶ÓÁĞµÄ¹ÜÀíÕß
+ * @Description ZWCommandQueueManageræ˜¯commandé˜Ÿåˆ—çš„ç®¡ç†è€…
  */
 public final class ZWCommandQueueManager {
 	private static ZWCommandQueueManager instance;
@@ -23,49 +23,49 @@ public final class ZWCommandQueueManager {
 	}
 
 	public void initialize() {
-		ZWLogger.printLog(ZWCommandQueueManager.this, "×¼±¸³õÊ¼»¯£¡");
+		ZWLogger.printLog(ZWCommandQueueManager.this, "å‡†å¤‡åˆå§‹åŒ–ï¼");
 		if (!initialized) {
-			ZWLogger.printLog(ZWCommandQueueManager.this, "ÕıÔÚ³õÊ¼»¯£¡");
+			ZWLogger.printLog(ZWCommandQueueManager.this, "æ­£åœ¨åˆå§‹åŒ–ï¼");
 			queue = new ZWCommandQueue();
 			pool = ZWThreadPool.getInstance();
-			ZWLogger.printLog(ZWCommandQueueManager.this, "Íê³É³õÊ¼»¯£¡");
+			ZWLogger.printLog(ZWCommandQueueManager.this, "å®Œæˆåˆå§‹åŒ–ï¼");
 
 			pool.start();
 			initialized = true;
 		}
-		ZWLogger.printLog(ZWCommandQueueManager.this, "³õÊ¼»¯Íê³É£¡");
+		ZWLogger.printLog(ZWCommandQueueManager.this, "åˆå§‹åŒ–å®Œæˆï¼");
 	}
 
 	/**
-	 * ´Ó¶ÓÁĞÖĞ»ñÈ¡Command
+	 * ä»é˜Ÿåˆ—ä¸­è·å–Command
 	 * 
 	 * @return ZWICommand
 	 */
 	public ZWICommand getNextCommand() {
-		ZWLogger.printLog(ZWCommandQueueManager.this, "»ñÈ¡Command£¡");
+		ZWLogger.printLog(ZWCommandQueueManager.this, "è·å–Commandï¼");
 		ZWICommand cmd = queue.getNextCommand();
-		ZWLogger.printLog(ZWCommandQueueManager.this, "»ñÈ¡Command" + cmd + "Íê³É£¡");
+		ZWLogger.printLog(ZWCommandQueueManager.this, "è·å–Command" + cmd + "å®Œæˆï¼");
 		return cmd;
 	}
 
 	/**
-	 * Ìí¼ÓCommandµ½¶ÓÁĞÖĞ
+	 * æ·»åŠ Commandåˆ°é˜Ÿåˆ—ä¸­
 	 */
 	public void enqueue(ZWICommand cmd) {
-		ZWLogger.printLog(ZWCommandQueueManager.this, "Ìí¼Ó" + cmd + "¿ªÊ¼");
+		ZWLogger.printLog(ZWCommandQueueManager.this, "æ·»åŠ " + cmd + "å¼€å§‹");
 		queue.enqueue(cmd);
-		ZWLogger.printLog(ZWCommandQueueManager.this, "Ìí¼Ó" + cmd + "Íê³É");
+		ZWLogger.printLog(ZWCommandQueueManager.this, "æ·»åŠ " + cmd + "å®Œæˆ");
 	}
 
 	/**
-	 * Çå³ı¶ÓÁĞ
+	 * æ¸…é™¤é˜Ÿåˆ—
 	 */
 	public void clear() {
 		queue.clear();
 	}
 
 	/**
-	 * ¹Ø±Õ¶ÓÁĞ
+	 * å…³é—­é˜Ÿåˆ—
 	 */
 	public void shutdown() {
 		if (initialized) {

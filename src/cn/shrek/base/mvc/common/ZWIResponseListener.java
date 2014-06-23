@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013  WhiteCat 白猫 (www.thinkandroid.cn)
+ * Copyright (C) 2013  WhiteCat 鐧界尗 (www.thinkandroid.cn)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package cn.shrek.base.mvc.common;
 
 /**
- * @Description ZWIResponseListener是数据返回的一个监听器
+ * @Description ZWIResponseListener鏄暟鎹繑鍥炵殑涓�涓洃鍚櫒
  */
 public interface ZWIResponseListener {
 	void onStart();

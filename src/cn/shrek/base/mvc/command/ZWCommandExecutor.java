@@ -18,9 +18,9 @@ public class ZWCommandExecutor {
 	public ZWCommandExecutor() {
 		if (!initialized) {
 			initialized = true;
-			ZWLogger.printLog(ZWCommandExecutor.this, "CommandExecutor³õÊ¼»¯");
+			ZWLogger.printLog(ZWCommandExecutor.this, "CommandExecutoråˆå§‹åŒ–");
 			ZWCommandQueueManager.getInstance().initialize();
-			ZWLogger.printLog(ZWCommandExecutor.this, "CommandExecutor³õÊ¼»¯");
+			ZWLogger.printLog(ZWCommandExecutor.this, "CommandExecutoråˆå§‹åŒ–");
 		}
 	}
 
@@ -29,21 +29,21 @@ public class ZWCommandExecutor {
 	}
 
 	/**
-	 * ËùÓĞÃüÁîÖÕÖ¹»ò±ê¼ÇÎª½áÊø
+	 * æ‰€æœ‰å‘½ä»¤ç»ˆæ­¢æˆ–æ ‡è®°ä¸ºç»“æŸ
 	 */
 	public void terminateAll() {
 
 	}
 
 	/**
-	 * ÃüÁîÈëÁĞ
+	 * å‘½ä»¤å…¥åˆ—
 	 * 
 	 * @param commandKey
-	 *            ÃüÁîID
+	 *            å‘½ä»¤ID
 	 * @param request
-	 *            Ìá½»µÄ²ÎÊı
+	 *            æäº¤çš„å‚æ•°
 	 * @param listener
-	 *            ÏìÓ¦¼àÌıÆ÷
+	 *            å“åº”ç›‘å¬å™¨
 	 * @throws TANoSuchCommandException
 	 */
 	public void enqueueCommand(String commandKey, ZWRequest request,
@@ -73,7 +73,7 @@ public class ZWCommandExecutor {
 
 	
 	/**
-	 * µÃµ½ÃüÁî
+	 * å¾—åˆ°å‘½ä»¤
 	 * @param commandKey
 	 * @return
 	 * @throws TANoSuchCommandException
@@ -91,12 +91,12 @@ public class ZWCommandExecutor {
 					try {
 						rv = cmd.newInstance();
 					} catch (Exception e) {
-						throw new TANoSuchCommandException("Ã»·¢ÏÖ" + commandKey
-								+ "ÃüÁî");
+						throw new TANoSuchCommandException("æ²¡å‘ç°" + commandKey
+								+ "å‘½ä»¤");
 					}
 				} else {
-					throw new TANoSuchCommandException("Ã»·¢ÏÖ" + commandKey
-							+ "ÃüÁî");
+					throw new TANoSuchCommandException("æ²¡å‘ç°" + commandKey
+							+ "å‘½ä»¤");
 				}
 			}
 		}

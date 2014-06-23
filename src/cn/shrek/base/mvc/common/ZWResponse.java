@@ -3,7 +3,7 @@ package cn.shrek.base.mvc.common;
 import java.io.Serializable;
 
 /**
- * @Description ZWResponse是返回的数据
+ * @Description ZWResponse鏄繑鍥炵殑鏁版嵁
  * @param Object
  */
 public class ZWResponse implements Serializable {

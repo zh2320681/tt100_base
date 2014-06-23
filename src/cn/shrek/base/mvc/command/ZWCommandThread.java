@@ -6,7 +6,7 @@ import cn.shrek.base.util.ZWLogger;
 /**
  * @Title TACommandThread
  * @package com.ta.mvc.command
- * @Description ZWCommandThreadÊÇÒ»¸ö×¨ÃÅÖ´ÐÐcommandµÄÏß³Ì
+ * @Description ZWCommandThreadæ˜¯ä¸€ä¸ªä¸“é—¨æ‰§è¡Œcommandçš„çº¿ç¨‹
  */
 public class ZWCommandThread implements Runnable {
 	private int threadId;
