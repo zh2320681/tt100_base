@@ -2,7 +2,7 @@ package cn.shrek.base.exception;
 
 /**
  * @Title ZWNoSuchCommandException
- * @Description ZWNoSuchCommandExceptionÊÇµ±Ã»ÓĞÕÒµ½ÏàÓ¦×ÊÔ´IDÃû×ÖµÄ×ÊÔ´Ê±£¬Å×³ö´ËÒì³££¡
+ * @Description ZWNoSuchCommandExceptionæ˜¯å½“æ²¡æœ‰æ‰¾åˆ°ç›¸åº”èµ„æºIDåå­—çš„èµ„æºæ—¶ï¼ŒæŠ›å‡ºæ­¤å¼‚å¸¸ï¼
  */
 public class TANoSuchCommandException extends Exception {
 	private static final long serialVersionUID = 1L;

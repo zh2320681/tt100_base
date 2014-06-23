@@ -3,7 +3,7 @@ package cn.shrek.base.exception;
 public class CallJSONException extends Exception{
 
 	/**
-	 *  xml½âÎöÒì³£
+	 *  xmlè§£æå¼‚å¸¸
 	 */
 	private static final long serialVersionUID = 3494742589876470663L;
 

@@ -10,7 +10,7 @@ public class CallServiceException extends Exception{
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 *  ÇëÇó·şÎñ¶Ë Ê§°Ü
+	 *  è¯·æ±‚æœåŠ¡ç«¯ å¤±è´¥
 	 */
 
 //	public CallServiceException() {
@@ -31,8 +31,8 @@ public class CallServiceException extends Exception{
 //	}
 	 
 	/**
-	 * ¹¹Ôì·½·¨
-	 * @param code  ÇëÇó´íÎóÂë
+	 * æ„é€ æ–¹æ³•
+	 * @param code  è¯·æ±‚é”™è¯¯ç 
 	 */
 	public CallServiceException(int code){
 		super(parseCode(code));
@@ -43,32 +43,32 @@ public class CallServiceException extends Exception{
 		String exceptionStr = "";
 		switch(code){
 			case HttpStatus.SC_BAD_REQUEST:
-				exceptionStr = "·şÎñÆ÷²»Àí½âÇëÇóµÄÓï·¨!";
+				exceptionStr = "æœåŠ¡å™¨ä¸ç†è§£è¯·æ±‚çš„è¯­æ³•!";
 				break;
 			case HttpStatus.SC_BAD_GATEWAY:
-				exceptionStr = "·şÎñÆ÷×÷ÎªÍø¹Ø»ò´úÀí´íÎó!";
+				exceptionStr = "æœåŠ¡å™¨ä½œä¸ºç½‘å…³æˆ–ä»£ç†é”™è¯¯!";
 				break;
 			case HttpStatus.SC_CONFLICT:
-				exceptionStr = "·şÎñÆ÷ÔÚÍê³ÉÇëÇóÊ±·¢Éú³åÍ»¡£ ·şÎñÆ÷±ØĞëÔÚÏìÓ¦ÖĞ°üº¬ÓĞ¹Ø³åÍ»µÄĞÅÏ¢!";
+				exceptionStr = "æœåŠ¡å™¨åœ¨å®Œæˆè¯·æ±‚æ—¶å‘ç”Ÿå†²çªã€‚ æœåŠ¡å™¨å¿…é¡»åœ¨å“åº”ä¸­åŒ…å«æœ‰å…³å†²çªçš„ä¿¡æ¯!";
 				break;
 			case HttpStatus.SC_EXPECTATION_FAILED:
-				exceptionStr = "·şÎñÆ÷Î´Âú×ãÆÚÍûÇëÇó±êÍ·×Ö¶ÎµÄÒªÇó!";
+				exceptionStr = "æœåŠ¡å™¨æœªæ»¡è¶³æœŸæœ›è¯·æ±‚æ ‡å¤´å­—æ®µçš„è¦æ±‚!";
 				break;
 			case 500:
-				exceptionStr = "ÇëÇó·şÎñÆ÷³öÏÖÒì³£!";
+				exceptionStr = "è¯·æ±‚æœåŠ¡å™¨å‡ºç°å¼‚å¸¸!";
 				break;
 			case 401:
-				exceptionStr = "ÓÃ»§Ãû»òÕßÃÜÂëÑéÖ¤Ê§°Ü!";
+				exceptionStr = "ç”¨æˆ·åæˆ–è€…å¯†ç éªŒè¯å¤±è´¥!";
 				break;
 			case 404:
-				exceptionStr = "²éÑ¯Êı¾İÎ´ÕÒµ½!";
+				exceptionStr = "æŸ¥è¯¢æ•°æ®æœªæ‰¾åˆ°!";
 				break;
 			case 302:
-				exceptionStr = "ÇëÇó·şÎñÆ÷µØÖ·²»ÕıÈ·!";
+				exceptionStr = "è¯·æ±‚æœåŠ¡å™¨åœ°å€ä¸æ­£ç¡®!";
 				break;	
 				
 			default:
-				exceptionStr = "ÇëÇó·şÎñ¶Ë³öÏÖ´íÎó!";
+				exceptionStr = "è¯·æ±‚æœåŠ¡ç«¯å‡ºç°é”™è¯¯!";
 				break;
 		}
 		return exceptionStr;

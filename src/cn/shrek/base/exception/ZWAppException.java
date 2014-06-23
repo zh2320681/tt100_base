@@ -17,7 +17,7 @@ public class ZWAppException implements UncaughtExceptionHandler {
 
 	private ZWAppException(Context context) {
 		mContext = context;
-		// µÃµ½default handler
+		// å¾—åˆ°default handler
 		mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
 	}
 
@@ -44,10 +44,10 @@ public class ZWAppException implements UncaughtExceptionHandler {
 	}
 
 	/**
-	 * ×Ô¶¨Òå´íÎó´¦Àí,ÊÕ¼¯´íÎóĞÅÏ¢ ·¢ËÍ´íÎó±¨¸æµÈ²Ù×÷¾ùÔÚ´ËÍê³É
+	 * è‡ªå®šä¹‰é”™è¯¯å¤„ç†,æ”¶é›†é”™è¯¯ä¿¡æ¯ å‘é€é”™è¯¯æŠ¥å‘Šç­‰æ“ä½œå‡åœ¨æ­¤å®Œæˆ
 	 * 
 	 * @param ex
-	 * @return true:Èç¹û´¦ÀíÁË¸ÃÒì³£ĞÅÏ¢;·ñÔò·µ»Øfalse
+	 * @return true:å¦‚æœå¤„ç†äº†è¯¥å¼‚å¸¸ä¿¡æ¯;å¦åˆ™è¿”å›false
 	 */
 	private boolean handleException(final Throwable ex) {
 		if (ex == null) {
@@ -63,9 +63,9 @@ public class ZWAppException implements UncaughtExceptionHandler {
 					e1.printStackTrace();
 				}
 				AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext)
-						.setTitle("³ÌĞò±ÀÀ£ÁË").setCancelable(false)
-						.setMessage("³ÌĞò±ÀÀ£ÁË...")
-						.setPositiveButton("¹Ø±ÕAPP", new OnClickListener() {
+						.setTitle("ç¨‹åºå´©æºƒäº†").setCancelable(false)
+						.setMessage("ç¨‹åºå´©æºƒäº†...")
+						.setPositiveButton("å…³é—­APP", new OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
@@ -74,7 +74,7 @@ public class ZWAppException implements UncaughtExceptionHandler {
 								System.exit(10);
 							}
 						});
-				// .setNegativeButton("ÖØĞÂÆô¶¯", new OnClickListener() {
+				// .setNegativeButton("é‡æ–°å¯åŠ¨", new OnClickListener() {
 				//
 				// @Override
 				// public void onClick(DialogInterface arg0, int arg1) {
@@ -103,8 +103,8 @@ public class ZWAppException implements UncaughtExceptionHandler {
 					// });
 					StackTraceElement[] stes = ex.getStackTrace();
 					StringBuffer sb = new StringBuffer();
-					sb.append("----Òì³£ÀàĞÍ---\n" + ex.toString() + "\n\n");
-					sb.append("----Òì³£ÏêÇé---\n");
+					sb.append("----å¼‚å¸¸ç±»å‹---\n" + ex.toString() + "\n\n");
+					sb.append("----å¼‚å¸¸è¯¦æƒ…---\n");
 					for (StackTraceElement ste : stes) {
 						sb.append(ste.toString() + "\n");
 					}
@@ -119,7 +119,7 @@ public class ZWAppException implements UncaughtExceptionHandler {
 					System.exit(0);
 				}
 
-				// È¡ÏûÏ¢¶ÓÁĞµÚÒ»¸ö
+				// å–æ¶ˆæ¯é˜Ÿåˆ—ç¬¬ä¸€ä¸ª
 //				try {
 //					Looper mainLooper = Looper.getMainLooper();
 //					Field queueField = Looper.class.getDeclaredField("mQueue");
@@ -142,7 +142,7 @@ public class ZWAppException implements UncaughtExceptionHandler {
 //					e.printStackTrace();
 //				}
 				/**
-				 * ¼ÓÔØÀà³öÏÖµÄÒì³£
+				 * åŠ è½½ç±»å‡ºç°çš„å¼‚å¸¸
 				 */
 				 Looper.loop();
 			}

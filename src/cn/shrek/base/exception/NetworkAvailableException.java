@@ -3,7 +3,7 @@ package cn.shrek.base.exception;
 public class NetworkAvailableException extends Exception{
 
 	/**
-	 * 移动数据连接关闭
+	 * 绉诲姩鏁版嵁杩炴帴鍏抽棴
 	 */
 	private static final long serialVersionUID = -1240269706818302612L;
 
