@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 
 /**
- * “Ï≥£¿‡
+ * ÂºÇÂ∏∏Á±ª
  * @author shrek
  *
  */
@@ -24,9 +24,9 @@ public class ErrorActivity extends ZWActivity {
 		layout.setBackgroundColor(Color.BLACK);
 		setContentView(layout);
 		if(ex != null){
-			AlertDialog.Builder mBuilder = new AlertDialog.Builder(this).setTitle("Ã· æ")
-					.setCancelable(false).setMessage("≥Ã–Ú±¿¿£¡À...")
-					.setNeutralButton("πÿ±’APP", new OnClickListener() {
+			AlertDialog.Builder mBuilder = new AlertDialog.Builder(this).setTitle("ÊèêÁ§∫")
+					.setCancelable(false).setMessage("Á®ãÂ∫èÂ¥©Ê∫É‰∫Ü...")
+					.setNeutralButton("ÂÖ≥Èó≠APP", new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog,
 								int which) {
@@ -34,7 +34,7 @@ public class ErrorActivity extends ZWActivity {
 									.killProcess(android.os.Process.myPid());
 							System.exit(10);
 						}
-					}).setNeutralButton("÷ÿ–¬∆Ù∂Ø", new OnClickListener() {
+					}).setNeutralButton("ÈáçÊñ∞ÂêØÂä®", new OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {

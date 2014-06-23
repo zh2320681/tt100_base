@@ -21,7 +21,7 @@ public class ZWActivityManager<T extends Activity> {
 	}
 	
 	/**
-	 * ¹Ø±Õ×îÉÏ²ã activity
+	 * å…³é—­æœ€ä¸Šå±‚ activity
 	 */
 	public void popActivity() {
 		if(activityStack.size() > 0){
@@ -36,7 +36,7 @@ public class ZWActivityManager<T extends Activity> {
 
 	
 	/**
-	 * ¹Ø±Õ Ö¸¶¨µÄ activity
+	 * å…³é—­ æŒ‡å®šçš„ activity
 	 * @param activity
 	 */
 	public void popActivity(Activity activity) {
@@ -52,7 +52,7 @@ public class ZWActivityManager<T extends Activity> {
 	}
 
 	/**
-	 * µÃµ½µ±Ç° activity
+	 * å¾—åˆ°å½“å‰ activity
 	 * @return
 	 */
 	public T currentActivity() throws NullPointerException{
@@ -66,7 +66,7 @@ public class ZWActivityManager<T extends Activity> {
 
 	
 	/**
-	 * Ìí¼Ó ĞÂµÄ activity
+	 * æ·»åŠ  æ–°çš„ activity
 	 * @param activity
 	 */
 	public void pushActivity(T activity) {
@@ -77,7 +77,7 @@ public class ZWActivityManager<T extends Activity> {
 	}
 
 	/*
-	 * ¹Ø±ÕÆäËû³ıÁËÖ¸¶¨µÄ
+	 * å…³é—­å…¶ä»–é™¤äº†æŒ‡å®šçš„
 	 */
 	public void popAllActivityExceptOne(Class<? extends Activity> cls) {
 		while (true) {
@@ -93,7 +93,7 @@ public class ZWActivityManager<T extends Activity> {
 	}
 	
 	/*
-	 * ¹Ø±ÕÆäËû³ıÁËÖ¸¶¨µÄ
+	 * å…³é—­å…¶ä»–é™¤äº†æŒ‡å®šçš„
 	 */
 	public void popAllActivity() {
 		while (true) {

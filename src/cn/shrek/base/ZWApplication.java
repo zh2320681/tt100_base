@@ -35,56 +35,56 @@ import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
 import cn.shrek.base.util.net.ZWNetworkStateReceiver;
 
 public class ZWApplication extends Application {
-	// ÊÇ·ñ¿ªÆôdebugÄ£Ê½
+	// æ˜¯å¦å¼€å¯debugæ¨¡å¼
 	public static boolean isDebugMode = false;
-	// ÊÇ·ñ¼àÌıÍøÂç±ä»¯
+	// æ˜¯å¦ç›‘å¬ç½‘ç»œå˜åŒ–
 	public static boolean isMonitorNetChange = false;
-	// ÊÇ·ñ¿ªÆôÈÕÖ¾´òÓ¡
+	// æ˜¯å¦å¼€å¯æ—¥å¿—æ‰“å°
 	public static boolean isLoggerPrint = false;
-	// ÈÕÖ¾±£´æÊ±¼ä£¨ÒÔsÎªµ¥Î»£©
+	// æ—¥å¿—ä¿å­˜æ—¶é—´ï¼ˆä»¥sä¸ºå•ä½ï¼‰
 	public static long loggerPrintAvaidTime = 7;
-	// ÈÕÖ¾±£´æÂ·¾¶
+	// æ—¥å¿—ä¿å­˜è·¯å¾„
 	public static String loggerPrintName = "";
-	// Êı¾İ¿â°æ±¾ºÅ
+	// æ•°æ®åº“ç‰ˆæœ¬å·
 	public static int dbVersion = 1;
-	// Êı¾İ¿âÃû³Æ
+	// æ•°æ®åº“åç§°
 	public static String dbName = "DEFALUT_DB_NAME";
-	// DBOPeratorµÄÓĞĞ§Ê±¼äµ¥Î»ms
+	// DBOPeratorçš„æœ‰æ•ˆæ—¶é—´å•ä½ms
 	public static int dbOPeratorAvailTime = 1000;
-	// ÊÇ·ñ·¢³örest ÇëÇó
+	// æ˜¯å¦å‘å‡ºrest è¯·æ±‚
 	public static boolean isLoadRestRequest = false;
-	// Í¬Ò»¸ö activity ÊÇ·ñÔÊĞíÍ¬Ê±Ö´ĞĞÍ¬Ò»¸öÇëÇó
+	// åŒä¸€ä¸ª activity æ˜¯å¦å…è®¸åŒæ—¶æ‰§è¡ŒåŒä¸€ä¸ªè¯·æ±‚
 	public static boolean isInterceptSameRequest = true;
-	// ÊÇ·ñ¿ªÊ¼StrictMode
+	// æ˜¯å¦å¼€å§‹StrictMode
 	public static boolean isOpenStrictMode = true;
 	
 	/**
 	 * -----------------------
-	 * Í¼Æ¬¼ÓÔØ
+	 * å›¾ç‰‡åŠ è½½
 	 * -----------------------
 	 */
-	//ÊÇ·ñ³õÊ¼»¯ imageLoader
+	//æ˜¯å¦åˆå§‹åŒ– imageLoader
 	public static boolean isInitImageLoader = false;
-	//»º´æ±¾µØ¸ñÊ½  PNG OR JPEG   default JPEG
+	//ç¼“å­˜æœ¬åœ°æ ¼å¼  PNG OR JPEG   default JPEG
 	public static String imageSaveFormat = "JPEG";
-	//¼ÓÔØµÄÏß³ÌÊıÁ¿
+	//åŠ è½½çš„çº¿ç¨‹æ•°é‡
 	public static int imageThreadPoolSize = 3;
-	//ÄÚ´æ»º´æ´óĞ¡ µ¥Î»MB  2*1024*1024
+	//å†…å­˜ç¼“å­˜å¤§å° å•ä½MB  2*1024*1024
 	public static int memoryCacheSize = 2;
 	public static String imageDiscCacheDir= "/mnt/sdcard/uil_test";
-	//disc»º´æ´óĞ¡ µ¥Î»MB  2*1024*1024
+	//discç¼“å­˜å¤§å° å•ä½MB  2*1024*1024
 	public static int discCacheSize = 50;
 
-	/** AppÒì³£±ÀÀ£´¦ÀíÆ÷ */
+	/** Appå¼‚å¸¸å´©æºƒå¤„ç†å™¨ */
 	private UncaughtExceptionHandler uncaughtExceptionHandler;
 
-	private String systemOutTAG = "²âÊÔ";
+	private String systemOutTAG = "æµ‹è¯•";
 	public ZWActivityManager mActivityManager;
 	public static ZWPrintToFileLogger mPrintLogger;
 
 	public int screenWidth, screenHight;
 	public float density;
-	//ÅäÖÃ ±ØĞëÔÚapplicationÖĞ
+	//é…ç½® å¿…é¡»åœ¨applicationä¸­
 	protected ImageLoaderConfiguration.Builder imageLoaderConfigBuilder;
 	
 	private ZWNetChangeObserver zwNetChangeObserver;
@@ -93,7 +93,7 @@ public class ZWApplication extends Application {
 	public final void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
-		// ×¢²áAppÒì³£±ÀÀ£´¦ÀíÆ÷
+		// æ³¨å†ŒAppå¼‚å¸¸å´©æºƒå¤„ç†å™¨
 		Thread.setDefaultUncaughtExceptionHandler(getUncaughtExceptionHandler());
 		onPreCreateApplication();
 		initParameterWithProperties();
@@ -104,25 +104,25 @@ public class ZWApplication extends Application {
 			info.flags = ApplicationInfo.FLAG_DEBUGGABLE;
 		}
 
-		/** ------------------ isOpenStrictMode 2.3ÒÔÉÏÖ§³Ö----------------------- */
+		/** ------------------ isOpenStrictMode 2.3ä»¥ä¸Šæ”¯æŒ----------------------- */
 		if (isDebugMode && isOpenStrictMode
 				&& AndroidVersionCheckUtils.hasGingerbread()) {
-			android.os.StrictMode.setThreadPolicy(new android.os.StrictMode.ThreadPolicy.Builder() // ¹¹ÔìStrictMode
-					.detectDiskReads() // µ±·¢Éú´ÅÅÌ¶Á²Ù×÷Ê±Êä³ö
-					.detectDiskWrites()// µ±·¢Éú´ÅÅÌĞ´²Ù×÷Ê±Êä³ö
-					.detectNetwork() // ·ÃÎÊÍøÂçÊ±Êä³ö£¬ÕâÀï¿ÉÒÔÌæ»»ÎªdetectAll()
-										// ¾Í°üÀ¨ÁË´ÅÅÌ¶ÁĞ´ºÍÍøÂçI/O
-					.penaltyLog() // ÒÔÈÕÖ¾µÄ·½Ê½Êä³ö
+			android.os.StrictMode.setThreadPolicy(new android.os.StrictMode.ThreadPolicy.Builder() // æ„é€ StrictMode
+					.detectDiskReads() // å½“å‘ç”Ÿç£ç›˜è¯»æ“ä½œæ—¶è¾“å‡º
+					.detectDiskWrites()// å½“å‘ç”Ÿç£ç›˜å†™æ“ä½œæ—¶è¾“å‡º
+					.detectNetwork() // è®¿é—®ç½‘ç»œæ—¶è¾“å‡ºï¼Œè¿™é‡Œå¯ä»¥æ›¿æ¢ä¸ºdetectAll()
+										// å°±åŒ…æ‹¬äº†ç£ç›˜è¯»å†™å’Œç½‘ç»œI/O
+					.penaltyLog() // ä»¥æ—¥å¿—çš„æ–¹å¼è¾“å‡º
 					.build());
 			android.os.StrictMode.setVmPolicy(new android.os.StrictMode.VmPolicy.Builder()
-					.detectLeakedSqlLiteObjects() // Ì½²âSQLiteÊı¾İ¿â²Ù×÷
-					.penaltyLog() // ÒÔÈÕÖ¾µÄ·½Ê½Êä³ö
+					.detectLeakedSqlLiteObjects() // æ¢æµ‹SQLiteæ•°æ®åº“æ“ä½œ
+					.penaltyLog() // ä»¥æ—¥å¿—çš„æ–¹å¼è¾“å‡º
 					.penaltyDeath().build());
 
 		}
 
 		mActivityManager = ZWActivityManager.getInstance();
-		// ĞŞ¸ÄSystem.outÊä³öÁ÷
+		// ä¿®æ”¹System.outè¾“å‡ºæµ
 		System.setOut(new PrintStream(System.out) {
 			@Override
 			public synchronized void println(String str) {
@@ -132,7 +132,7 @@ public class ZWApplication extends Application {
 			}
 		});
 
-		// ÍøÂç¼àÌı
+		// ç½‘ç»œç›‘å¬
 		if (isMonitorNetChange) {
 			try {
 
@@ -165,7 +165,7 @@ public class ZWApplication extends Application {
 			}
 		}
 
-		/** -------------- ÈÕÖ¾´òÓ¡ ------------------- */
+		/** -------------- æ—¥å¿—æ‰“å° ------------------- */
 		if (isLoggerPrint) {
 			mPrintLogger = new ZWPrintToFileLogger(getApplicationContext());
 			mPrintLogger.open();
@@ -220,7 +220,7 @@ public class ZWApplication extends Application {
 	}
 
 	/**
-	 * ´Óassets/PropertiesÎÄ¼şÖĞ ³õÊ¼»¯ ²ÎÊıÖµ
+	 * ä»assets/Propertiesæ–‡ä»¶ä¸­ åˆå§‹åŒ– å‚æ•°å€¼
 	 */
 	private void initParameterWithProperties() {
 		AssetManager mManager = getAssets();
@@ -276,14 +276,14 @@ public class ZWApplication extends Application {
 	}
 
 	/**
-	 * ´´½¨ApplicationÇ° ×öÊ²Ã´¶¯×÷
+	 * åˆ›å»ºApplicationå‰ åšä»€ä¹ˆåŠ¨ä½œ
 	 */
 	protected void onPreCreateApplication() {
 		// TODO Auto-generated method stub
 	}
 
 	/**
-	 * ´´½¨ApplicationÖ®ºó ×öÊ²Ã´¶¯×÷
+	 * åˆ›å»ºApplicationä¹‹å åšä»€ä¹ˆåŠ¨ä½œ
 	 */
 	protected void onAfterCreateApplication() {
 		// TODO Auto-generated method stub
@@ -291,7 +291,7 @@ public class ZWApplication extends Application {
 	}
 	
 	/**
-	 * ³õÊ¼»¯builder
+	 * åˆå§‹åŒ–builder
 	 * @param builder
 	 */
 	protected void initImageLoaderConfig(Builder builder){
@@ -299,7 +299,7 @@ public class ZWApplication extends Application {
 	}
 	
 	/**
-	 * ÉèÖÃconfig
+	 * è®¾ç½®config
 	 */
 	public void setImageLoaderConfig(){
 		ImageLoader.getInstance().init(imageLoaderConfigBuilder.build());
@@ -316,7 +316,7 @@ public class ZWApplication extends Application {
 	}
 
 	/**
-	 * ÉèÖÃ AppÒì³£±ÀÀ£´¦ÀíÆ÷
+	 * è®¾ç½® Appå¼‚å¸¸å´©æºƒå¤„ç†å™¨
 	 * 
 	 * @param uncaughtExceptionHandler
 	 */
@@ -326,7 +326,7 @@ public class ZWApplication extends Application {
 	}
 
 	/**
-	 * µÃµ½AppÒì³£±ÀÀ£´¦ÀíÆ÷
+	 * å¾—åˆ°Appå¼‚å¸¸å´©æºƒå¤„ç†å™¨
 	 * 
 	 * @return
 	 */
@@ -338,7 +338,7 @@ public class ZWApplication extends Application {
 	}
 
 	/**
-	 * ¹Ø±ÕÈÕÖ¾´òÓ¡¹¦ÄÜ
+	 * å…³é—­æ—¥å¿—æ‰“å°åŠŸèƒ½
 	 */
 	public void closeLoggerPrint() {
 		isLoggerPrint = false;

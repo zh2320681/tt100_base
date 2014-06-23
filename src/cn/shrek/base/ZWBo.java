@@ -5,10 +5,10 @@ import java.util.Date;
 import cn.shrek.base.annotation.DatabaseField;
 
 public class ZWBo {
-	//创建时间
+	//鍒涘缓鏃堕棿
 	@DatabaseField
 	public Date createTime;
-	//是否过期
+	//鏄惁杩囨湡
 	@DatabaseField
 	public boolean isExpired;
 	

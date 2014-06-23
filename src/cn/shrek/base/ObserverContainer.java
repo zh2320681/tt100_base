@@ -12,7 +12,7 @@ public class ObserverContainer {
 //		if(!container.containsKey(hashCodeKey)){
 //			container.put(hashCodeKey, mModelObservable);
 //		}
-		//´æÔÚkey Ò²Ö±½ÓÌæ»»
+		//å­˜åœ¨key ä¹Ÿç›´æ¥æ›¿æ¢
 		container.put(hashCodeKey, mModelObservable);
 	}
 	
@@ -20,7 +20,7 @@ public class ObserverContainer {
 		if(container.containsKey(hashCodeKey)){
 			container.get(hashCodeKey).addObserver(mViewObserver);
 		}else{
-			ZWLogger.printLog(ObserverContainer.class, "Î´ÕÒµ½¹Û²ì¶ÔÏó,ÎŞ·¨Ìí¼Ó¹Û²ìÕß");
+			ZWLogger.printLog(ObserverContainer.class, "æœªæ‰¾åˆ°è§‚å¯Ÿå¯¹è±¡,æ— æ³•æ·»åŠ è§‚å¯Ÿè€…");
 		}
 	}
 	
