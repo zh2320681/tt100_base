@@ -29,7 +29,7 @@ import com.alibaba.fastjson.TypeReference;
 public class ZWAsyncTask<PARSEOBJ> extends
 		AsyncTask<ZWRequestConfig, Void, ZWResult<PARSEOBJ>> {
 	private static final String TAG = "ZWAsyncTask";
-	// ÓÃÓÚ¼ÆÊ±
+	// ç”¨äºè®¡æ—¶
 	private static final Map<String, Long> timeingMap = new HashMap<String, Long>();
 
 	public static final byte PRE_TASK_NORMAL = 0x01;
@@ -38,24 +38,24 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	public static int NO_CACHE = -0x01;
 
-	private static ZWCache restCache; // ÓÃÓÚÇëÇóµÄ
+	private static ZWCache restCache; // ç”¨äºè¯·æ±‚çš„
 	/**
-	 * taskGuidÓÃÓÚÊ¶±ğtaskÊÇ·ñÎªÍ¬Ò»¸ö
-	 * taskUUID ÎªÈÎÎñµÄUUID
+	 * taskGuidç”¨äºè¯†åˆ«taskæ˜¯å¦ä¸ºåŒä¸€ä¸ª
+	 * taskUUID ä¸ºä»»åŠ¡çš„UUID
 	 */
 	private String taskGuid,taskUUID;
 	public WeakReference<Context> ctx;
-	// ÇëÇó´¦ÀíÆ÷
+	// è¯·æ±‚å¤„ç†å™¨
 	private AsyncTaskHandler<PARSEOBJ> handler;
 
 	private AtomicBoolean isCancel;
 	// private Class<PARSEOBJ> parseObjClazz;
 	private TypeReference<PARSEOBJ> reference;
-	// »º´æ±£´æÊ±¼ä(µ¥Î»:s) Èç¹ûÎªNO_CACHE ²»¿ªÆô»º´æ
+	// ç¼“å­˜ä¿å­˜æ—¶é—´(å•ä½:s) å¦‚æœä¸ºNO_CACHE ä¸å¼€å¯ç¼“å­˜
 	public int cacheSaveTime;
 
 	/**
-	 * ×Ô´øÇëÇóµÄconfig ÔÚ¶ÓÁĞÊ±ºòÓÃ
+	 * è‡ªå¸¦è¯·æ±‚çš„config åœ¨é˜Ÿåˆ—æ—¶å€™ç”¨
 	 */
 	public ZWRequestConfig config;
 	private Queue<ZWAsyncTask<?>> allTask;
@@ -71,7 +71,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	}
 
 	/**
-	 * ½«ÈÎÎñÌí¼Óµ½¶ÓÁĞÖĞ,²¢·µ»Ø¶ÓÁĞµÄµÚÒ»¸öÈÎÎñÖ´ĞĞ
+	 * å°†ä»»åŠ¡æ·»åŠ åˆ°é˜Ÿåˆ—ä¸­,å¹¶è¿”å›é˜Ÿåˆ—çš„ç¬¬ä¸€ä¸ªä»»åŠ¡æ‰§è¡Œ
 	 * 
 	 * @param tasks
 	 * @return
@@ -80,7 +80,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		Queue<ZWAsyncTask<?>> allTask = new LinkedList<ZWAsyncTask<?>>();
 		for (ZWAsyncTask<?> task : tasks) {
 			if (task.config == null) {
-				throw new NullPointerException("¶ÓÁĞÀïÃæÈÎÎñ±ØĞëÌáÇ°ÉèÖÃ Config!");
+				throw new NullPointerException("é˜Ÿåˆ—é‡Œé¢ä»»åŠ¡å¿…é¡»æå‰è®¾ç½® Config!");
 			}
 			task.allTask = allTask;
 			allTask.add(task);
@@ -97,19 +97,19 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	}
 
 	/**
-	 * ¾²Ì¬µÄ ÇëÇó·½·¨
+	 * é™æ€çš„ è¯·æ±‚æ–¹æ³•
 	 * 
 	 * @param ctx
 	 * @param url
-	 *            µØÖ· ÀàËÆÓëhttp://example.com/hotels/{hotel}/bookings/{booking}
+	 *            åœ°å€ ç±»ä¼¼ä¸http://example.com/hotels/{hotel}/bookings/{booking}
 	 * @param method
-	 *            GET POST PUTµÈ
+	 *            GET POST PUTç­‰
 	 * @param clazz
-	 *            ·µ»ØÊ²Ã´ÀàĞÍ
+	 *            è¿”å›ä»€ä¹ˆç±»å‹
 	 * @param paras
-	 *            URL²ÎÊı
+	 *            URLå‚æ•°
 	 * @param handler
-	 *            ÈÎÎñ»Øµ÷ÓÃ
+	 *            ä»»åŠ¡å›è°ƒç”¨
 	 */
 	public static <T> void excuteTaskWithMap(Context ctx, String url,
 			HttpMethod method, TypeReference<T> reference,AsyncTaskHandler<T> handler,
@@ -131,19 +131,19 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	}
 
 	/**
-	 * ¾²Ì¬µÄ ÇëÇó·½·¨
+	 * é™æ€çš„ è¯·æ±‚æ–¹æ³•
 	 * 
 	 * @param ctx
 	 * @param url
-	 *            µØÖ· ÀàËÆÓëhttp://example.com/hotels/{hotel}/bookings/{booking}
+	 *            åœ°å€ ç±»ä¼¼ä¸http://example.com/hotels/{hotel}/bookings/{booking}
 	 * @param method
-	 *            GET POST PUTµÈ
+	 *            GET POST PUTç­‰
 	 * @param clazz
-	 *            ·µ»ØÊ²Ã´ÀàĞÍ
+	 *            è¿”å›ä»€ä¹ˆç±»å‹
 	 * @param paras
-	 *            URL²ÎÊı
+	 *            URLå‚æ•°
 	 * @param handler
-	 *            ÈÎÎñ»Øµ÷ÓÃ
+	 *            ä»»åŠ¡å›è°ƒç”¨
 	 */
 	public static <T> void excuteTaskWithParas(Context ctx, String url,
 			HttpMethod method,TypeReference<T> reference, AsyncTaskHandler<T> handler, Object... paras) {
@@ -190,7 +190,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	@Override
 	protected void onPreExecute() {
-		// ÈÎÎñÖ´ĞĞÇ°
+		// ä»»åŠ¡æ‰§è¡Œå‰
 		super.onPreExecute();
 		taskUUID = UUID.randomUUID().toString();
 		if(taskGuid == null){
@@ -213,7 +213,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			}
 		}
 		
-		ZWLogger.printLog(TAG, "ÈÎÎñ¿ªÊ¼,ÈÎÎñIDÎª:" + taskGuid+"  ÈÎÎñUUIDÎª:"+taskUUID);
+		ZWLogger.printLog(TAG, "ä»»åŠ¡å¼€å§‹,ä»»åŠ¡IDä¸º:" + taskGuid+"  ä»»åŠ¡UUIDä¸º:"+taskUUID);
 		timeingMap.put(taskUUID, System.currentTimeMillis());
 	}
 	
@@ -226,9 +226,9 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		this.config = config;
 		if (config == null) {
 			throw new NullPointerException(
-					"excute task parameter£¨ZWRequestConfig£© must not null");
+					"excute task parameterï¼ˆZWRequestConfigï¼‰ must not null");
 		}
-		// ÅĞ¶Ï taskÊÇ·ñ±»ÖÕ½á
+		// åˆ¤æ–­ taskæ˜¯å¦è¢«ç»ˆç»“
 		if (!judgeTaskValid()) {
 			return null;
 		}
@@ -236,17 +236,17 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		ZWResult<PARSEOBJ> r = new ZWResult<PARSEOBJ>();
 
 		Context context = ctx.get();
-		// ÅĞ¶ÏÊÇ·ñ¿ªÆô»º´æ
+		// åˆ¤æ–­æ˜¯å¦å¼€å¯ç¼“å­˜
 		if (isOpenCache()) {
 			ZWCache cache = getRestCache(context);
 			PARSEOBJ parserObj = cache.getAsJsonObject(config.getUniqueKey(),
 					reference);
 			if (parserObj != null) {
 				r.bodyObj = parserObj;
-				ZWLogger.printLog(this, "ÓĞĞ§µÄ»º´æÊı¾İ,²»±ØÇëÇóÍøÂç!");
+				ZWLogger.printLog(this, "æœ‰æ•ˆçš„ç¼“å­˜æ•°æ®,ä¸å¿…è¯·æ±‚ç½‘ç»œ!");
 				return r;
 			}else{
-				ZWLogger.printLog(this, "»º´æÊı¾İÒÑ¾­³¬Ê±,ĞèÇëÇóÍøÂç!");
+				ZWLogger.printLog(this, "ç¼“å­˜æ•°æ®å·²ç»è¶…æ—¶,éœ€è¯·æ±‚ç½‘ç»œ!");
 			}
 		}
 
@@ -262,7 +262,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 					config.getBody(), requestHeaders);
 
 			RestTemplate restTemplate = new RestTemplate();
-			// ÉèÖÃ³¬Ê±
+			// è®¾ç½®è¶…æ—¶
 			ClientHttpRequestFactory requestFactory = restTemplate
 					.getRequestFactory();
 			if (requestFactory instanceof HttpComponentsClientHttpRequestFactory) {
@@ -303,7 +303,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		} catch (Exception e) {
 			// TODO: handle exception
 			// e.printStackTrace();
-			ZWLogger.printLog(TAG, "ÇëÇó³öÏÖÒì³£:" + e.toString());
+			ZWLogger.printLog(TAG, "è¯·æ±‚å‡ºç°å¼‚å¸¸:" + e.toString());
 			r.errorException = e;
 			// return null;
 		}
@@ -312,22 +312,22 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	@Override
 	protected void onPostExecute(ZWResult<PARSEOBJ> result) {
-		// ÈÎÎñÖ´ĞĞºó
+		// ä»»åŠ¡æ‰§è¡Œå
 		super.onPostExecute(result);
 		if (judgeTaskValid() && handler != null) {
 			handler.afterTaskDoing();
 			// result.bodyStr
 			if (result.errorException != null) {
-				// ³öÏÖ´íÎóµÄÊ±ºò
+				// å‡ºç°é”™è¯¯çš„æ—¶å€™
 				handler.postError(result, result.errorException);
 				return;
 			}
-			// ÅĞ¶ÏÊÇ·ñ¿ªÊ¼»º´æ
+			// åˆ¤æ–­æ˜¯å¦å¼€å§‹ç¼“å­˜
 			if (isOpenCache() && result.bodyObj != null) {
 				ZWCache cache = getRestCache(ctx.get());
 				cache.putJson(config.getUniqueKey(), result.bodyObj,
 						cacheSaveTime);
-				ZWLogger.printLog(this, "ÍøÂçµÄÊı¾İÒÑ»º´æ,»º´æÊ±¼äÎª:"+cacheSaveTime+"Ãë");
+				ZWLogger.printLog(this, "ç½‘ç»œçš„æ•°æ®å·²ç¼“å­˜,ç¼“å­˜æ—¶é—´ä¸º:"+cacheSaveTime+"ç§’");
 			}
 
 			handler.postResult(result);
@@ -338,13 +338,13 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			}
 			if (allTask != null) {
 				if (allTask.size() == 0) {
-					// ¶ÓÁĞÀïÃæÈÎÎñÔÊĞíÍê±Ï
+					// é˜Ÿåˆ—é‡Œé¢ä»»åŠ¡å…è®¸å®Œæ¯•
 
 				} else {
 					if (config == null) {
-						throw new NullPointerException("¶ÓÁĞÀïÃæÈÎÎñ±ØĞëÌáÇ°ÉèÖÃ Config!");
+						throw new NullPointerException("é˜Ÿåˆ—é‡Œé¢ä»»åŠ¡å¿…é¡»æå‰è®¾ç½® Config!");
 					}
-					ZWLogger.printLog(TAG, "¶ÓÁĞÓĞÈÎÎñ,¼ÌĞøÖ´ĞĞ!");
+					ZWLogger.printLog(TAG, "é˜Ÿåˆ—æœ‰ä»»åŠ¡,ç»§ç»­æ‰§è¡Œ!");
 					ZWAsyncTask<?> task = allTask.poll();
 					task.execute(config);
 				}
@@ -354,11 +354,11 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			
 			ZWLogger.printLog(
 					TAG,
-					"ÈÎÎñOver,ÈÎÎñIDÎª:"
+					"ä»»åŠ¡Over,ä»»åŠ¡IDä¸º:"
 							+ taskGuid
-							+ "  ºÄÊ±:"
+							+ "  è€—æ—¶:"
 							+ (System.currentTimeMillis() - timeingMap
-									.remove(taskUUID)) + "ºÁÃë!");
+									.remove(taskUUID)) + "æ¯«ç§’!");
 		}
 
 		
@@ -374,7 +374,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	}
 
 	/**
-	 * ÅĞ¶Ï ÊÇ²»ÊÇÕâ¸öÀà
+	 * åˆ¤æ–­ æ˜¯ä¸æ˜¯è¿™ä¸ªç±»
 	 */
 	public boolean judgeContextToActivity(Class<? extends Context> activityClass) {
 		Context mContext = ctx.get();
@@ -396,7 +396,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñ¿ªÆô»º´æ
+	 * åˆ¤æ–­æ˜¯å¦å¼€å¯ç¼“å­˜
 	 * @return
 	 */
 	public boolean isOpenCache(){
@@ -404,7 +404,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	}
 	
 	/**
-	 * µÃµ½ »º´æ ¹ÜÀíÀà
+	 * å¾—åˆ° ç¼“å­˜ ç®¡ç†ç±»
 	 * 
 	 * @param ctx
 	 * @return
@@ -442,12 +442,12 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	}
 
 	/**
-	 * Çå¿ÕÊı¾İ
+	 * æ¸…ç©ºæ•°æ®
 	 */
 	private void cycle() {
 		ctx.clear();
 		ctx = null;
-		// ÇëÇó´¦ÀíÆ÷
+		// è¯·æ±‚å¤„ç†å™¨
 		handler = null;
 
 		if (allTask != null) {

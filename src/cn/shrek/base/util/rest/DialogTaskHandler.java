@@ -44,7 +44,7 @@ public abstract class DialogTaskHandler<T> implements AsyncTaskHandler<T> {
 	@Override
 	public void postError(ZWResult<T> result, Exception ex) {
 		// TODO Auto-generated method stub
-		showNormalError(false, "ÇëÇó³ö´íÀ²", ex.toString());
+		showNormalError(false, "è¯·æ±‚å‡ºé”™å•¦", ex.toString());
 	}
 
 	public void errorDoing(){
@@ -63,7 +63,7 @@ public abstract class DialogTaskHandler<T> implements AsyncTaskHandler<T> {
 //			}
 			build.setTitle(errorTitle)
 					.setMessage(errorContent)
-					.setPositiveButton("È·¶¨",
+					.setPositiveButton("ç¡®å®š",
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,

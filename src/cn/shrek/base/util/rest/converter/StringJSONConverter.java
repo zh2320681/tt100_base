@@ -54,7 +54,7 @@ public class StringJSONConverter implements HttpMessageConverter<String> {
 		reader.close();
 		
 //		Result result = JSON.parseObject(sb.toString(), arg0);
-		ZWLogger.printLog(this, "接收到的JSON数据:"+sb.toString());
+		ZWLogger.printLog(this, "鎺ユ敹鍒扮殑JSON鏁版嵁:"+sb.toString());
 		return sb.toString();
 	}
 

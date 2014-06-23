@@ -32,7 +32,7 @@ public class ZWLogger {
 				break;
 			}
 			
-			/** -------------- ÈÕÖ¾´òÓ¡ ------------------- */
+			/** -------------- æ—¥å¿—æ‰“å° ------------------- */
 			if(ZWApplication.isLoggerPrint){
 				ZWApplication.mPrintLogger.println(mLogLevel, tag, msg);
 			}

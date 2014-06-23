@@ -30,7 +30,7 @@ import cn.shrek.base.download.bo.DLTask;
 import cn.tt100.base.R;
 
 /**
- * ¹¤¾ßÀà
+ * å·¥å…·ç±»
  * 
  * @author shrek
  * 
@@ -40,7 +40,7 @@ public class BaseUtil {
 	public static final DecimalFormat df = new DecimalFormat("#.00");
 
 	/**
-	 * Í¨¹ı¸ø¶¨µÄ ¸¸View ³õÊ¼»¯holderÀïÃæËùÓĞµÄView
+	 * é€šè¿‡ç»™å®šçš„ çˆ¶View åˆå§‹åŒ–holderé‡Œé¢æ‰€æœ‰çš„View
 	 * 
 	 * @param parentView
 	 * @param holderObj
@@ -54,22 +54,22 @@ public class BaseUtil {
 		for (Field f : fields) {
 			if (View.class.isAssignableFrom(f.getType())) {
 				String idName = regex.replace("?", f.getName());
-				// ÅĞ¶ÏĞŞÊÎ
+				// åˆ¤æ–­ä¿®é¥°
 				int value = getIdValueIntoR(ctx, idName);
 				f.setAccessible(true);
 				try {
 					f.set(holderObj, parentView.findViewById(value));
 				} catch (IllegalArgumentException e) {
-					ZWLogger.printLog(BaseUtil.class, f.getName() + "¸³ÖµÊ§°Ü!");
+					ZWLogger.printLog(BaseUtil.class, f.getName() + "èµ‹å€¼å¤±è´¥!");
 				} catch (IllegalAccessException e) {
-					ZWLogger.printLog(BaseUtil.class, f.getName() + "¸³ÖµÊ±·ÃÎÊÊ§°Ü!");
+					ZWLogger.printLog(BaseUtil.class, f.getName() + "èµ‹å€¼æ—¶è®¿é—®å¤±è´¥!");
 				}
 			}
 		}
 	}
 
 	/**
-	 * Í¨¹ıÃû×Ö µÃµ½idµÄÖµ
+	 * é€šè¿‡åå­— å¾—åˆ°idçš„å€¼
 	 * 
 	 * @param idName
 	 * @return
@@ -80,7 +80,7 @@ public class BaseUtil {
 	}
 
 	/**
-	 * ¼ì²âÍøÂçÁ´½Ó
+	 * æ£€æµ‹ç½‘ç»œé“¾æ¥
 	 * 
 	 * @param context
 	 * @return
@@ -104,7 +104,7 @@ public class BaseUtil {
 	}
 
 	/**
-	 * ´ò¿ªÎÄ¼ş
+	 * æ‰“å¼€æ–‡ä»¶
 	 * 
 	 * @param file
 	 */
@@ -114,11 +114,11 @@ public class BaseUtil {
 		String fName = file.getName();
 		int dotIndex = fName.lastIndexOf(".");
 		if (dotIndex < 0) {
-			// ÎÄ¼şÃ»ÓĞºó×ºÃû
-			Toast.makeText(context, "ÎŞ·¨Ê¶±ğµÄÎÄ¼şÀàĞÍ!", Toast.LENGTH_LONG).show();
+			// æ–‡ä»¶æ²¡æœ‰åç¼€å
+			Toast.makeText(context, "æ— æ³•è¯†åˆ«çš„æ–‡ä»¶ç±»å‹!", Toast.LENGTH_LONG).show();
 			return;
 		}
-		/* »ñÈ¡ÎÄ¼şµÄºó×ºÃû */
+		/* è·å–æ–‡ä»¶çš„åç¼€å */
 //		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
 		// if (end.indexOf("txt") != -1 || end.indexOf("htm") != -1) {
 		// intent.setClass(context, ShowTxtAndWeb.class);
@@ -127,23 +127,23 @@ public class BaseUtil {
 		// } else {
 
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		// ÉèÖÃintentµÄActionÊôĞÔ
+		// è®¾ç½®intentçš„Actionå±æ€§
 		intent.setAction(Intent.ACTION_VIEW);
-		// »ñÈ¡ÎÄ¼şfileµÄMIMEÀàĞÍ
+		// è·å–æ–‡ä»¶fileçš„MIMEç±»å‹
 		String type = getMIMEType(file);
-		// ÉèÖÃintentµÄdataºÍTypeÊôĞÔ¡£
+		// è®¾ç½®intentçš„dataå’ŒTypeå±æ€§ã€‚
 		intent.setDataAndType(Uri.fromFile(file), type);
 		try {
 			context.startActivity(intent);
 		} catch (Exception e) {
-			Toast.makeText(context, "¸ÃÎÄ¼şÀàĞÍÎŞ·¨´ò¿ª!", Toast.LENGTH_LONG).show();
+			Toast.makeText(context, "è¯¥æ–‡ä»¶ç±»å‹æ— æ³•æ‰“å¼€!", Toast.LENGTH_LONG).show();
 		}
 
 	}
 
-	// ½¨Á¢Ò»¸öMIMEÀàĞÍÓëÎÄ¼şºó×ºÃûµÄÆ¥Åä±í
+	// å»ºç«‹ä¸€ä¸ªMIMEç±»å‹ä¸æ–‡ä»¶åç¼€åçš„åŒ¹é…è¡¨
 	static final String[][] MIME_MapTable = {
-			// {ºó×ºÃû£¬ MIMEÀàĞÍ}
+			// {åç¼€åï¼Œ MIMEç±»å‹}
 			{ ".3gp", "video/3gpp" },
 			{ ".apk", "application/vnd.android.package-archive" },
 			{ ".asf", "video/x-ms-asf" }, { ".avi", "video/x-msvideo" },
@@ -194,7 +194,7 @@ public class BaseUtil {
 			{ "", "*/*" } };
 
 	/**
-	 * ¸ù¾İÎÄ¼şºó×ºÃû»ñµÃ¶ÔÓ¦µÄMIMEÀàĞÍ¡£
+	 * æ ¹æ®æ–‡ä»¶åç¼€åè·å¾—å¯¹åº”çš„MIMEç±»å‹ã€‚
 	 * 
 	 * @param file
 	 */
@@ -205,7 +205,7 @@ public class BaseUtil {
 		if (dotIndex < 0) {
 			return type;
 		}
-		/* »ñÈ¡ÎÄ¼şµÄºó×ºÃû */
+		/* è·å–æ–‡ä»¶çš„åç¼€å */
 		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
 		if (end == "")
 			return type;
@@ -217,7 +217,7 @@ public class BaseUtil {
 	}
 
 	/**
-	 * ½«str×ª»¯Îªint Èç¹û³öÏÖÒì³£ ·µ»Ø0
+	 * å°†strè½¬åŒ–ä¸ºint å¦‚æœå‡ºç°å¼‚å¸¸ è¿”å›0
 	 * 
 	 * @param str
 	 * @return
@@ -236,7 +236,7 @@ public class BaseUtil {
 	}
 
 	/**
-	 * ÅĞ¶Ï ÊÇ²»ÊÇÕâ¸öActivity
+	 * åˆ¤æ–­ æ˜¯ä¸æ˜¯è¿™ä¸ªActivity
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T judgeContextToActivity(Object obj,
@@ -255,16 +255,16 @@ public class BaseUtil {
 	
 	/**
 	 * #########################################################################
-	 * ############################ Í¼Æ¬´¦ÀíÀà ###################################
+	 * ############################ å›¾ç‰‡å¤„ç†ç±» ###################################
 	 * #########################################################################
 	 */
 	
 	/**
-	 * Í¨¹ıÓÃ»§Ö¸¶¨µÄ ´óĞ¡ ¼ÓÔØÍ¼Æ¬
+	 * é€šè¿‡ç”¨æˆ·æŒ‡å®šçš„ å¤§å° åŠ è½½å›¾ç‰‡
 	 * 
 	 * @param filePath
 	 * @param imgWidth
-	 *            Îª-1²ÉÓÃÔ­Í¼´óĞ¡ 0 ²»ÒÔ¿í×öµÈ±ÈËõ·Å ÆäËû¾ÍÊÇËõ·ÅºóµÄÍ¼Æ¬´óĞ¡
+	 *            ä¸º-1é‡‡ç”¨åŸå›¾å¤§å° 0 ä¸ä»¥å®½åšç­‰æ¯”ç¼©æ”¾ å…¶ä»–å°±æ˜¯ç¼©æ”¾åçš„å›¾ç‰‡å¤§å°
 	 * @param imgHeight
 	 * @return
 	 * @throws Exception
@@ -315,7 +315,7 @@ public class BaseUtil {
 
 	
 	/**
-	 * Bitmap ¡ú Drawable
+	 * Bitmap â†’ Drawable
 	 */
 	@SuppressWarnings("deprecation")
 	public static Drawable bitmap2Drawable(Bitmap bm) {
@@ -328,30 +328,30 @@ public class BaseUtil {
 	}
 	
 	/**
-	 * Drawable ¡ú Bitmap
+	 * Drawable â†’ Bitmap
 	 */
 	@SuppressWarnings("deprecation")
 	public static Bitmap drawable2Bitmap(Drawable drawable) {
 		if (drawable == null) {
 			return null;
 		}
-		// È¡ drawable µÄ³¤¿í
+		// å– drawable çš„é•¿å®½
 		int w = drawable.getIntrinsicWidth();
 		int h = drawable.getIntrinsicHeight();
-		// È¡ drawable µÄÑÕÉ«¸ñÊ½
+		// å– drawable çš„é¢œè‰²æ ¼å¼
 		Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
-		// ½¨Á¢¶ÔÓ¦ bitmap
+		// å»ºç«‹å¯¹åº” bitmap
 		Bitmap bitmap = Bitmap.createBitmap(w, h, config);
-		// ½¨Á¢¶ÔÓ¦ bitmap µÄ»­²¼
+		// å»ºç«‹å¯¹åº” bitmap çš„ç”»å¸ƒ
 		Canvas canvas = new Canvas(bitmap);
 		drawable.setBounds(0, 0, w, h);
-		// °Ñ drawable ÄÚÈİ»­µ½»­²¼ÖĞ
+		// æŠŠ drawable å†…å®¹ç”»åˆ°ç”»å¸ƒä¸­
 		drawable.draw(canvas);
 		return bitmap;
 	}
 	
 	/**
-	 * byte[] ¡ú Bitmap
+	 * byte[] â†’ Bitmap
 	 */
 	public static Bitmap Bytes2Bimap(byte[] b) {
 		if (b.length == 0) {
@@ -362,7 +362,7 @@ public class BaseUtil {
 	
 	
 	/**
-	 * Bitmap ¡ú byte[]
+	 * Bitmap â†’ byte[]
 	 */
 	public static byte[] Bitmap2Bytes(Bitmap bm) {
 		if (bm == null) {
@@ -388,7 +388,7 @@ public class BaseUtil {
 	// }
 
 	/**
-	 * Í¨¹ısize »ñÈ¡ÎÄ¼ş´óĞ¡ÏÔÊ¾×Ö·û´®
+	 * é€šè¿‡size è·å–æ–‡ä»¶å¤§å°æ˜¾ç¤ºå­—ç¬¦ä¸²
 	 * 
 	 * @param size
 	 * @return
@@ -423,7 +423,7 @@ public class BaseUtil {
 	}
 
 	/**
-	 * ÅĞ¶Ïsd¿¨ÊÇ·ñ´æÔÚ
+	 * åˆ¤æ–­sdå¡æ˜¯å¦å­˜åœ¨
 	 */
 	public static boolean isSdCardExist() {
 		boolean isExist = false;
@@ -435,7 +435,7 @@ public class BaseUtil {
 	}
 
 	/**
-	 * ·µ»Ø´ò¿ªÎÄ¼şµÄÒâÍ¼
+	 * è¿”å›æ‰“å¼€æ–‡ä»¶çš„æ„å›¾
 	 * 
 	 * @param file
 	 */
@@ -445,29 +445,29 @@ public class BaseUtil {
 		String fName = file.getName();
 		int dotIndex = fName.lastIndexOf(".");
 		if (dotIndex < 0) {
-			// ÎÄ¼şÃ»ÓĞºó×ºÃû
-			Toast.makeText(context, "ÎŞ·¨Ê¶±ğµÄÎÄ¼şÀàĞÍ!", Toast.LENGTH_LONG).show();
+			// æ–‡ä»¶æ²¡æœ‰åç¼€å
+			Toast.makeText(context, "æ— æ³•è¯†åˆ«çš„æ–‡ä»¶ç±»å‹!", Toast.LENGTH_LONG).show();
 			return null;
 		}
-		/* »ñÈ¡ÎÄ¼şµÄºó×ºÃû */
+		/* è·å–æ–‡ä»¶çš„åç¼€å */
 //		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		// ÉèÖÃintentµÄActionÊôĞÔ
+		// è®¾ç½®intentçš„Actionå±æ€§
 		intent.setAction(Intent.ACTION_VIEW);
-		// »ñÈ¡ÎÄ¼şfileµÄMIMEÀàĞÍ
+		// è·å–æ–‡ä»¶fileçš„MIMEç±»å‹
 		String type = getMIMEType(file);
-		// ÉèÖÃintentµÄdataºÍTypeÊôĞÔ¡£
+		// è®¾ç½®intentçš„dataå’ŒTypeå±æ€§ã€‚
 		intent.setDataAndType(Uri.fromFile(file), type);
 		return intent;
 
 	}
 
 	/**
-	 * ¸ù¾İÎÄ¼şÃû µÃµ½¶ÔÓ¦µÄ Í¼±ê
+	 * æ ¹æ®æ–‡ä»¶å å¾—åˆ°å¯¹åº”çš„ å›¾æ ‡
 	 */
 	public static int getIcon(File f) {
 		if (!f.isDirectory()) {
-			// ÎÄ¼ş
+			// æ–‡ä»¶
 			String name = f.getName().toLowerCase();
 			if (name.indexOf(".txt") > 0) {
 				return R.drawable.mimetype_text_txt;
@@ -489,7 +489,7 @@ public class BaseUtil {
 				return R.drawable.mimetype_video;
 			}
 		} else {
-			// ÎÄ¼ş¼Ğ
+			// æ–‡ä»¶å¤¹
 			return R.drawable.mimetype_folder;
 		}
 
@@ -497,18 +497,18 @@ public class BaseUtil {
 	}
 
 	/**
-	 * µÃµ½Ò»¸ö¿ÉÓÃµÄ»º´æÄ¿Â¼(Èç¹ûÍâ²¿¿ÉÓÃÊ¹ÓÃÍâ²¿,·ñÔòÄÚ²¿)¡£
+	 * å¾—åˆ°ä¸€ä¸ªå¯ç”¨çš„ç¼“å­˜ç›®å½•(å¦‚æœå¤–éƒ¨å¯ç”¨ä½¿ç”¨å¤–éƒ¨,å¦åˆ™å†…éƒ¨)ã€‚
 	 * 
 	 * @param context
-	 *            ÉÏÏÂÎÄĞÅÏ¢
+	 *            ä¸Šä¸‹æ–‡ä¿¡æ¯
 	 * @param uniqueName
-	 *            Ä¿Â¼Ãû×Ö
-	 * @return ·µ»ØÄ¿Â¼Ãû×Ö
+	 *            ç›®å½•åå­—
+	 * @return è¿”å›ç›®å½•åå­—
 	 */
 	public static File getDiskCacheDir(Context context, String uniqueName) {
-		// ¼ì²éÊÇ·ñ°²×°»ò´æ´¢Ã½ÌåÊÇÄÚÖÃµÄ,Èç¹ûÊÇÕâÑù,ÊÔ×ÅÊ¹ÓÃ
-		// Íâ²¿»º´æ Ä¿Â¼
-		// ·ñÔòÊ¹ÓÃÄÚ²¿»º´æ Ä¿Â¼
+		// æ£€æŸ¥æ˜¯å¦å®‰è£…æˆ–å­˜å‚¨åª’ä½“æ˜¯å†…ç½®çš„,å¦‚æœæ˜¯è¿™æ ·,è¯•ç€ä½¿ç”¨
+		// å¤–éƒ¨ç¼“å­˜ ç›®å½•
+		// å¦åˆ™ä½¿ç”¨å†…éƒ¨ç¼“å­˜ ç›®å½•
 		final String cachePath = Environment.MEDIA_MOUNTED.equals(Environment
 				.getExternalStorageState()) || !isExternalStorageRemovable() ? getExternalCacheDir(
 				context).getPath()
@@ -518,9 +518,9 @@ public class BaseUtil {
 	}
 
 	/**
-	 * ¼ì²éÈç¹ûÍâ²¿´æ´¢Æ÷ÊÇÄÚÖÃµÄ»òÊÇ¿ÉÒÆ¶¯µÄ¡£
+	 * æ£€æŸ¥å¦‚æœå¤–éƒ¨å­˜å‚¨å™¨æ˜¯å†…ç½®çš„æˆ–æ˜¯å¯ç§»åŠ¨çš„ã€‚
 	 * 
-	 * @return Èç¹ûÍâ²¿´æ´¢ÊÇ¿ÉÒÆ¶¯µÄ(¾ÍÏñÒ»¸öSD¿¨)·µ»ØÎª true,·ñÔòfalse¡£
+	 * @return å¦‚æœå¤–éƒ¨å­˜å‚¨æ˜¯å¯ç§»åŠ¨çš„(å°±åƒä¸€ä¸ªSDå¡)è¿”å›ä¸º true,å¦åˆ™falseã€‚
 	 */
 	public static boolean isExternalStorageRemovable() {
 		if (AndroidVersionCheckUtils.hasGingerbread()) {
@@ -530,11 +530,11 @@ public class BaseUtil {
 	}
 
 	/**
-	 * »ñµÃÍâ²¿Ó¦ÓÃ³ÌĞò»º´æÄ¿Â¼
+	 * è·å¾—å¤–éƒ¨åº”ç”¨ç¨‹åºç¼“å­˜ç›®å½•
 	 * 
 	 * @param context
-	 *            ÉÏÏÂÎÄĞÅÏ¢
-	 * @return Íâ²¿»º´æÄ¿Â¼
+	 *            ä¸Šä¸‹æ–‡ä¿¡æ¯
+	 * @return å¤–éƒ¨ç¼“å­˜ç›®å½•
 	 */
 	public static File getExternalCacheDir(Context context) {
 		if (AndroidVersionCheckUtils.hasFroyo()) {

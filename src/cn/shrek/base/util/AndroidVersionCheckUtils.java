@@ -4,7 +4,7 @@ import android.os.Build;
 
 /**
  * @Title AndroidVersionCheckUtils
- * @Description AndroidVersionCheckUtils ÓÃÓÚ¶à°æ±¾¼æÈİ¼ì²â
+ * @Description AndroidVersionCheckUtils ç”¨äºå¤šç‰ˆæœ¬å…¼å®¹æ£€æµ‹
  */
 public class AndroidVersionCheckUtils {
 	
@@ -13,7 +13,7 @@ public class AndroidVersionCheckUtils {
 	};
 
 	/**
-	 * µ±Ç°AndroidÏµÍ³°æ±¾ÊÇ·ñÔÚ£¨ Donut£© Android 1.6»òÒÔÉÏ
+	 * å½“å‰Androidç³»ç»Ÿç‰ˆæœ¬æ˜¯å¦åœ¨ï¼ˆ Donutï¼‰ Android 1.6æˆ–ä»¥ä¸Š
 	 * 
 	 * @return
 	 */
@@ -22,7 +22,7 @@ public class AndroidVersionCheckUtils {
 	}
 
 	/**
-	 * µ±Ç°AndroidÏµÍ³°æ±¾ÊÇ·ñÔÚ£¨ Eclair£© Android 2.0»ò ÒÔÉÏ
+	 * å½“å‰Androidç³»ç»Ÿç‰ˆæœ¬æ˜¯å¦åœ¨ï¼ˆ Eclairï¼‰ Android 2.0æˆ– ä»¥ä¸Š
 	 * 
 	 * @return
 	 */
@@ -31,7 +31,7 @@ public class AndroidVersionCheckUtils {
 	}
 
 	/**
-	 * µ±Ç°AndroidÏµÍ³°æ±¾ÊÇ·ñÔÚ£¨ Froyo£© Android 2.2»ò Android 2.2ÒÔÉÏ
+	 * å½“å‰Androidç³»ç»Ÿç‰ˆæœ¬æ˜¯å¦åœ¨ï¼ˆ Froyoï¼‰ Android 2.2æˆ– Android 2.2ä»¥ä¸Š
 	 * 
 	 * @return
 	 */
@@ -40,7 +40,7 @@ public class AndroidVersionCheckUtils {
 	}
 
 	/**
-	 * µ±Ç°AndroidÏµÍ³°æ±¾ÊÇ·ñÔÚ£¨ Gingerbread£© Android 2.3x»ò Android 2.3x ÒÔÉÏ
+	 * å½“å‰Androidç³»ç»Ÿç‰ˆæœ¬æ˜¯å¦åœ¨ï¼ˆ Gingerbreadï¼‰ Android 2.3xæˆ– Android 2.3x ä»¥ä¸Š
 	 * 
 	 * @return
 	 */
@@ -49,7 +49,7 @@ public class AndroidVersionCheckUtils {
 	}
 
 	/**
-	 * µ±Ç°AndroidÏµÍ³°æ±¾ÊÇ·ñÔÚ£¨ Honeycomb£© Android3.1»ò Android3.1ÒÔÉÏ
+	 * å½“å‰Androidç³»ç»Ÿç‰ˆæœ¬æ˜¯å¦åœ¨ï¼ˆ Honeycombï¼‰ Android3.1æˆ– Android3.1ä»¥ä¸Š
 	 * 
 	 * @return
 	 */
@@ -58,7 +58,7 @@ public class AndroidVersionCheckUtils {
 	}
 
 	/**
-	 * µ±Ç°AndroidÏµÍ³°æ±¾ÊÇ·ñÔÚ£¨ HoneycombMR1£© Android3.1.1»ò Android3.1.1ÒÔÉÏ
+	 * å½“å‰Androidç³»ç»Ÿç‰ˆæœ¬æ˜¯å¦åœ¨ï¼ˆ HoneycombMR1ï¼‰ Android3.1.1æˆ– Android3.1.1ä»¥ä¸Š
 	 * 
 	 * @return
 	 */
@@ -67,7 +67,7 @@ public class AndroidVersionCheckUtils {
 	}
 
 	/**
-	 * µ±Ç°AndroidÏµÍ³°æ±¾ÊÇ·ñÔÚ£¨ IceCreamSandwich£© Android4.0»ò Android4.0ÒÔÉÏ
+	 * å½“å‰Androidç³»ç»Ÿç‰ˆæœ¬æ˜¯å¦åœ¨ï¼ˆ IceCreamSandwichï¼‰ Android4.0æˆ– Android4.0ä»¥ä¸Š
 	 * 
 	 * @return
 	 */

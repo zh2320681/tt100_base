@@ -3,9 +3,9 @@ package cn.shrek.base.util.rest;
 import org.springframework.http.HttpStatus;
 
 public class ZWResult<PARAEOBJ> {
-	//ÇëÇóÂë
+	//è¯·æ±‚ç 
 	public HttpStatus requestCode;
-	//´íÎóĞÅÏ¢
+	//é”™è¯¯ä¿¡æ¯
 	public Exception errorException;
 	
 	public PARAEOBJ bodyObj;

@@ -36,8 +36,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 /**
- * »º´æÀà (Ö÷ÒªÓÃFile»º´æ)
- * Ö÷ÒªÓÃ»§ ÍøÂçÇëÇóµÄ»º´æ
+ * ç¼“å­˜ç±» (ä¸»è¦ç”¨Fileç¼“å­˜)
+ * ä¸»è¦ç”¨æˆ· ç½‘ç»œè¯·æ±‚çš„ç¼“å­˜
  * @author shrek
  *
  */
@@ -45,7 +45,7 @@ public class ZWCache {
 	public static final int TIME_HOUR = 60 * 60;
 	public static final int TIME_DAY = TIME_HOUR * 24;
 	private static final int MAX_SIZE = 1000 * 1000 * 50; // 50 mb
-	private static final int MAX_COUNT = Integer.MAX_VALUE; // ²»ÏŞÖÆ´æ·ÅÊı¾İµÄÊıÁ¿
+	private static final int MAX_COUNT = Integer.MAX_VALUE; // ä¸é™åˆ¶å­˜æ”¾æ•°æ®çš„æ•°é‡
 	private static Map<String, ZWCache> mInstanceMap = new HashMap<String, ZWCache>();
 	private ACacheManager mCache;
 
@@ -78,7 +78,7 @@ public class ZWCache {
 	}
 
 	/**
-	 * ·µ»ØÓ¦ÓÃµÄ½ø³ÌID
+	 * è¿”å›åº”ç”¨çš„è¿›ç¨‹ID
 	 * @return
 	 */
 	private static String myPid() {
@@ -118,15 +118,15 @@ public class ZWCache {
 	}
 
 	// =======================================
-	// ============ StringÊı¾İ ¶ÁĞ´ ==============
+	// ============ Stringæ•°æ® è¯»å†™ ==============
 	// =======================================
 	/**
-	 * ±£´æ StringÊı¾İ µ½ »º´æÖĞ
+	 * ä¿å­˜ Stringæ•°æ® åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄStringÊı¾İ
+	 *            ä¿å­˜çš„Stringæ•°æ®
 	 */
 	public void put(String key, String value) {
 		File file = mCache.newFile(key);
@@ -150,24 +150,24 @@ public class ZWCache {
 	}
 
 	/**
-	 * ±£´æ StringÊı¾İ µ½ »º´æÖĞ
+	 * ä¿å­˜ Stringæ•°æ® åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄStringÊı¾İ
+	 *            ä¿å­˜çš„Stringæ•°æ®
 	 * @param saveTime
-	 *            ±£´æµÄÊ±¼ä£¬µ¥Î»£ºÃë
+	 *            ä¿å­˜çš„æ—¶é—´ï¼Œå•ä½ï¼šç§’
 	 */
 	public void put(String key, String value, int saveTime) {
 		put(key, Utils.newStringWithDateInfo(saveTime, value));
 	}
 
 	/**
-	 * ¶ÁÈ¡ StringÊı¾İ
+	 * è¯»å– Stringæ•°æ®
 	 * 
 	 * @param key
-	 * @return String Êı¾İ
+	 * @return String æ•°æ®
 	 */
 	public String getAsString(String key) {
 		File file = mCache.get(key);
@@ -205,39 +205,39 @@ public class ZWCache {
 	}
 
 	// =======================================
-	// ============= JSONObject Êı¾İ ¶ÁĞ´ ==============
+	// ============= JSONObject æ•°æ® è¯»å†™ ==============
 	// =======================================
 	/**
-	 * ±£´æ JSONObjectÊı¾İ µ½ »º´æÖĞ
+	 * ä¿å­˜ JSONObjectæ•°æ® åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄJSONÊı¾İ
+	 *            ä¿å­˜çš„JSONæ•°æ®
 	 */
 	public void put(String key, JSONObject value) {
 		put(key, value.toString());
 	}
 
 	/**
-	 * ±£´æ JSONObjectÊı¾İ µ½ »º´æÖĞ
+	 * ä¿å­˜ JSONObjectæ•°æ® åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄJSONObjectÊı¾İ
+	 *            ä¿å­˜çš„JSONObjectæ•°æ®
 	 * @param saveTime
-	 *            ±£´æµÄÊ±¼ä£¬µ¥Î»£ºÃë
+	 *            ä¿å­˜çš„æ—¶é—´ï¼Œå•ä½ï¼šç§’
 	 */
 	public void put(String key, JSONObject value, int saveTime) {
 		put(key, value.toString(), saveTime);
 	}
 
 	/**
-	 * ¶ÁÈ¡JSONObjectÊı¾İ
+	 * è¯»å–JSONObjectæ•°æ®
 	 * 
 	 * @param key
-	 * @return JSONObjectÊı¾İ
+	 * @return JSONObjectæ•°æ®
 	 */
 	public JSONObject getAsJSONObject(String key) {
 		String JSONString = getAsString(key);
@@ -251,39 +251,39 @@ public class ZWCache {
 	}
 
 	// =======================================
-	// ============ JSONArray Êı¾İ ¶ÁĞ´ =============
+	// ============ JSONArray æ•°æ® è¯»å†™ =============
 	// =======================================
 	/**
-	 * ±£´æ JSONArrayÊı¾İ µ½ »º´æÖĞ
+	 * ä¿å­˜ JSONArrayæ•°æ® åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄJSONArrayÊı¾İ
+	 *            ä¿å­˜çš„JSONArrayæ•°æ®
 	 */
 	public void put(String key, JSONArray value) {
 		put(key, value.toString());
 	}
 
 	/**
-	 * ±£´æ JSONArrayÊı¾İ µ½ »º´æÖĞ
+	 * ä¿å­˜ JSONArrayæ•°æ® åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄJSONArrayÊı¾İ
+	 *            ä¿å­˜çš„JSONArrayæ•°æ®
 	 * @param saveTime
-	 *            ±£´æµÄÊ±¼ä£¬µ¥Î»£ºÃë
+	 *            ä¿å­˜çš„æ—¶é—´ï¼Œå•ä½ï¼šç§’
 	 */
 	public void put(String key, JSONArray value, int saveTime) {
 		put(key, value.toString(), saveTime);
 	}
 
 	/**
-	 * ¶ÁÈ¡JSONArrayÊı¾İ
+	 * è¯»å–JSONArrayæ•°æ®
 	 * 
 	 * @param key
-	 * @return JSONArrayÊı¾İ
+	 * @return JSONArrayæ•°æ®
 	 */
 	public JSONArray getAsJSONArray(String key) {
 		String JSONString = getAsString(key);
@@ -298,39 +298,39 @@ public class ZWCache {
 
 	
 	 // =======================================
-		// ============ JSON Object Êı¾İ ¶ÁĞ´ =============
+		// ============ JSON Object æ•°æ® è¯»å†™ =============
 		// =======================================
 		/**
-		 * ±£´æ JSON Êı¾İ µ½ »º´æÖĞ
+		 * ä¿å­˜ JSON æ•°æ® åˆ° ç¼“å­˜ä¸­
 		 * 
 		 * @param key
-		 *            ±£´æµÄkey
+		 *            ä¿å­˜çš„key
 		 * @param value
-		 *            ±£´æµÄJSON Êı¾İ
+		 *            ä¿å­˜çš„JSON æ•°æ®
 		 */
 		public void putJson(String key, Object value) {
 			put(key, JSON.toJSONString(value));
 		}
 
 		/**
-		 * ±£´æ JSONArrayÊı¾İ µ½ »º´æÖĞ
+		 * ä¿å­˜ JSONArrayæ•°æ® åˆ° ç¼“å­˜ä¸­
 		 * 
 		 * @param key
-		 *            ±£´æµÄkey
+		 *            ä¿å­˜çš„key
 		 * @param value
-		 *            ±£´æµÄJSONArrayÊı¾İ
+		 *            ä¿å­˜çš„JSONArrayæ•°æ®
 		 * @param saveTime
-		 *            ±£´æµÄÊ±¼ä£¬µ¥Î»£ºÃë
+		 *            ä¿å­˜çš„æ—¶é—´ï¼Œå•ä½ï¼šç§’
 		 */
 		public void putJson(String key, Object value, int saveTime) {
 			put(key, JSON.toJSONString(value), saveTime);
 		}
 
 		/**
-		 * ¶ÁÈ¡JSONObjectÊı¾İ
+		 * è¯»å–JSONObjectæ•°æ®
 		 * 
 		 * @param key
-		 * @return JSONArrayÊı¾İ
+		 * @return JSONArrayæ•°æ®
 		 */
 		public <T> T getAsJsonObject(String key,TypeReference<T> reference) {
 			String JSONString = getAsString(key);
@@ -345,15 +345,15 @@ public class ZWCache {
 		
 		
 	// =======================================
-	// ============== byte Êı¾İ ¶ÁĞ´ =============
+	// ============== byte æ•°æ® è¯»å†™ =============
 	// =======================================
 	/**
-	 * ±£´æ byteÊı¾İ µ½ »º´æÖĞ
+	 * ä¿å­˜ byteæ•°æ® åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄÊı¾İ
+	 *            ä¿å­˜çš„æ•°æ®
 	 */
 	public void put(String key, byte[] value) {
 		File file = mCache.newFile(key);
@@ -405,24 +405,24 @@ public class ZWCache {
 	}
 
 	/**
-	 * ±£´æ byteÊı¾İ µ½ »º´æÖĞ
+	 * ä¿å­˜ byteæ•°æ® åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄÊı¾İ
+	 *            ä¿å­˜çš„æ•°æ®
 	 * @param saveTime
-	 *            ±£´æµÄÊ±¼ä£¬µ¥Î»£ºÃë
+	 *            ä¿å­˜çš„æ—¶é—´ï¼Œå•ä½ï¼šç§’
 	 */
 	public void put(String key, byte[] value, int saveTime) {
 		put(key, Utils.newByteArrayWithDateInfo(saveTime, value));
 	}
 
 	/**
-	 * »ñÈ¡ byte Êı¾İ
+	 * è·å– byte æ•°æ®
 	 * 
 	 * @param key
-	 * @return byte Êı¾İ
+	 * @return byte æ•°æ®
 	 */
 	public byte[] getAsBinary(String key) {
 		RandomAccessFile RAFile = null;
@@ -457,29 +457,29 @@ public class ZWCache {
 	}
 
 	// =======================================
-	// ============= ĞòÁĞ»¯ Êı¾İ ¶ÁĞ´ ===============
+	// ============= åºåˆ—åŒ– æ•°æ® è¯»å†™ ===============
 	// =======================================
 	/**
-	 * ±£´æ SerializableÊı¾İ µ½ »º´æÖĞ
+	 * ä¿å­˜ Serializableæ•°æ® åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄvalue
+	 *            ä¿å­˜çš„value
 	 */
 	public void put(String key, Serializable value) {
 		put(key, value, -1);
 	}
 
 	/**
-	 * ±£´æ SerializableÊı¾İµ½ »º´æÖĞ
+	 * ä¿å­˜ Serializableæ•°æ®åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄvalue
+	 *            ä¿å­˜çš„value
 	 * @param saveTime
-	 *            ±£´æµÄÊ±¼ä£¬µ¥Î»£ºÃë
+	 *            ä¿å­˜çš„æ—¶é—´ï¼Œå•ä½ï¼šç§’
 	 */
 	public void put(String key, Serializable value, int saveTime) {
 		ByteArrayOutputStream baos = null;
@@ -505,10 +505,10 @@ public class ZWCache {
 	}
 
 	/**
-	 * ¶ÁÈ¡ SerializableÊı¾İ
+	 * è¯»å– Serializableæ•°æ®
 	 * 
 	 * @param key
-	 * @return Serializable Êı¾İ
+	 * @return Serializable æ•°æ®
 	 */
 	public Object getAsObject(String key) {
 		byte[] data = getAsBinary(key);
@@ -543,39 +543,39 @@ public class ZWCache {
 	}
 
 	// =======================================
-	// ============== bitmap Êı¾İ ¶ÁĞ´ =============
+	// ============== bitmap æ•°æ® è¯»å†™ =============
 	// =======================================
 	/**
-	 * ±£´æ bitmap µ½ »º´æÖĞ
+	 * ä¿å­˜ bitmap åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄbitmapÊı¾İ
+	 *            ä¿å­˜çš„bitmapæ•°æ®
 	 */
 	public void put(String key, Bitmap value) {
 		put(key, BaseUtil.Bitmap2Bytes(value));
 	}
 
 	/**
-	 * ±£´æ bitmap µ½ »º´æÖĞ
+	 * ä¿å­˜ bitmap åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄ bitmap Êı¾İ
+	 *            ä¿å­˜çš„ bitmap æ•°æ®
 	 * @param saveTime
-	 *            ±£´æµÄÊ±¼ä£¬µ¥Î»£ºÃë
+	 *            ä¿å­˜çš„æ—¶é—´ï¼Œå•ä½ï¼šç§’
 	 */
 	public void put(String key, Bitmap value, int saveTime) {
 		put(key, BaseUtil.Bitmap2Bytes(value), saveTime);
 	}
 
 	/**
-	 * ¶ÁÈ¡ bitmap Êı¾İ
+	 * è¯»å– bitmap æ•°æ®
 	 * 
 	 * @param key
-	 * @return bitmap Êı¾İ
+	 * @return bitmap æ•°æ®
 	 */
 	public Bitmap getAsBitmap(String key) {
 		if (getAsBinary(key) == null) {
@@ -585,39 +585,39 @@ public class ZWCache {
 	}
 
 	// =======================================
-	// ============= drawable Êı¾İ ¶ÁĞ´ =============
+	// ============= drawable æ•°æ® è¯»å†™ =============
 	// =======================================
 	/**
-	 * ±£´æ drawable µ½ »º´æÖĞ
+	 * ä¿å­˜ drawable åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄdrawableÊı¾İ
+	 *            ä¿å­˜çš„drawableæ•°æ®
 	 */
 	public void put(String key, Drawable value) {
 		put(key, BaseUtil.drawable2Bitmap(value));
 	}
 
 	/**
-	 * ±£´æ drawable µ½ »º´æÖĞ
+	 * ä¿å­˜ drawable åˆ° ç¼“å­˜ä¸­
 	 * 
 	 * @param key
-	 *            ±£´æµÄkey
+	 *            ä¿å­˜çš„key
 	 * @param value
-	 *            ±£´æµÄ drawable Êı¾İ
+	 *            ä¿å­˜çš„ drawable æ•°æ®
 	 * @param saveTime
-	 *            ±£´æµÄÊ±¼ä£¬µ¥Î»£ºÃë
+	 *            ä¿å­˜çš„æ—¶é—´ï¼Œå•ä½ï¼šç§’
 	 */
 	public void put(String key, Drawable value, int saveTime) {
 		put(key, BaseUtil.drawable2Bitmap(value), saveTime);
 	}
 
 	/**
-	 * ¶ÁÈ¡ Drawable Êı¾İ
+	 * è¯»å– Drawable æ•°æ®
 	 * 
 	 * @param key
-	 * @return Drawable Êı¾İ
+	 * @return Drawable æ•°æ®
 	 */
 	public Drawable getAsDrawable(String key) {
 		if (getAsBinary(key) == null) {
@@ -627,10 +627,10 @@ public class ZWCache {
 	}
 
 	/**
-	 * »ñÈ¡»º´æÎÄ¼ş
+	 * è·å–ç¼“å­˜æ–‡ä»¶
 	 * 
 	 * @param key
-	 * @return value »º´æµÄÎÄ¼ş
+	 * @return value ç¼“å­˜çš„æ–‡ä»¶
 	 */
 	public File file(String key) {
 		File f = mCache.newFile(key);
@@ -640,25 +640,25 @@ public class ZWCache {
 	}
 
 	/**
-	 * ÒÆ³ıÄ³¸ökey
+	 * ç§»é™¤æŸä¸ªkey
 	 * 
 	 * @param key
-	 * @return ÊÇ·ñÒÆ³ı³É¹¦
+	 * @return æ˜¯å¦ç§»é™¤æˆåŠŸ
 	 */
 	public boolean remove(String key) {
 		return mCache.remove(key);
 	}
 
 	/**
-	 * Çå³ıËùÓĞÊı¾İ
+	 * æ¸…é™¤æ‰€æœ‰æ•°æ®
 	 */
 	public void clear() {
 		mCache.clear();
 	}
 
 	/**
-	 * @title »º´æ¹ÜÀíÆ÷
-	 * Í¨¹ıÊÔÓÃ´ÎÊı Ã¿´ÎÉ¾³ı×î²»ÊÔÓÃµÄÎÄ¼ş
+	 * @title ç¼“å­˜ç®¡ç†å™¨
+	 * é€šè¿‡è¯•ç”¨æ¬¡æ•° æ¯æ¬¡åˆ é™¤æœ€ä¸è¯•ç”¨çš„æ–‡ä»¶
 	 * @version 1.0
 	 */
 	public class ACacheManager {
@@ -679,7 +679,7 @@ public class ZWCache {
 		}
 
 		/**
-		 * ¼ÆËã cacheSizeºÍcacheCount
+		 * è®¡ç®— cacheSizeå’ŒcacheCount
 		 */
 		private void calculateCacheSizeAndCacheCount() {
 			new Thread(new Runnable() {
@@ -702,9 +702,9 @@ public class ZWCache {
 		}
 
 		/**
-		 * Ìí¼ÓÎÄ¼ş
-		 * 1.³¬¹ıÊıÁ¿ »òÕßÏŞÖÆ´óĞ¡ É¾³ı×îºóÒ»¸öÎÄ¼ş
-		 * 2.Ìí¼ÓÎÄ¼ş½øÈë lastUsageDates ¸ÄÎÄ¼ş×îºóĞŞ¸ÄÊ±¼ä
+		 * æ·»åŠ æ–‡ä»¶
+		 * 1.è¶…è¿‡æ•°é‡ æˆ–è€…é™åˆ¶å¤§å° åˆ é™¤æœ€åä¸€ä¸ªæ–‡ä»¶
+		 * 2.æ·»åŠ æ–‡ä»¶è¿›å…¥ lastUsageDates æ”¹æ–‡ä»¶æœ€åä¿®æ”¹æ—¶é—´
 		 * @param file
 		 */
 		private void put(File file) {
@@ -732,7 +732,7 @@ public class ZWCache {
 
 		
 		/**
-		 * Í¨¹ıkey µÃµ½ÎÄ¼ş  
+		 * é€šè¿‡key å¾—åˆ°æ–‡ä»¶  
 		 * @param key
 		 * @return
 		 */
@@ -746,7 +746,7 @@ public class ZWCache {
 		}
 
 		/**
-		 * ´´½¨ÎÄ¼ş
+		 * åˆ›å»ºæ–‡ä»¶
 		 * @param key
 		 * @return
 		 */
@@ -772,8 +772,8 @@ public class ZWCache {
 		}
 
 		/**
-		 * ÒÆ³ı¾ÉµÄÎÄ¼ş
-		 * È¡ÊÔÓÃÊıÁ¿ ×îÉÙµÄÄÇ¸ö É¾³ıÖ®
+		 * ç§»é™¤æ—§çš„æ–‡ä»¶
+		 * å–è¯•ç”¨æ•°é‡ æœ€å°‘çš„é‚£ä¸ª åˆ é™¤ä¹‹
 		 * @return
 		 */
 		private long removeNext() {
@@ -807,7 +807,7 @@ public class ZWCache {
 		}
 
 		/**
-		 * ¼ÆËãÎÄ¼şµÄ³¤¶È
+		 * è®¡ç®—æ–‡ä»¶çš„é•¿åº¦
 		 * @param file
 		 * @return
 		 */
@@ -823,25 +823,25 @@ public class ZWCache {
 	
 	
 	/**
-	 * @title Ê±¼ä¼ÆËã¹¤¾ßÀà
+	 * @title æ—¶é—´è®¡ç®—å·¥å…·ç±»
 	 */
 	private static class Utils {
 		private static final char mSeparator = ' ';
 		/**
-		 * ÅĞ¶Ï»º´æµÄStringÊı¾İÊÇ·ñµ½ÆÚ
+		 * åˆ¤æ–­ç¼“å­˜çš„Stringæ•°æ®æ˜¯å¦åˆ°æœŸ
 		 * 
 		 * @param str
-		 * @return true£ºµ½ÆÚÁË false£º»¹Ã»ÓĞµ½ÆÚ
+		 * @return trueï¼šåˆ°æœŸäº† falseï¼šè¿˜æ²¡æœ‰åˆ°æœŸ
 		 */
 		private static boolean isDue(String str) {
 			return isDue(str.getBytes());
 		}
 
 		/**
-		 * ÅĞ¶Ï»º´æµÄbyteÊı¾İÊÇ·ñµ½ÆÚ
+		 * åˆ¤æ–­ç¼“å­˜çš„byteæ•°æ®æ˜¯å¦åˆ°æœŸ
 		 * 
 		 * @param data
-		 * @return true£ºµ½ÆÚÁË false£º»¹Ã»ÓĞµ½ÆÚ
+		 * @return trueï¼šåˆ°æœŸäº† falseï¼šè¿˜æ²¡æœ‰åˆ°æœŸ
 		 */
 		private static boolean isDue(byte[] data) {
 			String[] strs = getDateInfoFromDate(data);
@@ -860,7 +860,7 @@ public class ZWCache {
 		}
 
 		/**
-		 * µ±Ç°Ê±¼ä-±£´æÊ±¼ästrInfo
+		 * å½“å‰æ—¶é—´-ä¿å­˜æ—¶é—´strInfo
 		 * @param second
 		 * @param strInfo
 		 * @return
@@ -924,7 +924,7 @@ public class ZWCache {
 		}
 
 		/**
-		 * ·µ»Ø×Ö·û´® µ±Ç°Ê±¼ä-second
+		 * è¿”å›å­—ç¬¦ä¸² å½“å‰æ—¶é—´-second
 		 * @param second
 		 * @return
 		 */

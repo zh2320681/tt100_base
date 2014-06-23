@@ -13,7 +13,7 @@ import cn.shrek.base.util.ZWLogger;
 import cn.shrek.base.util.rest.converter.StringJSONConverter;
 
 /**
- * ÇëÇóµÄÅäÖÃ
+ * è¯·æ±‚çš„é…ç½®
  * @author shrek
  *
  */
@@ -22,26 +22,26 @@ public class ZWRequestConfig {
 	public static final String GBK_CHARSET = "gbk";
 	public static final String GB2312_CHARSET = "gb2312";
 	public static final String ISO_CHARSET = "ISO-8859-1";
-	//³¬Ê±¼ä
-	/** ¶ÁÈ¡³¬Ê±Ê±¼ä,µ¥Î»:ºÁÃë */
+	//è¶…æ—¶é—´
+	/** è¯»å–è¶…æ—¶æ—¶é—´,å•ä½:æ¯«ç§’ */
 	public static final int READ_TIME_OUT = 30000;
-	/** Á¬½Ó³¬Ê±Ê±¼ä ,µ¥Î»:ºÁÃë */
+	/** è¿æ¥è¶…æ—¶æ—¶é—´ ,å•ä½:æ¯«ç§’ */
 	public static final int CONN_TIME_OUT = 30000;
 	
 	
 	private static ZWRequestConfig defaultConfig;
 	
-	private String uniqueKey;//Î¨Ò»Ê¶±ğÂë
+	private String uniqueKey;//å”¯ä¸€è¯†åˆ«ç 
 	
-	private String urlCharset; //±àÂë
+	private String urlCharset; //ç¼–ç 
 	private Map<String,String> headers;
-	private Map<String,Object> maps;  //²ÎÊıÁĞ±í
+	private Map<String,Object> maps;  //å‚æ•°åˆ—è¡¨
 	private Object body;
 	public int connTimeOut,readTimeOut;
 	
 	
 	/**
-	 * Spring Ö§³ÖÕâÑù ²ÎÊıÀàĞÍ
+	 * Spring æ”¯æŒè¿™æ · å‚æ•°ç±»å‹
 	 */
 	private Object[] paras;
 	
@@ -51,7 +51,7 @@ public class ZWRequestConfig {
 	
 	public String url;
 	public Class<?> parseClazz;
-	//½âÎöÊ±ºò ÊÇ·ñÊÇÁĞ±í
+	//è§£ææ—¶å€™ æ˜¯å¦æ˜¯åˆ—è¡¨
 //	public boolean isList;
 	
 	public ZWRequestConfig(HttpMethod httpMethod,HttpMessageConverter<?> converter,String charset){
@@ -68,7 +68,7 @@ public class ZWRequestConfig {
 		if(Charset.isSupported(charset)){
 			this.urlCharset = charset;
 		}else{
-			throw new IllegalArgumentException("²»Ö§³ÖµÄ±àÂë·½Ê½:"+charset);
+			throw new IllegalArgumentException("ä¸æ”¯æŒçš„ç¼–ç æ–¹å¼:"+charset);
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class ZWRequestConfig {
 	}
 	
 	/**
-	 * ¿½±´Ä¬ÈÏµÄ ÇëÇó
+	 * æ‹·è´é»˜è®¤çš„ è¯·æ±‚
 	 * @return
 	 */
 	public static ZWRequestConfig copyDefault(){
@@ -107,7 +107,7 @@ public class ZWRequestConfig {
 				maps.put(key, URLEncoder.encode(value.toString(), urlCharset));
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(ZWRequestConfig.this, "Ìí¼ÓvalueÊ±±àÂë³öÏÖ´íÎó!");
+				ZWLogger.printLog(ZWRequestConfig.this, "æ·»åŠ valueæ—¶ç¼–ç å‡ºç°é”™è¯¯!");
 			}
 		}else{
 			maps.put(key, value);
@@ -163,7 +163,7 @@ public class ZWRequestConfig {
 
 
 	/**
-	 * ÊÇ·ñ¶Ô url½øĞĞ±àÂë
+	 * æ˜¯å¦å¯¹ urlè¿›è¡Œç¼–ç 
 	 * @return
 	 */
 	private boolean isUrlEnCode(){
@@ -171,8 +171,8 @@ public class ZWRequestConfig {
 	}
 	
 	/**
-	 * µÃµ½Î¨Ò» Ê¶±ğÂë
-	 * ÇëÇóµÄ "UniqueKey"+£¨URL+£¨ËùÓĞ²ÎÊı£©+body.toString£©.hashCode()
+	 * å¾—åˆ°å”¯ä¸€ è¯†åˆ«ç 
+	 * è¯·æ±‚çš„ "UniqueKey"+ï¼ˆURL+ï¼ˆæ‰€æœ‰å‚æ•°ï¼‰+body.toStringï¼‰.hashCode()
 	 * @return
 	 */
 	public String getUniqueKey(){

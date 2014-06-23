@@ -1,12 +1,12 @@
 package cn.shrek.base.util;
 
 public enum LogLevel {
-	DEBUG("调试"),
-	INFO("信息"),
-	WARNING("警告"),
-	ERROR("错误");
+	DEBUG("璋冭瘯"),
+	INFO("淇℃伅"),
+	WARNING("璀﹀憡"),
+	ERROR("閿欒");
 	
-	public String descript;//描述
+	public String descript;//鎻忚堪
 	
 	LogLevel(String descript){
 		this.descript = descript;

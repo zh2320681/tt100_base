@@ -3,12 +3,12 @@ package cn.shrek.base.util.rest;
 public interface AsyncTaskHandler<T> {
 	public void preDoing();
 	/**
-	 * ÈÎÎñ½áÊøºó×öÊ²Ã´
+	 * ä»»åŠ¡ç»“æŸååšä»€ä¹ˆ
 	 */
 	public void afterTaskDoing();
 	
 	/**
-	 * ¿Í»§×ö¶¯×÷
+	 * å®¢æˆ·åšåŠ¨ä½œ
 	 * @param result
 	 */
 	public void postResult(ZWResult<T> result);
