@@ -1,7 +1,7 @@
 package cn.shrek.base.ormlite.dao;
 /**
- * ÀàĞÍÖĞ×ª Field <----> Column
- * 1.»ù±¾ÀàĞÍÕı³£ÖĞ×ª
+ * ç±»å‹ä¸­è½¬ Field <----> Column
+ * 1.åŸºæœ¬ç±»å‹æ­£å¸¸ä¸­è½¬
  * 2.boolean ----> int
  * 3.Date Calendar ----> int
  * 4.String ----> Text
@@ -11,31 +11,31 @@ package cn.shrek.base.ormlite.dao;
 public interface DBTransforDao<F,C> {
 	
 	/**
-	 * °ÑJavaµÄ ×ª»»Îª Êı¾İ¿â´æ´¢ÀàĞÍ
+	 * æŠŠJavaçš„ è½¬æ¢ä¸º æ•°æ®åº“å­˜å‚¨ç±»å‹
 	 * @param fieldObj
 	 * @return
 	 */
 	public C parseFieldToColumn(F fieldObj);
 	
 	/**
-	 * Êı¾İ¿â´æ´¢ÀàĞÍ ×ª»¯ JavaµÄ
+	 * æ•°æ®åº“å­˜å‚¨ç±»å‹ è½¬åŒ– Javaçš„
 	 * @param columnObj
 	 * @return
 	 */
 	public F parseColumnToField(C columnObj);
 	
 	/**
-	 * ÌØÊâÇå¿Õ
+	 * ç‰¹æ®Šæ¸…ç©º
 	 */
 	public void specialDoing();
 	
 	/**
-	 * µÃµ½¿ÕÖµ<¿ÕÖµ²»»á²åÈëÊı¾İ¿â>
+	 * å¾—åˆ°ç©ºå€¼<ç©ºå€¼ä¸ä¼šæ’å…¥æ•°æ®åº“>
 	 */
 	public Object getFeildValueNull();
 	
 	/**
-	 * ÅĞ¶ÏÖµÊÇ·ñÎª¿Õ
+	 * åˆ¤æ–­å€¼æ˜¯å¦ä¸ºç©º
 	 * @param f
 	 * @return
 	 */

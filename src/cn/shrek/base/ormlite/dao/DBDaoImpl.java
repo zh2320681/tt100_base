@@ -61,7 +61,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 		Set<Object> allFKs = new HashSet<Object>();
 		InsertBuider<T> buider = insertBuider();
 		for(T obj : t){
-			//ÏÈ²åÈëÍâ¼üÖµ
+			//å…ˆæ’å…¥å¤–é”®å€¼
 			Set<Object> objs = buider.getForeignKeyObjs(obj);
 			allFKs.addAll(objs);
 		}
@@ -112,7 +112,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 //		return optNum;
 	}
 
-	/** -------------------É¾³ı-------------------------- */
+	/** -------------------åˆ é™¤-------------------------- */
 	@Override
 	public DeleteBuider deleteBuider() {
 		// TODO Auto-generated method stub
@@ -134,8 +134,8 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 	}
 
 	/**
-	 * ²»ÍÆ¼öÊÔÓÃ  
-	 * @param whereSql Ìõ¼şµÄsqlµÄÓï¾ä
+	 * ä¸æ¨èè¯•ç”¨  
+	 * @param whereSql æ¡ä»¶çš„sqlçš„è¯­å¥
 	 */
 	@Override
 	public long deleteObj(String whereSql) {
@@ -166,7 +166,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 		}
 	}
 
-	/** ------------------- ¸üĞÂ ----------------------- */
+	/** ------------------- æ›´æ–° ----------------------- */
 	@Override
 	public UpdateBuider<T> updateBuider() {
 		// TODO Auto-generated method stub
@@ -273,7 +273,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 				logColumnName = columnName;
 				Field field = info.allField.get(i);
 				
-				//ÊôĞÔÀàĞÍ
+				//å±æ€§ç±»å‹
 				Class<?> fieldType = info.getFieldType(i);
 				
 				int index = cursor.getColumnIndex(columnName);
@@ -299,28 +299,28 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 						break;
 				}	
 				/**
-				 * ÅĞ¶ÏÊôĞÔÊÇ·ñ Íâ¼ü  
-				 * Íâ¼ü Worker ÀïÃæCompany  ´ÓÊı¾İ¿âÀÌ³öÊÇ Company ID  ËùÒÔÒªÏÈnew Company()  °ÑIDÖµ¸øµ½Company 
-				 * ÔÚ°ÑCompany ¸øWoker¶ÔÏó
+				 * åˆ¤æ–­å±æ€§æ˜¯å¦ å¤–é”®  
+				 * å¤–é”® Worker é‡Œé¢Company  ä»æ•°æ®åº“æå‡ºæ˜¯ Company ID  æ‰€ä»¥è¦å…ˆnew Company()  æŠŠIDå€¼ç»™åˆ°Company 
+				 * åœ¨æŠŠCompany ç»™Wokerå¯¹è±¡
 				 */
 				if (info.allforeignClassMaps.containsKey(columnName)) {
 //					Field foreignField = info.allforeignMaps.get(columnName);
 					Class<?> forgienClazz =  info.allforeignClassMaps.get(columnName);
-					//Íâ¼üÖ¸ÏòµÄ¶ÔÏó
+					//å¤–é”®æŒ‡å‘çš„å¯¹è±¡
 //					Object forgienObj = forgienClazz.getConstructor().newInstance();
 //					foreignField.setAccessible(true);
-					//´Ó×Ö¶ÎµÄÖµ ×ª»»Îª JavaÀïÃæµÄÖµ
+					//ä»å­—æ®µçš„å€¼ è½¬æ¢ä¸º Javaé‡Œé¢çš„å€¼
 //					Object fieldValues =  DBTransforFactory.getFieldValue(columnValue, foreignField.getType());
 //					foreignField.set(forgienObj, fieldValues);
 					Object forgienObj = parseCurser(cursor, (Class<? extends ZWBo>)forgienClazz);
-					//·½±ãlogÊä³ö
+					//æ–¹ä¾¿logè¾“å‡º
 					logObj = forgienObj;
 					field.setAccessible(true);
 					field.set(obj, forgienObj);
 				}else {
-					//´Ó×Ö¶ÎµÄÖµ ×ª»»Îª JavaÀïÃæµÄÖµ
+					//ä»å­—æ®µçš„å€¼ è½¬æ¢ä¸º Javaé‡Œé¢çš„å€¼
 					Object fieldValues =  DBTransforFactory.getFieldValue(columnValue, fieldType);
-					//·½±ãlogÊä³ö
+					//æ–¹ä¾¿logè¾“å‡º
 					logObj = fieldValues;
 					field.setAccessible(true);
 					field.set(obj, fieldValues);
@@ -328,7 +328,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 			}
 			return obj;
 		} catch (Exception e) {
-			ZWLogger.printLog(DBDaoImpl.this, "¸ø×Ö¶ÎÃû:"+logColumnName+"¸³Öµ£¬Öµ:"+logObj+",Ê§°Ü!");
+			ZWLogger.printLog(DBDaoImpl.this, "ç»™å­—æ®µå:"+logColumnName+"èµ‹å€¼ï¼Œå€¼:"+logObj+",å¤±è´¥!");
 			e.printStackTrace();
 		}
 //		catch (IllegalAccessException e) {
@@ -348,9 +348,9 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T>{
 	}
 
 	/**
-	 * Á¬½ÓÖ÷ÒªÊÇ×óÁ¬½Ó²éÑ¯
-	 * ÀıÈçEmployee²éÑ¯µÄÊ±ºò Ë³±ã°ÑËùÊô¹«Ë¾Company ²é³öÀ´
-	 * 1.µÃµ½ËùÓĞµÄÍâ¼ü
+	 * è¿æ¥ä¸»è¦æ˜¯å·¦è¿æ¥æŸ¥è¯¢
+	 * ä¾‹å¦‚EmployeeæŸ¥è¯¢çš„æ—¶å€™ é¡ºä¾¿æŠŠæ‰€å±å…¬å¸Company æŸ¥å‡ºæ¥
+	 * 1.å¾—åˆ°æ‰€æœ‰çš„å¤–é”®
 	 */
 	@Override
 	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder) {

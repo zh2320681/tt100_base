@@ -8,18 +8,18 @@ import cn.shrek.base.ormlite.ZWDBHelper;
 import cn.shrek.base.util.ZWLogger;
 
 /**
- * ×îºÃ¾ÍÊÇÔöÉ¾¸Ä²Ù×÷  ²éÑ¯Òì²½×îºó×Ô¼ºÊµÏÖtaskÀà
+ * æœ€å¥½å°±æ˜¯å¢åˆ æ”¹æ“ä½œ  æŸ¥è¯¢å¼‚æ­¥æœ€åè‡ªå·±å®ç°taskç±»
  * @author shrek
  *
  */
 public abstract class DBAsyncTask extends AsyncTask<Object, Void, Integer> {
 	private ZWDBHelper mHelper;
-	//ÊÇ·ñ¿ªÆôÊÂÎñ
+	//æ˜¯å¦å¼€å¯äº‹åŠ¡
 	private boolean isTransaction;
 	
 	public DBAsyncTask(ZWDBHelper mHelper,boolean isTransaction){
 		if (mHelper == null) {
-			throw new IllegalArgumentException("Êı¾İ¿âÒì²½ÈÎÎñ ÖÁÉÙ´«Èë ZWDBHelper¶ÔÏó");
+			throw new IllegalArgumentException("æ•°æ®åº“å¼‚æ­¥ä»»åŠ¡ è‡³å°‘ä¼ å…¥ ZWDBHelperå¯¹è±¡");
 		}
 		this.mHelper = mHelper;
 		this.isTransaction = isTransaction;
@@ -37,22 +37,22 @@ public abstract class DBAsyncTask extends AsyncTask<Object, Void, Integer> {
 			long before = System.currentTimeMillis();
 			SQLiteDatabase db = mHelper.getDatabase(!isTransaction);
 			if(isTransaction){
-				db.beginTransaction();  //ÊÖ¶¯ÉèÖÃ¿ªÊ¼ÊÂÎñ
+				db.beginTransaction();  //æ‰‹åŠ¨è®¾ç½®å¼€å§‹äº‹åŠ¡
 			}
 			try {
 				optNum = doInBackground(mHelper);
 				if(isTransaction){
-					db.setTransactionSuccessful(); //´¦ÀíÍê³É
+					db.setTransactionSuccessful(); //å¤„ç†å®Œæˆ
 				}
 			} catch (Exception e) {
 				// TODO: handle exception
 				if(ZWApplication.isDebugMode){
 					e.printStackTrace();
 				}
-				ZWLogger.printLog(this, "Êı¾İ¿â²Ù×÷Ê§°Ü ÊÂÎñ»Ø¹ö!");
+				ZWLogger.printLog(this, "æ•°æ®åº“æ“ä½œå¤±è´¥ äº‹åŠ¡å›æ»š!");
 			}finally{
 				if(isTransaction){
-					db.endTransaction(); //´¦ÀíÍê³É
+					db.endTransaction(); //å¤„ç†å®Œæˆ
 				}	
 			}
 			long after = System.currentTimeMillis();

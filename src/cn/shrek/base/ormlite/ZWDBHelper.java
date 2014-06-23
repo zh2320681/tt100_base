@@ -25,7 +25,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	private static final int CLOSE_DBOPERATOR = 0x89;
 
 	private static Map<Class<? extends ZWBo>, DBDao> allDBDaos = new HashMap<Class<? extends ZWBo>, DBDao>();
-	//DatabaseErrorHandlerÊÇAPI 11µÄ
+	//DatabaseErrorHandleræ˜¯API 11çš„
 //	private static DatabaseErrorHandler mErrorHandler = new DefaultDatabaseErrorHandler();
 	private static SQLiteDatabase currentDBOperator;
 
@@ -95,7 +95,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * µÃµ½²Ù×÷Àà
+	 * å¾—åˆ°æ“ä½œç±»
 	 * 
 	 * @param clazz
 	 * @return
@@ -111,7 +111,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * ´´½¨¶à¸ö±í
+	 * åˆ›å»ºå¤šä¸ªè¡¨
 	 * 
 	 * @param arg0
 	 * @param createTablClss
@@ -124,7 +124,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * É¾³ı¶àÕÅ±í
+	 * åˆ é™¤å¤šå¼ è¡¨
 	 * 
 	 * @param arg0
 	 * @param createTablClss
@@ -137,7 +137,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * ²»ÓÃÉú³É dao¶ÔÏó Ö±½Ó×ö²Ù×÷
+	 * ä¸ç”¨ç”Ÿæˆ daoå¯¹è±¡ ç›´æ¥åšæ“ä½œ
 	 * 
 	 * @param sql
 	 * @param objClass
@@ -155,7 +155,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 
 	
 	/**
-	 * ²»ÓÃÉú³É dao¶ÔÏó Ö±½Ó×ö²Ù×÷
+	 * ä¸ç”¨ç”Ÿæˆ daoå¯¹è±¡ ç›´æ¥åšæ“ä½œ
 	 * 
 	 * @param sql
 	 * @param objClass
@@ -175,7 +175,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	}
 	
 	/**
-	 * Í¨¹ısql²éÑ¯ µÃµ½mapµÄÓ³Éä
+	 * é€šè¿‡sqlæŸ¥è¯¢ å¾—åˆ°mapçš„æ˜ å°„
 	 * @param sql
 	 * @return
 	 */
@@ -211,7 +211,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	}
 	
 	/**
-	 * Í¨¹ıÓÎ±ê Ö±½ÓµÃµ½¶ÔÏó
+	 * é€šè¿‡æ¸¸æ ‡ ç›´æ¥å¾—åˆ°å¯¹è±¡
 	 * @param cursor
 	 * @param objClass
 	 * @return
@@ -223,14 +223,14 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 			obj = objClass.getConstructor().newInstance();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			ZWLogger.printLog(objClass.getSimpleName(), "ÇëÌá¹©Ò»¸öÎŞ²ÎµÄ¹¹Ôì·½·¨!");
+			ZWLogger.printLog(objClass.getSimpleName(), "è¯·æä¾›ä¸€ä¸ªæ— å‚çš„æ„é€ æ–¹æ³•!");
 			e.printStackTrace();
 			return null;
 		}
 		int columnCount = cursor.getColumnCount();
 		for (int i = 0; i < columnCount; i++) {
 			String columnName = cursor.getColumnName(i);
-			// ´¦ÀíµôÒì³£ ²»Å×³ö
+			// å¤„ç†æ‰å¼‚å¸¸ ä¸æŠ›å‡º
 			Field field = null;
 			try {
 				field = objClass.getField(columnName);
@@ -243,17 +243,17 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 					field = objClass.getDeclaredField(columnName);
 				} catch (NoSuchFieldException e) {
 					// TODO Auto-generated catch block
-					ZWLogger.printLog(objClass.getSimpleName(), "ÀàÃû:"
-							+ objClass.getSimpleName() + "ÕÒ²»µ½½Ğ" + columnName
-							+ "ÊôĞÔÃû!");
+					ZWLogger.printLog(objClass.getSimpleName(), "ç±»å:"
+							+ objClass.getSimpleName() + "æ‰¾ä¸åˆ°å«" + columnName
+							+ "å±æ€§å!");
 					e.printStackTrace();
 					return null;
 				}
 			}
-			// ÊôĞÔÀàĞÍ
+			// å±æ€§ç±»å‹
 			Class<?> fieldType = field.getType();
 
-			// ´Ó×Ö¶ÎµÄÖµ ×ª»»Îª JavaÀïÃæµÄÖµ
+			// ä»å­—æ®µçš„å€¼ è½¬æ¢ä¸º Javaé‡Œé¢çš„å€¼
 			Object fieldValues = DBTransforFactory.getFieldValue(
 					getObjectValueByCursor(cursor, i), fieldType);
 			try {
@@ -261,8 +261,8 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 				field.set(obj, fieldValues);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				ZWLogger.printLog(objClass.getSimpleName(), "¸ø×Ö¶ÎÃû:"
-						+ columnName + "¸³Öµ£¬Öµ:" + fieldValues + ",Ê§°Ü!");
+				ZWLogger.printLog(objClass.getSimpleName(), "ç»™å­—æ®µå:"
+						+ columnName + "èµ‹å€¼ï¼Œå€¼:" + fieldValues + ",å¤±è´¥!");
 				e.printStackTrace();
 			}
 		}
@@ -270,7 +270,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Í¨¹ıÏÂ±ê µÃµ½ÓÎ±êÀïÃæµÄÖµ
+	 * é€šè¿‡ä¸‹æ ‡ å¾—åˆ°æ¸¸æ ‡é‡Œé¢çš„å€¼
 	 * 
 	 * @param cursor
 	 * @param index

@@ -12,7 +12,7 @@ import cn.shrek.base.util.ZWLogger;
 
 public abstract class StmtBuilder{
 	/**
-	 * ¿ÕÖµ<ÉèÖÃÎª¿ÕÖµ²»»á¶ÔÊı¾İ¿â²Ù×÷>
+	 * ç©ºå€¼<è®¾ç½®ä¸ºç©ºå€¼ä¸ä¼šå¯¹æ•°æ®åº“æ“ä½œ>
 	 */
 	public static final int NULL_INTEGER = Integer.MIN_VALUE;
 	public static final String NULL_STR = "THIS IS NULL VALUE";
@@ -23,16 +23,16 @@ public abstract class StmtBuilder{
 	public TableInfo tableInfo ;
 	public StringBuffer whereBuffer;
 	public StringBuffer sqlBuffer;
-	//tableAliases ±íµÄ±ğÃû
+	//tableAliases è¡¨çš„åˆ«å
 	protected String tableAliases;
 	
 	private static final String LIKE_KEYWORD = " LIKE ";
 	private static final String OR_KEYWORD = " OR ";
 	private static final String AND_KEYWORD = " AND ";
 	private static final String BETWEEN_KEYWORD = " BETWEEN ";
-	//ÊÇ·ñ¿ÉÒÔÌí¼ÓÌõ¼ş
+	//æ˜¯å¦å¯ä»¥æ·»åŠ æ¡ä»¶
 	private boolean isAddCondition = true;
-	//À¨ºÅÊıÁ¿ ¿ÕÖµ(  )
+	//æ‹¬å·æ•°é‡ ç©ºå€¼(  )
 	private int bracketsNum = 0;
 	
 	public StmtBuilder(Class<? extends ZWBo> clazz){
@@ -60,8 +60,8 @@ public abstract class StmtBuilder{
 	
 	
 	/**
-	 * Ìí¼ÓµÈÖµÌõ¼ş id=3  name='zhangsan'  company=1 Íâ¼ü ¶ÔÓ¦ company±íÖĞId=1;
-	 * @param fieldName  ÊÇÊôĞÔÃû  ²»ÊÇ±í×Ö¶ÎÃû
+	 * æ·»åŠ ç­‰å€¼æ¡ä»¶ id=3  name='zhangsan'  company=1 å¤–é”® å¯¹åº” companyè¡¨ä¸­Id=1;
+	 * @param fieldName  æ˜¯å±æ€§å  ä¸æ˜¯è¡¨å­—æ®µå
 	 * @param obj 
 	 * @return
 	 */
@@ -84,7 +84,7 @@ public abstract class StmtBuilder{
 	}
 	
 	/**
-	 * Ö»ÓĞ¿ÉÒÔÌí¼ÓÌõ¼şÊ±ºò Ìí¼Ó×óÀ¨ºÅ(   
+	 * åªæœ‰å¯ä»¥æ·»åŠ æ¡ä»¶æ—¶å€™ æ·»åŠ å·¦æ‹¬å·(   
 	 * @return
 	 */
 	public StmtBuilder leftBrackets(){
@@ -96,7 +96,7 @@ public abstract class StmtBuilder{
 	}
 	
 	/**
-	 * Ìí¼ÓÓÒÀ¨ºÅ  
+	 * æ·»åŠ å³æ‹¬å·  
 	 * @return
 	 */
 	public StmtBuilder rightBrackets(){
@@ -108,11 +108,11 @@ public abstract class StmtBuilder{
 	}
 	
 	/**
-	 * like ÃèÊö  ±ØĞëÊÇ×Ó´®
-	 * @param fieldName  ÊôĞÔÃû<²»ÊÇ±íµÄ×Ö¶ÎÃû>
-	 * @param likeStr like×Ó´®
-	 * @param isAddBefor Ç°Ãæ¼Ó%£¿
-	 * @param isAddAfter ºóÃæ¼Ó Í¨Åä·û?
+	 * like æè¿°  å¿…é¡»æ˜¯å­ä¸²
+	 * @param fieldName  å±æ€§å<ä¸æ˜¯è¡¨çš„å­—æ®µå>
+	 * @param likeStr likeå­ä¸²
+	 * @param isAddBefor å‰é¢åŠ %ï¼Ÿ
+	 * @param isAddAfter åé¢åŠ  é€šé…ç¬¦?
 	 * @return
 	 */
 	public StmtBuilder like(String fieldName,String likeStr,boolean isAddBefor,boolean isAddAfter){
@@ -145,7 +145,7 @@ public abstract class StmtBuilder{
 	
 	
 	/**
-	 * betweenÌõ¼ş
+	 * betweenæ¡ä»¶
 	 * @param fieldName
 	 * @param beforObj
 	 * @param afterObj
@@ -172,7 +172,7 @@ public abstract class StmtBuilder{
 //				Calendar date2 = (Calendar)afterObj;
 //				appendWhereStr(DBUtil.parseCalendarToLong(date1)+ AND_KEYWORD+DBUtil.parseCalendarToLong(date2));
 //			}else if(String.class.isAssignableFrom(fieldType)){
-//				//×Ó´®
+//				//å­ä¸²
 //				appendWhereStr("'"+beforObj.toString()+"'"+AND_KEYWORD+"'"+afterObj+"'");
 //			}else{
 //				appendWhereStr(" "+beforObj.toString()+" "+AND_KEYWORD+" "+afterObj+" ");
@@ -190,7 +190,7 @@ public abstract class StmtBuilder{
 		Class<?> fieldType = tableInfo.getFieldType(index);
 		
 		if(objs == null || objs.length == 0){
-			ZWLogger.printLog(this, "in µÄÌõ¼ş£¨£©ÀïÃæµÃÓĞÖµÅ¶~~~");
+			ZWLogger.printLog(this, "in çš„æ¡ä»¶ï¼ˆï¼‰é‡Œé¢å¾—æœ‰å€¼å“¦~~~");
 			return this;
 		}
 		if(initContinue(fieldName, mField, columnName, fieldType,true, objs)){
@@ -209,7 +209,7 @@ public abstract class StmtBuilder{
 //					Calendar date = (Calendar)obj;
 //					appendWhereStr(DBUtil.parseCalendarToLong(date)+"");
 //				}else if(String.class.isAssignableFrom(fieldType)){
-//					//×Ó´®
+//					//å­ä¸²
 //					appendWhereStr("'"+obj.toString()+"'");
 //				}else{
 //					appendWhereStr(" "+obj.toString()+" ");
@@ -226,7 +226,7 @@ public abstract class StmtBuilder{
 	}
 	
 	/**
-	 * ×Ö¶ÎÊÇ·ñ Îª¿ÕÖµ
+	 * å­—æ®µæ˜¯å¦ ä¸ºç©ºå€¼
 	 * @param isNull
 	 * @param fieldName
 	 * @return
@@ -245,8 +245,8 @@ public abstract class StmtBuilder{
 	}
 	
 	/**
-	 * Ìí¼Ó±È½ÏµÄÌõ¼ş
-	 * @param compareStr ±È½Ï·û = <= >= != <>
+	 * æ·»åŠ æ¯”è¾ƒçš„æ¡ä»¶
+	 * @param compareStr æ¯”è¾ƒç¬¦ = <= >= != <>
 	 * @param fieldName 
 	 * @param obj
 	 * @return
@@ -259,7 +259,7 @@ public abstract class StmtBuilder{
 		
 		if(initContinue(fieldName, mField, columnName, fieldType,true, obj)){
 //			if(obj.getClass().isAssignableFrom(fieldType)){
-//				ZWLogger.printLog(StmtBuilder.this, "Ìí¼ÓÌõ¼ş ÊôĞÔÀàĞÍ ºÍ ²ÎÊıÀàĞÍ²»Ò»ÖÂ£¡");
+//				ZWLogger.printLog(StmtBuilder.this, "æ·»åŠ æ¡ä»¶ å±æ€§ç±»å‹ å’Œ å‚æ•°ç±»å‹ä¸ä¸€è‡´ï¼");
 //				return this;
 //			}
 			appendWhereStr(getColumnNameWithAliases(columnName)+compareStr);
@@ -272,7 +272,7 @@ public abstract class StmtBuilder{
 				Calendar date = (Calendar)obj;
 				appendWhereStr(DBUtil.parseCalendarToLong(date)+"");
 			}else if(String.class.isAssignableFrom(fieldType)){
-				//×Ó´®
+				//å­ä¸²
 				appendWhereStr("'"+obj.toString()+"'");
 			}else{
 				appendWhereStr(" "+obj.toString()+" ");
@@ -284,14 +284,14 @@ public abstract class StmtBuilder{
 	
 	
 	/**
-	 * Í¨¹ı Ìá¹©µÄ ÊôĞÔÃû<²»ÊÇ±íµÄ×Ö¶ÎÃû> µÃµ½Ïà¹ØĞÅÏ¢
-	 * @param fieldName Ìá¹©µÄÊôĞÔÃû³Æ
-	 * @param mField ³õÊ¼»¯µÄField
-	 * @param columnName ¶ÔÓ¦ ±íÖĞµÄ×Ö¶ÎÃû
-	 * @param fieldType ÀàĞÍ
-	 * @param objs ¶à¸ö²ÎÊı
-	 * @param isCheckObjNull ÊÇ·ñ¼ì²âObjs ÊÇ·ñÎª¿Õ
-	 * @return true ³õÊ¼»¯³É¹¦  false Ê§°Ü
+	 * é€šè¿‡ æä¾›çš„ å±æ€§å<ä¸æ˜¯è¡¨çš„å­—æ®µå> å¾—åˆ°ç›¸å…³ä¿¡æ¯
+	 * @param fieldName æä¾›çš„å±æ€§åç§°
+	 * @param mField åˆå§‹åŒ–çš„Field
+	 * @param columnName å¯¹åº” è¡¨ä¸­çš„å­—æ®µå
+	 * @param fieldType ç±»å‹
+	 * @param objs å¤šä¸ªå‚æ•°
+	 * @param isCheckObjNull æ˜¯å¦æ£€æµ‹Objs æ˜¯å¦ä¸ºç©º
+	 * @return true åˆå§‹åŒ–æˆåŠŸ  false å¤±è´¥
 	 */
 	private boolean initContinue(String fieldName,Field mField,String columnName,Class<?> fieldType,boolean isCheckObjNull,Object... objs){
 		if(fieldName == null || "".equals(fieldName)
@@ -313,11 +313,11 @@ public abstract class StmtBuilder{
 //		}
 		
 		if(mField == null || columnName == null){
-			ZWLogger.printLog(StmtBuilder.this, "Ìí¼ÓÌõ¼ş ÊôĞÔÃû£º"+fieldName+"¶ÔÓÚ±íÖĞµÄÓ³Éä×Ö¶Î ¸ù±¾ÕÒ²»µ½£¡");
+			ZWLogger.printLog(StmtBuilder.this, "æ·»åŠ æ¡ä»¶ å±æ€§åï¼š"+fieldName+"å¯¹äºè¡¨ä¸­çš„æ˜ å°„å­—æ®µ æ ¹æœ¬æ‰¾ä¸åˆ°ï¼");
 			return false;
 		}
 		
-		//ÅĞ¶ÏÊôĞÔÊÇ·ñ Íâ¼ü
+		//åˆ¤æ–­å±æ€§æ˜¯å¦ å¤–é”®
 //		if(tableInfo.allforeignClassMaps.containsKey(columnName)){
 //			fieldType = tableInfo.allforeignClassMaps.get(columnName);
 //		}else{
@@ -326,9 +326,9 @@ public abstract class StmtBuilder{
 		
 		if(isCheckObjNull){
 			for(Object obj : objs){
-				//»ù´¡ÀàĞÍ ²»¼ì²â
+				//åŸºç¡€ç±»å‹ ä¸æ£€æµ‹
 				if(!fieldType.isPrimitive() &&!obj.getClass().isAssignableFrom(fieldType)){
-					ZWLogger.printLog(StmtBuilder.this, "Ìí¼ÓÌõ¼ş ÊôĞÔÀàĞÍ ºÍ ²ÎÊıÀàĞÍ²»Ò»ÖÂ£¡");
+					ZWLogger.printLog(StmtBuilder.this, "æ·»åŠ æ¡ä»¶ å±æ€§ç±»å‹ å’Œ å‚æ•°ç±»å‹ä¸ä¸€è‡´ï¼");
 					return false;
 				}
 			}
@@ -357,7 +357,7 @@ public abstract class StmtBuilder{
 	}
 	
 	/**
-	 * ÅĞ¶Ï±íÃû ÊÇ·ñ¼ÓÉÏ±ğÃû
+	 * åˆ¤æ–­è¡¨å æ˜¯å¦åŠ ä¸Šåˆ«å
 	 * @param tableName
 	 * @return
 	 */
@@ -378,7 +378,7 @@ public abstract class StmtBuilder{
 	}
 	
 	/**
-	 * ÉèÖÃ±íµÄ±ğÃû (SQLiteÖ»ÓĞ SelectÖ§³Ö±ğÃû)
+	 * è®¾ç½®è¡¨çš„åˆ«å (SQLiteåªæœ‰ Selectæ”¯æŒåˆ«å)
 	 * @param tableAliases
 	 */
 	public void setTableAliases(String tableAliases) {

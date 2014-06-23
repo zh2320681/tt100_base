@@ -12,31 +12,31 @@ import cn.shrek.base.ormlite.stmt.UpdateBuider;
 public interface DBDao<T extends ZWBo> {
 	
 	/**
-	 * µÃµ½ ²åÈëµÄ ¹¹ÔìÆ÷
+	 * å¾—åˆ° æ’å…¥çš„ æ„é€ å™¨
 	 * @return
 	 */
 	public InsertBuider<T> insertBuider();
 	
 	/**
-	 * µÃµ½ É¾³ıµÄ ¹¹ÔìÆ÷
+	 * å¾—åˆ° åˆ é™¤çš„ æ„é€ å™¨
 	 * @return
 	 */
 	public DeleteBuider deleteBuider();
 	
 	/**
-	 * µÃµ½ ¸üĞÂµÄ ¹¹ÔìÆ÷
+	 * å¾—åˆ° æ›´æ–°çš„ æ„é€ å™¨
 	 * @return
 	 */
 	public UpdateBuider<T> updateBuider();
 	
 	/**
-	 * µÃµ½ ²éÑ¯µÄ ¹¹ÔìÆ÷
+	 * å¾—åˆ° æŸ¥è¯¢çš„ æ„é€ å™¨
 	 * @return
 	 */
 	public QueryBuilder queryBuilder();
 	
 	/**
-	 * ²åÈë¶ÔÏó
+	 * æ’å…¥å¯¹è±¡
 	 * @param t
 	 * @return
 	 */
@@ -47,7 +47,7 @@ public interface DBDao<T extends ZWBo> {
 	public long insertObjs(T... t);
 	
 	/**
-	 * ²åÈë¶ÔÏó ÊÇ·ñ×ö Íâ¼ü¹ØÁª²åÈë
+	 * æ’å…¥å¯¹è±¡ æ˜¯å¦åš å¤–é”®å…³è”æ’å…¥
 	 * @param isAddFKObject
 	 * @param t
 	 * @return
@@ -56,7 +56,7 @@ public interface DBDao<T extends ZWBo> {
 	
 	public long insertObjs(boolean isAddFKObject,List<T> t);
 	/**
-	 * É¾³ı¶ÔÏó
+	 * åˆ é™¤å¯¹è±¡
 	 */
 	public long deleteObjs(DeleteBuider builder);
 	
@@ -65,13 +65,13 @@ public interface DBDao<T extends ZWBo> {
 	public long deleteObj(String whereSql);
 	
 	/**
-	 * Çå¿Õ¶ÔÏó
+	 * æ¸…ç©ºå¯¹è±¡
 	 */
 	public void clearObj(T t);
 	
 	
 	/**
-	 * ¸üĞÂ ¶ÔÏó
+	 * æ›´æ–° å¯¹è±¡
 	 */
 	public long updateAllObjs(T t);
 	
@@ -81,7 +81,7 @@ public interface DBDao<T extends ZWBo> {
 	
 	
 	/**
-	 * ²éÑ¯¶ÔÏó
+	 * æŸ¥è¯¢å¯¹è±¡
 	 */
 	public List<T> queryAllObjs();
 	
@@ -94,7 +94,7 @@ public interface DBDao<T extends ZWBo> {
 	public int queryCount(QueryBuilder mQueryBuilder);
 	
 	/**
-	 * Á¬½Ó²éÑ¯ ²éÑ¯WorkerÊ±ºò °Ñ CompanyÒ²²é³öÀ´
+	 * è¿æ¥æŸ¥è¯¢ æŸ¥è¯¢Workeræ—¶å€™ æŠŠ Companyä¹ŸæŸ¥å‡ºæ¥
 	 * @return
 	 */
 	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder);

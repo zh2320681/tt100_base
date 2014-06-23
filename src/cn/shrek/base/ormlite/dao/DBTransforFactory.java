@@ -22,7 +22,7 @@ public class DBTransforFactory {
 //	}
 	
 	/**
-	 * µÃµ½ÊôĞÔÖµ Í¨¹ı´ÓÊı¾İ¿âµÃµ½µÄÖµ
+	 * å¾—åˆ°å±æ€§å€¼ é€šè¿‡ä»æ•°æ®åº“å¾—åˆ°çš„å€¼
 	 * @param column
 	 * @param clazzType
 	 * @return
@@ -145,8 +145,8 @@ public class DBTransforFactory {
 			map = allTransforMap.get();
 		}
 		if(map == null){
-			ZWLogger.printLog("DBTransforFactory", "allTransforMap ÒÑ±»»ØÊÕ!");
-//			throw new Exception("allTransforMap ÒÑ±»»ØÊÕ!");
+			ZWLogger.printLog("DBTransforFactory", "allTransforMap å·²è¢«å›æ”¶!");
+//			throw new Exception("allTransforMap å·²è¢«å›æ”¶!");
 			
 			map = new HashMap<Class<?>, DBTransforDao<?,?>>();
 			map.put(Boolean.class, new BooleanTransfor());

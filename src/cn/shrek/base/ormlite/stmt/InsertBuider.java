@@ -37,7 +37,7 @@ public class InsertBuider<T extends ZWBo> extends StmtBuilder {
 				if(tableInfo.allforeignMaps.containsKey(columnName)){
 					/**
 					 * fieldValue
-					 * Èç¹ûÊÇÍâ¼ü ÀıÈçWorkerµÄCompany  Õâ±ßÒª´æµÄÊÇ Company ID µ«ÊÇCompany¶ÔÏóÒªÏÈ´æ ÒòÎª ÓĞÍâ¼üÔ¼Êø 
+					 * å¦‚æœæ˜¯å¤–é”® ä¾‹å¦‚Workerçš„Company  è¿™è¾¹è¦å­˜çš„æ˜¯ Company ID ä½†æ˜¯Companyå¯¹è±¡è¦å…ˆå­˜ å› ä¸º æœ‰å¤–é”®çº¦æŸ 
 					 */
 					Field foreignField = tableInfo.allforeignMaps.get(columnName);
 					fieldValue = foreignField.get(fieldValue);
@@ -71,7 +71,7 @@ public class InsertBuider<T extends ZWBo> extends StmtBuilder {
 	
 	
 	/**
-	 * µÃµ½Õâ¸ö¶ÔÏó ÀïÃæËùÓĞÍâ¼ü µÄ¶ÔÏóÖµ
+	 * å¾—åˆ°è¿™ä¸ªå¯¹è±¡ é‡Œé¢æ‰€æœ‰å¤–é”® çš„å¯¹è±¡å€¼
 	 * @param t
 	 * @return
 	 */

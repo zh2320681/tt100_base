@@ -30,9 +30,9 @@ public class UpdateBuider<T extends ZWBo> extends StmtBuilder {
 //	}
 	
 	/**
-	 * ÉèÖÃ¸üĞÂµÄÄÚÈİ  
+	 * è®¾ç½®æ›´æ–°çš„å†…å®¹  
 	 * @param t
-	 * @param specials ÌØÊâµÄ ²»ĞèÒªµÄ¸üĞÂµÄ ÀıÈçboolean ±ØĞëÉèÖÃ Ã»·¨ÉèÖÃ¿ÕÖµ  
+	 * @param specials ç‰¹æ®Šçš„ ä¸éœ€è¦çš„æ›´æ–°çš„ ä¾‹å¦‚boolean å¿…é¡»è®¾ç½® æ²¡æ³•è®¾ç½®ç©ºå€¼  
 	 */
 	public void addValue(T t , String... specials) {
 		for (int i = 0; i < tableInfo.allField.size(); i++) {

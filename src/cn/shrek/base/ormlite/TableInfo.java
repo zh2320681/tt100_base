@@ -17,25 +17,25 @@ import cn.shrek.base.util.ZWLogger;
 public class TableInfo {
 	private static final Map<Class<? extends ZWBo>, TableInfo> tableInfoFactory = Collections
 			.synchronizedMap(new WeakHashMap<Class<? extends ZWBo>, TableInfo>());
-	// ËùÓĞ×Ö¶ÎÃû
+	// æ‰€æœ‰å­—æ®µå
 	public List<String> allColumnNames;
-	// ËùÓĞÊôĞÔ
+	// æ‰€æœ‰å±æ€§
 	public List<Field> allField;
-	// ËùÓĞÍâ¼ü key:Íâ¼ü×Ö¶ÎÃû value:¶ÔÓÚTeacher µÄidÊôĞÔ
+	// æ‰€æœ‰å¤–é”® key:å¤–é”®å­—æ®µå value:å¯¹äºTeacher çš„idå±æ€§
 	public Map<String, Field> allforeignMaps;
-	// ËùÓĞÍâ¼ü key:Íâ¼ü×Ö¶ÎÃû value:¶ÔÓÚTeacher.class
+	// æ‰€æœ‰å¤–é”® key:å¤–é”®å­—æ®µå value:å¯¹äºTeacher.class
 	public Map<String, Class<?>> allforeignClassMaps;
 	public Class<? extends ZWBo> clazz;
 	public String tableName;
 
 	private TableInfo(Class<? extends ZWBo> clazz) {
 		this.clazz = clazz;
-		//±ØĞëÓĞÎŞ²ÎÊıµÄ¹¹Ôì·½·¨
+		//å¿…é¡»æœ‰æ— å‚æ•°çš„æ„é€ æ–¹æ³•
 		try {
 			clazz.getConstructor();
 		} catch (NoSuchMethodException e1) {
 			// TODO Auto-generated catch block
-			ZWLogger.printLog(TableInfo.this,"Àà"+clazz.getSimpleName()+"ÇëÌá¹©ÎŞ²ÎÊıµÄ¹¹Ôì·½·¨£¡");
+			ZWLogger.printLog(TableInfo.this,"ç±»"+clazz.getSimpleName()+"è¯·æä¾›æ— å‚æ•°çš„æ„é€ æ–¹æ³•ï¼");
 			e1.printStackTrace();
 		}
 		tableName = DBUtil.getTableName(clazz);
@@ -44,9 +44,9 @@ public class TableInfo {
 
 		this.allforeignMaps = new HashMap<String, Field>();
 		allforeignClassMaps = new HashMap<String, Class<?>>();
-		//µÃµ½±¾ÀàµÄËùÓĞÊôĞÔ ²»°üÀ¨ ¸¸Àà
+		//å¾—åˆ°æœ¬ç±»çš„æ‰€æœ‰å±æ€§ ä¸åŒ…æ‹¬ çˆ¶ç±»
 		Field[] declaredFields = clazz.getDeclaredFields();
-		//µÃµ½±¾ÀàµÄËùÓĞpublicÊôĞÔ °üÀ¨ ¸¸Àà
+		//å¾—åˆ°æœ¬ç±»çš„æ‰€æœ‰publicå±æ€§ åŒ…æ‹¬ çˆ¶ç±»
 		Field[] publicFields = clazz.getFields();
 		List<Field> fields = new ArrayList<Field>();
 		for (Field field : declaredFields) {
@@ -72,16 +72,16 @@ public class TableInfo {
 			if (DBUtil.judgeFieldAvaid(field)) {
 				allField.add(field);
 
-				// ÊôĞÔµÄÀàĞÍ
+				// å±æ€§çš„ç±»å‹
 				Class<?> fieldType = field.getType();
 				/**
-				 * ########## Íâ¼üÅĞ¶Ï
+				 * ########## å¤–é”®åˆ¤æ–­
 				 */
 				String foreignColumnName = mDatabaseField.foreignColumnName();
 				if (foreignColumnName != null && !"".equals(foreignColumnName)) {
 
 					if (ZWBo.class.isAssignableFrom(fieldType)) {
-						// Íâ¼üÊÇBOÀàĞÍ
+						// å¤–é”®æ˜¯BOç±»å‹
 						Field objField;
 						try {
 							objField = fieldType.getField(foreignColumnName);
@@ -95,9 +95,9 @@ public class TableInfo {
 										.put(fkColumnName, fieldType);
 							} else {
 								ZWLogger.printLog(this,
-										"Íâ¼üÖ¸ÏòµÄ ÀàÃû£º" + fieldType.getSimpleName()
-												+ "×Ö¶ÎÃû:" + foreignColumnName
-												+ "²»·ûºÏDataBaseFieldµÄÌõ¼ş!");
+										"å¤–é”®æŒ‡å‘çš„ ç±»åï¼š" + fieldType.getSimpleName()
+												+ "å­—æ®µå:" + foreignColumnName
+												+ "ä¸ç¬¦åˆDataBaseFieldçš„æ¡ä»¶!");
 							}
 
 						} catch (NoSuchFieldException e) {
@@ -106,21 +106,21 @@ public class TableInfo {
 						}
 
 					} else if (List.class.isAssignableFrom(fieldType)) {
-						// Íâ¼üÊÇ¼¯ºÏÀàĞÍ
-						Type fc = field.getGenericType(); // ¹Ø¼üµÄµØ·½£¬Èç¹ûÊÇListÀàĞÍ£¬µÃµ½ÆäGenericµÄÀàĞÍ
+						// å¤–é”®æ˜¯é›†åˆç±»å‹
+						Type fc = field.getGenericType(); // å…³é”®çš„åœ°æ–¹ï¼Œå¦‚æœæ˜¯Listç±»å‹ï¼Œå¾—åˆ°å…¶Genericçš„ç±»å‹
 						if (fc == null) {
 							ZWLogger.printLog(this,
-									"Íâ¼üÖ¸ÏòµÄ ÀàÃû£º" + fieldType.getSimpleName()
-											+ "×Ö¶ÎÃû:" + foreignColumnName
-											+ " list Î´ÉèÖÃ·ºĞÍ");
+									"å¤–é”®æŒ‡å‘çš„ ç±»åï¼š" + fieldType.getSimpleName()
+											+ "å­—æ®µå:" + foreignColumnName
+											+ " list æœªè®¾ç½®æ³›å‹");
 							continue;
 						}
 
-						if (fc instanceof ParameterizedType) {// ¡¾3¡¿Èç¹ûÊÇ·ºĞÍ²ÎÊıµÄÀàĞÍ
+						if (fc instanceof ParameterizedType) {// ã€3ã€‘å¦‚æœæ˜¯æ³›å‹å‚æ•°çš„ç±»å‹
 							ParameterizedType pt = (ParameterizedType) fc;
 							Class<?> genericClazz = (Class<?>) pt
-									.getActualTypeArguments()[0]; // ¡¾4¡¿
-																	// µÃµ½·ºĞÍÀïµÄclassÀàĞÍ¶ÔÏó¡£
+									.getActualTypeArguments()[0]; // ã€4ã€‘
+																	// å¾—åˆ°æ³›å‹é‡Œçš„classç±»å‹å¯¹è±¡ã€‚
 							Field objField;
 							try {
 								objField = genericClazz
@@ -135,10 +135,10 @@ public class TableInfo {
 									allforeignClassMaps.put(fkColumnName,
 											fieldType);
 								} else {
-									ZWLogger.printLog(this, "Íâ¼üÖ¸ÏòµÄ ÀàÃû£º"
+									ZWLogger.printLog(this, "å¤–é”®æŒ‡å‘çš„ ç±»åï¼š"
 											+ fieldType.getSimpleName()
-											+ "×Ö¶ÎÃû:" + foreignColumnName
-											+ "²»·ûºÏDataBaseFieldµÄÌõ¼ş!");
+											+ "å­—æ®µå:" + foreignColumnName
+											+ "ä¸ç¬¦åˆDataBaseFieldçš„æ¡ä»¶!");
 								}
 							} catch (NoSuchFieldException e) {
 								// TODO Auto-generated catch block
@@ -148,12 +148,12 @@ public class TableInfo {
 						}
 					} else {
 						ZWLogger.printLog(this, fieldType.getSimpleName()
-								+ "²»ÊÇ BaseBo or ListµÄ×ÓÀà ²»ÄÜÉèÖÃÎªÍâ¼ü£¡");
+								+ "ä¸æ˜¯ BaseBo or Listçš„å­ç±» ä¸èƒ½è®¾ç½®ä¸ºå¤–é”®ï¼");
 					}
 					continue;
 				}
 
-				// Ìí¼Ó×Ö¶ÎÃû
+				// æ·»åŠ å­—æ®µå
 				String fieldName = DBUtil.getFeildName(field);
 				allColumnNames.add(fieldName);
 			} else {
@@ -178,7 +178,7 @@ public class TableInfo {
 	}
 
 	/**
-	 * Í¨¹ı field nameÕÒµ½±í×Ö¶ÎÃû
+	 * é€šè¿‡ field nameæ‰¾åˆ°è¡¨å­—æ®µå
 	 * 
 	 * @param fieldName
 	 * @return
@@ -194,7 +194,7 @@ public class TableInfo {
 	}
 
 	/**
-	 * Í¨¹ı field nameÕÒµ½±í×Ö¶ÎÏÂ±ê
+	 * é€šè¿‡ field nameæ‰¾åˆ°è¡¨å­—æ®µä¸‹æ ‡
 	 * 
 	 * @param fieldName
 	 * @return
@@ -206,12 +206,12 @@ public class TableInfo {
 				return i;
 			}
 		}
-		ZWLogger.printLog(this, "Àà£º"+clazz.toString()+" ÊôĞÔÃû½Ğ:"+fieldName+" ÕÒ²»µ½~~");
+		ZWLogger.printLog(this, "ç±»ï¼š"+clazz.toString()+" å±æ€§åå«:"+fieldName+" æ‰¾ä¸åˆ°~~");
 		return -1;
 	}
 	
 	/**
-	 * Í¨¹ı±íÖĞ ×Ö¶ÎÏÂ±ê ÕÒµ½ ¶ÔÓ¦ÊôĞÔµÄClass¶ÔÏó
+	 * é€šè¿‡è¡¨ä¸­ å­—æ®µä¸‹æ ‡ æ‰¾åˆ° å¯¹åº”å±æ€§çš„Classå¯¹è±¡
 	 * @param index
 	 * @return
 	 */
@@ -219,7 +219,7 @@ public class TableInfo {
 		String columnName = allColumnNames.get(index);
 		Field field = allField.get(index);
 		Class<?> fieldType = null;
-		// ÅĞ¶ÏÊôĞÔÊÇ·ñ Íâ¼ü
+		// åˆ¤æ–­å±æ€§æ˜¯å¦ å¤–é”®
 		if (allforeignClassMaps.containsKey(columnName)) {
 			fieldType = allforeignClassMaps.get(columnName);
 		} else {

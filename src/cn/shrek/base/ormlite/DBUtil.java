@@ -21,7 +21,7 @@ public class DBUtil {
 	
 	private static final String INDEX_CONSTRAINT = "INDEX_";
 	/**
-	 * Êı¾İ¿â ÀàĞÍ
+	 * æ•°æ®åº“ ç±»å‹
 	 */
 	public static final String BLOB_COLUMN_NAME = "BLOB";
 	public static final String INT_COLUMN_NAME = "INTEGER";
@@ -40,7 +40,7 @@ public class DBUtil {
 	public static final void createTable(SQLiteDatabase mDatabase, Class<? extends ZWBo> clazz, boolean isExists){
 		TableInfo mTableInfo = TableInfo.newInstance(clazz);
 		if(mTableInfo == null){
-			throw new NullPointerException("ÎŞ·¨»ñÈ¡"+clazz.getSimpleName()+"±íÃèÊö¶ÔÏó TableInfo");
+			throw new NullPointerException("æ— æ³•è·å–"+clazz.getSimpleName()+"è¡¨æè¿°å¯¹è±¡ TableInfo");
 		}
 		
 		String tableName = mTableInfo.tableName;
@@ -51,11 +51,11 @@ public class DBUtil {
 		createSqlSB.append(tableName+"(");
 		
 		
-		//Ö÷¼ü 
+		//ä¸»é”® 
 		StringBuffer premarySB = new StringBuffer();
-		//Ë÷Òı<Ö§³Ö×éºÏË÷Òı>
+		//ç´¢å¼•<æ”¯æŒç»„åˆç´¢å¼•>
 		List<String> indexColNames = new ArrayList<String>();
-		//´¥·¢Æ÷
+		//è§¦å‘å™¨
 		List<String> trigeerArr = new ArrayList<String>();
 		boolean isFirstAddField = true;
 		for(int i = 0 ;i<mTableInfo.allColumnNames.size();i++){
@@ -63,11 +63,11 @@ public class DBUtil {
 			Field columnField = mTableInfo.allField.get(i);
 			
 			DatabaseField mDatabaseField = columnField.getAnnotation(DatabaseField.class);
-			/**  ---------------- Íâ¼ü ----------------------  */
+			/**  ---------------- å¤–é”® ----------------------  */
 			Field fkColumnField = mTableInfo.allforeignMaps.get(columnName);
 			if(fkColumnField != null){
 				Class<?> objClazz = mTableInfo.allforeignClassMaps.get(columnName);
-				//ÓĞÍâ¼ü µÃµ½Íâ¼ü Ö¸ÏòµÄ ÄÇ¸ö±íÃû
+				//æœ‰å¤–é”® å¾—åˆ°å¤–é”® æŒ‡å‘çš„ é‚£ä¸ªè¡¨å
 				trigeerArr.addAll(getTrigeerFKCaceade(mDatabaseField, 
 						getTableName(objClazz), getFeildName(fkColumnField), tableName, columnName));
 			}
@@ -81,7 +81,7 @@ public class DBUtil {
 			String columnTypeStr = getObjMapping(columnField);
 			createSqlSB.append(columnName+" "+columnTypeStr);
 			
-			/**  ---------------- Ô¼Êø ----------------------  */
+			/**  ---------------- çº¦æŸ ----------------------  */
 			if(!mDatabaseField.canBeNull()){
 				createSqlSB.append(NOT_NULL_CONSTRAINT);
 			}
@@ -98,12 +98,12 @@ public class DBUtil {
 				}
 			}
 			
-			/**  ---------------- Ë÷Òı ----------------------  */
+			/**  ---------------- ç´¢å¼• ----------------------  */
 			if (mDatabaseField.index()) {
 				indexColNames.add(columnName);
 			}
 			
-			/**  ---------------- Ö÷¼ü ----------------------  */
+			/**  ---------------- ä¸»é”® ----------------------  */
 			if(mDatabaseField.id()){
 				String gapStr = " ";
 				if(premarySB.length() != 0){
@@ -117,10 +117,10 @@ public class DBUtil {
 			createSqlSB.append(",primary key("+premarySB.toString()+")");
 		}
 		createSqlSB.append(");");
-		ZWLogger.printLog(TAG, "´´½¨±íµÄÓï¾ä£º"+createSqlSB.toString());
+		ZWLogger.printLog(TAG, "åˆ›å»ºè¡¨çš„è¯­å¥ï¼š"+createSqlSB.toString());
 		mDatabase.execSQL(createSqlSB.toString());
 		
-		/**  ---------------- ´´½¨Ë÷Òı ----------------------  */
+		/**  ---------------- åˆ›å»ºç´¢å¼• ----------------------  */
 		if(indexColNames.size() > 0){
 			boolean isFirstAddIndex = true;
 			StringBuffer indexSB = new StringBuffer("CREATE INDEX  IF NOT EXISTS "+ INDEX_CONSTRAINT + tableName+" ON "+tableName+"(");
@@ -129,11 +129,11 @@ public class DBUtil {
 				isFirstAddIndex = false;
 			}
 			indexSB.append(");");
-			ZWLogger.printLog(TAG, "´´½¨Ë÷ÒıµÄÓï¾ä£º"+indexSB.toString());
+			ZWLogger.printLog(TAG, "åˆ›å»ºç´¢å¼•çš„è¯­å¥ï¼š"+indexSB.toString());
 			mDatabase.execSQL(indexSB.toString());
 		}
 		
-		/**  ---------------- ´´½¨´¥·¢Æ÷ ----------------------  */
+		/**  ---------------- åˆ›å»ºè§¦å‘å™¨ ----------------------  */
 		for(String trige : trigeerArr){
 			mDatabase.execSQL(trige);
 		}
@@ -143,57 +143,57 @@ public class DBUtil {
 	public static final void dropTable(SQLiteDatabase mDatabase, Class<? extends ZWBo> clazz){
 		TableInfo mTableInfo = TableInfo.newInstance(clazz);
 		if(mTableInfo == null){
-			throw new NullPointerException("ÎŞ·¨»ñÈ¡"+clazz.getSimpleName()+"±íÃèÊö¶ÔÏó TableInfo");
+			throw new NullPointerException("æ— æ³•è·å–"+clazz.getSimpleName()+"è¡¨æè¿°å¯¹è±¡ TableInfo");
 		}
 		StringBuffer dropSB = new StringBuffer("DROP TABLE "+mTableInfo.tableName);
-		ZWLogger.printLog(TAG, "DROP TABLEµÄÓï¾ä£º"+dropSB.toString());
+		ZWLogger.printLog(TAG, "DROP TABLEçš„è¯­å¥ï¼š"+dropSB.toString());
 		mDatabase.execSQL(dropSB.toString());
 	}
 	
 	/**
-	 * ´´½¨´¥·¢Æ÷ & ¼¶Áª²Ù×÷
+	 * åˆ›å»ºè§¦å‘å™¨ & çº§è”æ“ä½œ
 	 * 
 	 * @param mDatabase
 	 * @param paramDatabaseField
 	 * @param objTableName
-	 *            Íâ¼ü¹ØÁªµÄ ±íÃû
+	 *            å¤–é”®å…³è”çš„ è¡¨å
 	 * @param objFieldName
-	 *            Íâ¼ü¹ØÁªµÄ ±íÃûµÄ×Ö¶ÎÃû
+	 *            å¤–é”®å…³è”çš„ è¡¨åçš„å­—æ®µå
 	 * @param fkTableName
 	 * @param fkFieldName
 	 */
 	private static final List<String> getTrigeerFKCaceade(DatabaseField mDatabaseField, String objTableName,
 			String objFieldName, String fkTableName, String fkFieldName) {
 		List<String> trigeerArr = new ArrayList<String>();
-		// ´´½¨²åÈë´¥·¢Æ÷
+		// åˆ›å»ºæ’å…¥è§¦å‘å™¨
 		StringBuffer insertSB = new StringBuffer("CREATE TRIGGER "
 				+ fkFieldName + "_Insert ");
 		insertSB.append(" BEFORE Insert ON " + fkTableName);
 		insertSB.append(" FOR EACH ROW BEGIN ");
-		insertSB.append(" SELECT RAISE(ROLLBACK,'Ã»ÓĞÕâ¸ö×Ö¶ÎÃû " + objFieldName
+		insertSB.append(" SELECT RAISE(ROLLBACK,'æ²¡æœ‰è¿™ä¸ªå­—æ®µå " + objFieldName
 				+ " in " + objTableName + "')  ");
 		insertSB.append(" WHERE (SELECT " + objFieldName + " FROM "
 				+ objTableName + " WHERE " + objFieldName + " = NEW."
 				+ fkFieldName + ") IS NULL; ");
 		insertSB.append(" END ");
-		print("´´½¨²åÈë´¥·¢Æ÷ £º" + insertSB.toString());
+		print("åˆ›å»ºæ’å…¥è§¦å‘å™¨ ï¼š" + insertSB.toString());
 		trigeerArr.add(insertSB.toString());
 		
-		// ´´½¨¸üĞÂ´¥·¢Æ÷
+		// åˆ›å»ºæ›´æ–°è§¦å‘å™¨
 		StringBuffer updateSB = new StringBuffer("CREATE TRIGGER "
 				+ fkFieldName + "_Update ");
 		updateSB.append(" BEFORE Update ON " + fkTableName);
 		updateSB.append(" FOR EACH ROW BEGIN ");
-		updateSB.append(" SELECT RAISE(ROLLBACK,'Ã»ÓĞÕâ¸ö×Ö¶ÎÃû " + objFieldName
+		updateSB.append(" SELECT RAISE(ROLLBACK,'æ²¡æœ‰è¿™ä¸ªå­—æ®µå " + objFieldName
 				+ " in " + objTableName + "')  ");
 		updateSB.append(" WHERE (SELECT " + objFieldName + " FROM "
 				+ objTableName + " WHERE " + objFieldName + " = NEW."
 				+ fkFieldName + ") IS NULL; ");
 		updateSB.append(" END ");
-		print("´´½¨¸üĞÂ´¥·¢Æ÷ £º" + updateSB.toString());
+		print("åˆ›å»ºæ›´æ–°è§¦å‘å™¨ ï¼š" + updateSB.toString());
 		trigeerArr.add(updateSB.toString());
 		
-		// ´´½¨Delete´¥·¢Æ÷
+		// åˆ›å»ºDeleteè§¦å‘å™¨
 		StringBuffer deleteSB = new StringBuffer("CREATE TRIGGER "
 				+ fkFieldName + "_Delete ");
 		deleteSB.append(" BEFORE DELETE ON " + objTableName);
@@ -201,11 +201,11 @@ public class DBUtil {
 		deleteSB.append(" DELETE FROM " + fkTableName + " WHERE " + fkFieldName
 				+ " = OLD." + objFieldName + ";");
 		deleteSB.append(" END ");
-		print("´´½¨Delete´¥·¢Æ÷ £º" + deleteSB.toString());
+		print("åˆ›å»ºDeleteè§¦å‘å™¨ ï¼š" + deleteSB.toString());
 		trigeerArr.add(deleteSB.toString());
 		
 		if (mDatabaseField.foreignAutoRefresh()) {
-			// ´´½¨¼¶Áª²Ù×÷
+			// åˆ›å»ºçº§è”æ“ä½œ
 			StringBuffer caceadeUpdateSB = new StringBuffer("CREATE TRIGGER "
 					+ fkFieldName + "_Caceade_Update ");
 			caceadeUpdateSB.append(" AFTER Update ON " + objTableName);
@@ -214,14 +214,14 @@ public class DBUtil {
 					+ fkFieldName + " = new." + objFieldName + " where "
 					+ fkFieldName + " = old." + objFieldName + ";");
 			caceadeUpdateSB.append(" END ");
-			print("´´½¨¼¶Áª²Ù×÷ ¸üĞÂ´¥·¢Æ÷ £º" + caceadeUpdateSB.toString());
+			print("åˆ›å»ºçº§è”æ“ä½œ æ›´æ–°è§¦å‘å™¨ ï¼š" + caceadeUpdateSB.toString());
 			trigeerArr.add(caceadeUpdateSB.toString());
 		}
 		return trigeerArr;
 	}
 
 	/**
-	 * µÃµ½ÊôĞÔÃû
+	 * å¾—åˆ°å±æ€§å
 	 * 
 	 * @param field
 	 * @return
@@ -236,7 +236,7 @@ public class DBUtil {
 	}
 
 	/**
-	 * ·µ»ØÍâ¼üÃû³Æ
+	 * è¿”å›å¤–é”®åç§°
 	 * FK_TEACHER_ID
 	 * @param paramString
 	 * @param clazz
@@ -248,7 +248,7 @@ public class DBUtil {
 	}
 
 	/**
-	 * ´ÓFK_TEACHER_ID µÃµ½ ±íÃûTEACHER
+	 * ä»FK_TEACHER_ID å¾—åˆ° è¡¨åTEACHER
 	 * @param fkName
 	 * @return
 	 */
@@ -257,7 +257,7 @@ public class DBUtil {
 //	}
 	
 	/**
-	 * Í¨¹ı fieldÀàĞÍ µÃµ½¶ÔÓ¦Êı¾İ¿âµÄ×Ö¶ÎÀàĞÍ
+	 * é€šè¿‡ fieldç±»å‹ å¾—åˆ°å¯¹åº”æ•°æ®åº“çš„å­—æ®µç±»å‹
 	 * 
 	 * @param field
 	 * @return
@@ -283,16 +283,16 @@ public class DBUtil {
 				columnTypeName = REAL_COLUMN_NAME;
 			}
 		} else if (fieldClazz.isAssignableFrom(ZWBo.class)) {
-			print("¿ÉÄÜÊÇÍâ¼ü");
+			print("å¯èƒ½æ˜¯å¤–é”®");
 		} else if (fieldClazz.isAssignableFrom(List.class)) {
-			print("¿ÉÄÜÊÇList");
+			print("å¯èƒ½æ˜¯List");
 		}
 
 		return columnTypeName;
 	}
 
 	/**
-	 * µÃµ½±íÃû
+	 * å¾—åˆ°è¡¨å
 	 * 
 	 * @param clazz
 	 * @return
@@ -306,7 +306,7 @@ public class DBUtil {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊôĞÔ ÊÇ·ñÓĞĞ§
+	 * åˆ¤æ–­å±æ€§ æ˜¯å¦æœ‰æ•ˆ
 	 * @param field
 	 * @return
 	 */
@@ -321,7 +321,7 @@ public class DBUtil {
 	
 	
 	/**
-	 * ÊÇ·ñÊÇ Ö§³ÖµÄÀàĞÍ
+	 * æ˜¯å¦æ˜¯ æ”¯æŒçš„ç±»å‹
 	 * 
 	 * @param mField
 	 * @return
@@ -334,7 +334,7 @@ public class DBUtil {
 				&& !Number.class.isAssignableFrom(clazz)
 				&& !List.class.isAssignableFrom(clazz)
 				&& !ZWBo.class.isAssignableFrom(clazz)) {
-			ZWLogger.printLog(TAG, clazz.getName() + " ²»Ö§³ÖµÄÊı¾İÀàĞÍ");
+			ZWLogger.printLog(TAG, clazz.getName() + " ä¸æ”¯æŒçš„æ•°æ®ç±»å‹");
 			return false;
 		}
 		return true;
@@ -346,7 +346,7 @@ public class DBUtil {
 	}
 	
 	/**
-	 * Ê±¼ä ºÍ longÖ®¼ä×ª»»
+	 * æ—¶é—´ å’Œ longä¹‹é—´è½¬æ¢
 	 * @param obj
 	 * @return
 	 */
@@ -370,6 +370,6 @@ public class DBUtil {
 	
 	
 	public static void timeCompute(long before,long after ){
-		ZWLogger.printLog("Êı¾İ¿â²Ù×÷:", "Êı¾İ¿â²Ù×÷ºÄÊ±:"+(after-before)+"ºÁÃë!");
+		ZWLogger.printLog("æ•°æ®åº“æ“ä½œ:", "æ•°æ®åº“æ“ä½œè€—æ—¶:"+(after-before)+"æ¯«ç§’!");
 	}
 }

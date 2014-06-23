@@ -9,7 +9,7 @@ import cn.shrek.base.ZWBo;
 import cn.shrek.base.util.ZWLogger;
 
 /**
- * ²éÑ¯µÄ¹¹ÔìÆ÷
+ * æŸ¥è¯¢çš„æ„é€ å™¨
  * order by  group by having Limit 9 Offset 10
  * @author shrek
  *
@@ -19,20 +19,20 @@ public class QueryBuilder extends StmtBuilder {
 	private static final String ORDER_KEYWORD = " ORDER BY ";
 	private static final String GROUP_KEYWORD = " GROUP BY ";
 	private static final String HAVING_KEYWORD = " HAVING ";
-	//²éÑ¯ÁĞÃû
+	//æŸ¥è¯¢åˆ—å
 	private List<String> queryColumns,groupColumns,orderColumns;
 	private Map<String,String> orderColumnsMap;
 	public String havingStr;
-	//limitIndex Îª²éÑ¯¶àÉÙĞĞ  offsetIndex Ìø¹ı¶àÉÙĞĞ
+	//limitIndex ä¸ºæŸ¥è¯¢å¤šå°‘è¡Œ  offsetIndex è·³è¿‡å¤šå°‘è¡Œ
 	public int limitIndex,offsetIndex;
-	//Á¬½Ó²éÑ¯Óï¾ä  joinSelect²éÑ¯Ê±ºòÌí¼ÓµÄ
+	//è¿æ¥æŸ¥è¯¢è¯­å¥  joinSelectæŸ¥è¯¢æ—¶å€™æ·»åŠ çš„
 	public StringBuffer joinSB,joinSelect;
 	
 	public QueryBuilder(Class<? extends ZWBo> clazz) {
 		super(clazz);
 		// TODO Auto-generated constructor stub
 		sqlBuffer = new StringBuffer(SELECT_KEYWORD+" ");
-		//order by Ìõ¼ş key:ÊôĞÔÃû value£ºasc or desc
+		//order by æ¡ä»¶ key:å±æ€§å valueï¼šasc or desc
 		orderColumnsMap = new HashMap<String, String>();
 		orderColumns = new ArrayList<String>();
 		queryColumns = new ArrayList<String>();
@@ -45,9 +45,9 @@ public class QueryBuilder extends StmtBuilder {
 	}
 
 	/**
-	 * Ìí¼Óorder Ìõ¼ş  È¥ÖØ¸´
+	 * æ·»åŠ order æ¡ä»¶  å»é‡å¤
 	 * @param fieldName
-	 * @param isAsc ÊÇ·ñÉıĞò
+	 * @param isAsc æ˜¯å¦å‡åº
 	 */
 	public void addOrderByCon(String fieldName,boolean isAsc){
 		if(fieldName!= null && !orderColumnsMap.containsKey(fieldName)){
@@ -57,7 +57,7 @@ public class QueryBuilder extends StmtBuilder {
 	}
 	
 	/**
-	 * Ìí¼Ó group Ìõ¼ş£¬
+	 * æ·»åŠ  group æ¡ä»¶ï¼Œ
 	 * @param fieldName
 	 */
 	public void addGroupByCon(String... fieldNames){
@@ -75,7 +75,7 @@ public class QueryBuilder extends StmtBuilder {
 	}
 	
 	/**
-	 * ÊôĞÔÃû  °üÀ¨º¯Êı count(id) Ö§³Ö±ğÃû name as name1
+	 * å±æ€§å  åŒ…æ‹¬å‡½æ•° count(id) æ”¯æŒåˆ«å name as name1
 	 * @param fieldName
 	 */
 	public void addSelectColumn(String... fieldNames){
@@ -96,7 +96,7 @@ public class QueryBuilder extends StmtBuilder {
 	@Override
 	public String getSql() {
 		// TODO Auto-generated method stu
-		/** ------------------- Ìí¼Ó²éÑ¯µÄ×Ö¶Î ------------------------- */
+		/** ------------------- æ·»åŠ æŸ¥è¯¢çš„å­—æ®µ ------------------------- */
 		if(queryColumns.size() == 0){
 			queryColumns.add("*");
 		}
@@ -110,7 +110,7 @@ public class QueryBuilder extends StmtBuilder {
 			
 			String columnName = null;
 			if(leftKH != -1 && rightKH != -1){
-				//º¯Êı
+				//å‡½æ•°
 				String fieldName = hasAddStr.substring(leftKH+1, rightKH);
 				columnName = tableInfo.getColumnByFieldStr(fieldName);
 				if(columnName == null){
@@ -118,7 +118,7 @@ public class QueryBuilder extends StmtBuilder {
 				}
 				columnName = hasAddStr.replace(fieldName, getColumnNameWithAliases(columnName));
 			}else if(asIndex != -1){
-				//ÓĞ±ğÃû
+				//æœ‰åˆ«å
 				String fieldName = hasAddStr.substring(0, asIndex);
 				columnName = tableInfo.getColumnByFieldStr(fieldName);
 				if(columnName == null){
@@ -126,7 +126,7 @@ public class QueryBuilder extends StmtBuilder {
 				}
 				columnName = hasAddStr.replace(fieldName, getColumnNameWithAliases(columnName));
 			}else if(xIndex != -1){
-				//* ²éÑ¯ËùÓĞ
+				//* æŸ¥è¯¢æ‰€æœ‰
 				columnName = getColumnNameWithAliases(hasAddStr);
 			}else{
 				columnName = getColumnNameWithAliases(tableInfo.getColumnByFieldStr(hasAddStr));
@@ -142,9 +142,9 @@ public class QueryBuilder extends StmtBuilder {
 		}
 		
 		sqlBuffer.append(joinSelect+" FROM "+ getTableNameWithAliases() +" "+joinSB);
-		/** ------------------- Ìí¼ÓwhereµÄ×Ö¶Î ------------------------- */
+		/** ------------------- æ·»åŠ whereçš„å­—æ®µ ------------------------- */
 		sqlBuffer.append(getWhereSql());
-		/** ------------------- Ìí¼Ógroup byµÄ×Ö¶Î ------------------------- */
+		/** ------------------- æ·»åŠ group byçš„å­—æ®µ ------------------------- */
 		for (int i = 0; i < groupColumns.size(); i++) {
 			String groupStr = groupColumns.get(i);
 			String columnName = tableInfo.getColumnByFieldStr(groupStr);
@@ -159,11 +159,11 @@ public class QueryBuilder extends StmtBuilder {
 			sqlBuffer.append(getColumnNameWithAliases(columnName));
 		}
 		
-		/** ------------------- Ìí¼ÓHavingµÄ×Ö¶Î ------------------------- */
+		/** ------------------- æ·»åŠ Havingçš„å­—æ®µ ------------------------- */
 		if(havingStr != null && "".equals(havingStr)){
 			sqlBuffer.append(HAVING_KEYWORD + havingStr);
 		}
-		/** ------------------- Ìí¼Óorder byµÄ×Ö¶Î ------------------------- */
+		/** ------------------- æ·»åŠ order byçš„å­—æ®µ ------------------------- */
 		for (int i = 0; i < orderColumns.size(); i++) {
 			String orderStr = orderColumns.get(i);
 			String columnName = tableInfo.getColumnByFieldStr(orderStr);
@@ -177,7 +177,7 @@ public class QueryBuilder extends StmtBuilder {
 			}
 			sqlBuffer.append(getColumnNameWithAliases(columnName)+" "+ orderColumnsMap.get(orderStr));
 		}
-		/** ------------------- Ìí¼ÓlimitµÄ×Ö¶Î ------------------------- */
+		/** ------------------- æ·»åŠ limitçš„å­—æ®µ ------------------------- */
 		if(limitIndex != -1){
 			sqlBuffer.append(" LIMIT "+limitIndex);
 		}
@@ -186,12 +186,12 @@ public class QueryBuilder extends StmtBuilder {
 			sqlBuffer.append(" OFFSET  "+offsetIndex);
 		}
 		
-		ZWLogger.printLog(this, "²éÑ¯µÄSQLÎª:"+sqlBuffer.toString());
+		ZWLogger.printLog(this, "æŸ¥è¯¢çš„SQLä¸º:"+sqlBuffer.toString());
 		return sqlBuffer.toString();
 	}
 
 	/**
-	 * Çå¿Õ²éÑ¯µÄsection
+	 * æ¸…ç©ºæŸ¥è¯¢çš„section
 	 */
 	public void clearSelectSection(){
 		queryColumns.clear();

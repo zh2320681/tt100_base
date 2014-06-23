@@ -4,7 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import cn.shrek.base.ormlite.ZWDBHelper;
 /**
- * 到弹出框的数据库异步请求
+ * 鍒板脊鍑烘鐨勬暟鎹簱寮傛璇锋眰
  * @author shrek
  *
  */
