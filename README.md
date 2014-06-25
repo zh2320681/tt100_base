@@ -127,3 +127,12 @@ ZWHolderBo的使用
 			Class<T> clazz, Object hostObj,int layoutId, View parentView, String regex) {
         。。。
         }
+
+        
+数据存储映射(未调用JNI存储)
+=======
+用@DataSave(isSecret = true,defaultString="ADMIN")
+isSecret是存储本地时候 是明文还是密文   default???缺省值
+public class MyAppData extends ZWAppData(继承ZWAppData类)
+调用 appData.saveData();保存数据 
+在调用appData构造方法时候  即已经读取数据
