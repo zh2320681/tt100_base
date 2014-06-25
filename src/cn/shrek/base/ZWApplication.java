@@ -89,6 +89,11 @@ public class ZWApplication extends Application {
 	
 	private ZWNetChangeObserver zwNetChangeObserver;
 
+	
+//	static { 
+//		System.loadLibrary("ZWTool");
+//	}
+	
 	@Override
 	public final void onCreate() {
 		// TODO Auto-generated method stub

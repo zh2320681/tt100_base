@@ -15,6 +15,12 @@ public class MyAppData extends ZWAppData {
 	@DataSave(isSecret = true)
 	public String password;
 	
+	@DataSave(isSecret = true,defaultBoolean = true)
+	public boolean sercetFlag;
+	
+	@DataSave(isSecret = true,defaultInteger = 1014)
+	public int sercetIndex;
+	
 	@DataSave(defaultBoolean = false)
 	public boolean isSave;
 
@@ -23,4 +29,12 @@ public class MyAppData extends ZWAppData {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public String toString() {
+		return "MyAppData [parInt=" + parInt + ", acount=" + acount
+				+ ", password=" + password + ", isSave=" + isSave + "]";
+	}
+
+	
+	
 }

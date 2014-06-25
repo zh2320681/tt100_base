@@ -1,7 +1,5 @@
 package cn.shrek.base.util.data;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -28,159 +26,52 @@ public abstract class ZWAppData {
 	// public String appName;
 
 	Context ctx;
-
 	// 是否存在公开的数据 和秘密的数据
 	// protected boolean isExistSecretData,isExistOpenData;
 	protected List<Field> secretDatas, openDatas;
-
-	static {
-		System.loadLibrary("ZWTool");
-	}
 
 	public ZWAppData(Context ctx) {
 		this.ctx = ctx;
 		initExistFlag();
 
-		if (secretDatas.size() > 0) {
-			File file = new File(ctx.getFilesDir().getPath(), SECRET_NAME);
-			if (!file.exists()) {
-				try {
-					file.createNewFile();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			nativeSetAssetManager(ctx.getAssets(), file.getPath());
-			loadData();
-		}
-
+		// if (secretDatas.size() > 0) {
+		// File file = new File(ctx.getFilesDir().getPath(), SECRET_NAME);
+		// if (!file.exists()) {
+		// try {
+		// file.createNewFile();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// nativeSetAssetManager(ctx.getAssets(), file.getPath());
+		// loadData();
+		// }
+		SharedPreferences sharedPreferences = ctx.getSharedPreferences(
+				OPEN_NAME, Context.MODE_PRIVATE);
 		for (Field field : secretDatas) {
-			DataSave mDataSave = field.getAnnotation(DataSave.class);
-			String value = getValue(field.getName());
-			try {
-				Object obj = null;
-				if (value == null) {
-					Log.e("AppData", "属性:" + field.getName() + "获取值失败!设置缺省值~~~");
-					Class<?> clazz = field.getType();
-					if (Boolean.class.isAssignableFrom(clazz)
-							|| boolean.class.isAssignableFrom(clazz)) {
-						obj = mDataSave.defaultBoolean();
-					} else if (Integer.class.isAssignableFrom(clazz)
-							|| int.class.isAssignableFrom(clazz)) {
-						obj = mDataSave.defaultInteger();
-					} else if (float.class.isAssignableFrom(clazz)
-							|| Float.class.isAssignableFrom(clazz)) {
-						obj = mDataSave.defaultFloat();
-					} else if (Long.class.isAssignableFrom(clazz)
-							|| long.class.isAssignableFrom(clazz)) {
-						obj = mDataSave.defaultLong();
-					} else if (String.class.isAssignableFrom(clazz)) {
-						obj = mDataSave.defaultString();
-					}
-				} else {
-					obj = tranforString2Value(field, value);
-				}
-				field.setAccessible(true);
-				field.set(this, obj);
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			initValue(sharedPreferences, field, true);
 		}
 
-		SharedPreferences sharedPreferences = null;
 		for (Field field : openDatas) {
-			DataSave mDataSave = field.getAnnotation(DataSave.class);
-			if (sharedPreferences == null) {
-				sharedPreferences = ctx.getSharedPreferences(OPEN_NAME,
-						Context.MODE_PRIVATE);
-			}
-			Class<?> clazz = field.getType();
-			Object obj = null;
-			if (Boolean.class.isAssignableFrom(clazz)
-					|| boolean.class.isAssignableFrom(clazz)) {
-				obj = sharedPreferences.getBoolean(clazz.getSimpleName(),
-						mDataSave.defaultBoolean());
-			} else if (Integer.class.isAssignableFrom(clazz)
-					|| int.class.isAssignableFrom(clazz)) {
-				obj = sharedPreferences.getInt(clazz.getSimpleName(),
-						mDataSave.defaultInteger());
-			} else if (float.class.isAssignableFrom(clazz)
-					|| Float.class.isAssignableFrom(clazz)) {
-				obj = sharedPreferences.getFloat(clazz.getSimpleName(),
-						mDataSave.defaultFloat());
-			} else if (Long.class.isAssignableFrom(clazz)
-					|| long.class.isAssignableFrom(clazz)) {
-				obj = sharedPreferences.getLong(clazz.getSimpleName(),
-						mDataSave.defaultLong());
-			} else if (String.class.isAssignableFrom(clazz)) {
-				obj = sharedPreferences.getString(clazz.getSimpleName(),
-						mDataSave.defaultString());
-			}
-			field.setAccessible(true);
-			try {
-				field.set(this, obj);
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			initValue(sharedPreferences, field, false);
 		}
 	}
 
 	public void saveData() {
+
+		SharedPreferences sharedPreferences = ctx.getSharedPreferences(
+				OPEN_NAME, Context.MODE_PRIVATE);
+		Editor editor = sharedPreferences.edit();// 获取编辑器
+
 		for (Field field : secretDatas) {
-//			DataSave mDataSave = field.getAnnotation(DataSave.class);
-			String stringVal = tranforValue2String(field);
-			putData(field.getName(), stringVal);
-			Log.i("AppData", String.format("添加数据key = %s , value = %s",
-					field.getName(), stringVal));
+			// DataSave mDataSave = field.getAnnotation(DataSave.class);
+			saveValue(editor, field, true);
 		}
 
-		if(secretDatas.size() > 0){
-			saveDataInfoFile();
-		}
-		
-		Editor editor = null;
 		for (Field field : openDatas) {
-			if (editor == null) {
-				SharedPreferences sharedPreferences = ctx.getSharedPreferences(OPEN_NAME,
-						Context.MODE_PRIVATE);
-				editor = sharedPreferences.edit();// 获取编辑器
-			}
-			Class<?> clazz = field.getType();
-			String fieldName = field.getName();
-			Object value;
-			try {
-				value = field.get(this);
-				if (Boolean.class.isAssignableFrom(clazz)
-						|| boolean.class.isAssignableFrom(clazz)) {
-					editor.putBoolean(fieldName, (Boolean)value);
-				} else if (Integer.class.isAssignableFrom(clazz)
-						|| int.class.isAssignableFrom(clazz)) {
-					editor.putInt(fieldName, (Integer)value);
-				} else if (float.class.isAssignableFrom(clazz)
-						|| Float.class.isAssignableFrom(clazz)) {
-					editor.putFloat(fieldName, (Float)value);
-				} else if (Long.class.isAssignableFrom(clazz)
-						|| long.class.isAssignableFrom(clazz)) {
-					editor.putLong(fieldName, (Long)value);
-				} else if (String.class.isAssignableFrom(clazz)) {
-					editor.putString(fieldName, value.toString());
-				}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			editor.commit();
+			saveValue(editor, field, false);
 		}
+		editor.commit();
 	}
 
 	private final void initExistFlag() {
@@ -278,19 +169,165 @@ public abstract class ZWAppData {
 		return map;
 	}
 
-	protected native void putData(String key, String value);
+	/**
+	 * #########################################################################
+	 * ########
+	 */
+	// protected native void putData(String key, String value);
 
-	protected native void saveDataInfoFile();
+	// protected native void saveDataInfoFile();
 
-	protected native String getValue(String key);
+	// protected native String getValue(String key);
 
-	protected native void loadData();
+	// protected native void loadData();
 
 	/**
 	 * 
 	 * @param manager
 	 *            AssetManager对象 为了编译
 	 */
-	protected native void nativeSetAssetManager(Object manager, String filePath);
+	// protected native void nativeSetAssetManager(Object manager, String
+	// filePath);
 
+	/**
+	 * #########################################################################
+	 * ########
+	 */
+
+	/**
+	 * 通过key 设置属性
+	 * 
+	 * @param key
+	 * @return
+	 */
+	protected void initValue(SharedPreferences sharedPreferences, Field field,
+			boolean isSercet) {
+		Class<?> clazz = field.getType();
+		DataSave mDataSave = field.getAnnotation(DataSave.class);
+		String fieldName = field.getName();
+		Object obj = null;
+		// 密文保存 都是string
+		if (isSercet) {
+			String objStr = sharedPreferences.getString(fieldName, null);
+//			System.out.println("objStr密文===============>" + objStr + "  name:"
+//					+ fieldName);
+			if (objStr != null) {
+				obj = tranforString2Value(field, decode(objStr));
+			}
+		} else {
+			if (Boolean.class.isAssignableFrom(clazz)
+					|| boolean.class.isAssignableFrom(clazz)) {
+				obj = sharedPreferences.getBoolean(fieldName,
+						mDataSave.defaultBoolean());
+			} else if (Integer.class.isAssignableFrom(clazz)
+					|| int.class.isAssignableFrom(clazz)) {
+				obj = sharedPreferences.getInt(fieldName,
+						mDataSave.defaultInteger());
+			} else if (float.class.isAssignableFrom(clazz)
+					|| Float.class.isAssignableFrom(clazz)) {
+				obj = sharedPreferences.getFloat(fieldName,
+						mDataSave.defaultFloat());
+			} else if (Long.class.isAssignableFrom(clazz)
+					|| long.class.isAssignableFrom(clazz)) {
+				obj = sharedPreferences.getLong(fieldName,
+						mDataSave.defaultLong());
+			} else if (String.class.isAssignableFrom(clazz)) {
+				obj = sharedPreferences.getString(fieldName,
+						mDataSave.defaultString());
+			}
+		}
+
+		if(obj == null){
+			// 如果 obj没有获取到 设置默认值
+			Log.e("AppData", "属性:" + field.getName() + "获取值失败!设置缺省值~~~");
+			if (Boolean.class.isAssignableFrom(clazz)
+					|| boolean.class.isAssignableFrom(clazz)) {
+				obj = mDataSave.defaultBoolean();
+			} else if (Integer.class.isAssignableFrom(clazz)
+					|| int.class.isAssignableFrom(clazz)) {
+				obj = mDataSave.defaultInteger();
+			} else if (float.class.isAssignableFrom(clazz)
+					|| Float.class.isAssignableFrom(clazz)) {
+				obj = mDataSave.defaultFloat();
+			} else if (Long.class.isAssignableFrom(clazz)
+					|| long.class.isAssignableFrom(clazz)) {
+				obj = mDataSave.defaultLong();
+			} else if (String.class.isAssignableFrom(clazz)) {
+				obj = mDataSave.defaultString();
+			}
+		}
+		
+
+		field.setAccessible(true);
+		try {
+			field.set(this, obj);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	protected void saveValue(Editor editor, Field field, boolean isSercet) {
+		Class<?> clazz = field.getType();
+		String fieldName = field.getName();
+		Object value;
+
+		if (isSercet) {
+			// 密文 保存
+			String objStr = tranforValue2String(field);
+			editor.putString(fieldName, encode(objStr));
+		} else {
+			try {
+				value = field.get(this);
+				if (Boolean.class.isAssignableFrom(clazz)
+						|| boolean.class.isAssignableFrom(clazz)) {
+					editor.putBoolean(fieldName, (Boolean) value);
+				} else if (Integer.class.isAssignableFrom(clazz)
+						|| int.class.isAssignableFrom(clazz)) {
+					editor.putInt(fieldName, (Integer) value);
+				} else if (float.class.isAssignableFrom(clazz)
+						|| Float.class.isAssignableFrom(clazz)) {
+					editor.putFloat(fieldName, (Float) value);
+				} else if (Long.class.isAssignableFrom(clazz)
+						|| long.class.isAssignableFrom(clazz)) {
+					editor.putLong(fieldName, (Long) value);
+				} else if (String.class.isAssignableFrom(clazz)) {
+					editor.putString(fieldName, value.toString());
+				}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private static final String SERCET_KEY = "SERCET_KEY";
+
+	private String encode(String value) {
+		byte[] sercetChars = SERCET_KEY.getBytes();
+		byte[] bytes = value.getBytes();
+		byte[] newBytes = new byte[bytes.length];
+		for (int i = 0; i < bytes.length; i++) {
+			newBytes[i] = (byte) (bytes[i] ^ sercetChars[i % sercetChars.length]);
+		}
+//		System.out.println("编码后===============>" + new String(newBytes));
+		return new String(newBytes);
+	}
+
+	private String decode(String value) {
+		byte[] sercetChars = SERCET_KEY.getBytes();
+		byte[] bytes = value.getBytes();
+		byte[] newBytes = new byte[bytes.length];
+		for (int i = 0; i < bytes.length; i++) {
+			newBytes[i] = (byte) (bytes[i] ^ sercetChars[i % sercetChars.length]);
+		}
+//		System.out.println("转码后===============>" + new String(newBytes));
+		return new String(newBytes);
+	}
 }

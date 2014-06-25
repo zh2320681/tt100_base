@@ -13,7 +13,7 @@ public class AppDataActivity extends ZWActivity {
 	TextView tvShow;
 	
 	@AutoInject(idFormat="ad_?",clickSelector="myClick")
-	Button btn1, btn2, btn3;
+	Button btn1, btn2, btn3,btn4;
 	
 	MyAppData appData;
 	
@@ -28,6 +28,11 @@ public class AppDataActivity extends ZWActivity {
 				tvShow.setText("=======>" + appData.password);
 			} else if (arg0 == btn3) {
 				tvShow.setText("=======>" + appData.isSave);
+			} else if(arg0 == btn4){
+				appData.acount = "admin11111";
+				appData.password = "password1";
+				appData.parInt = 12580;
+				appData.saveData();
 			}
 		}
 	};
@@ -36,12 +41,13 @@ public class AppDataActivity extends ZWActivity {
 	protected void initialize() {
 		// TODO Auto-generated method stub
 		appData = new MyAppData(getApplicationContext());
+		tvShow.setText("=======>" + appData.toString());
 	}
 
 	@Override
 	protected void addListener() {
 		// TODO Auto-generated method stub
-
+	
 	}
 
 	@Override
