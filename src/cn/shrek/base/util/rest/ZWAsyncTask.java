@@ -165,7 +165,9 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	public static <T> void excuteTaskWithParas(Context ctx, String url,
 			AsyncTaskHandler<? extends T> handler, Object... paras) {
-		excuteTaskWithParas(ctx, url, null, (AsyncTaskHandler<T>) handler,
+		TypeReference<T> reference = new TypeReference<T>() {
+		};
+		excuteTaskWithParas(ctx, url, null,reference, (AsyncTaskHandler<T>) handler,
 				paras);
 
 	}
@@ -179,6 +181,14 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,TypeReference<T> reference,
 			AsyncTaskHandler<? extends T> handler) {
+		excuteTaskWithMap(ctx, urlWithoutPar, null,reference,
+				(AsyncTaskHandler<T>) handler, null);
+	}
+	
+	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,
+			AsyncTaskHandler<? extends T> handler) {
+		TypeReference<T> reference = new TypeReference<T>() {
+		};
 		excuteTaskWithMap(ctx, urlWithoutPar, null,reference,
 				(AsyncTaskHandler<T>) handler, null);
 	}
