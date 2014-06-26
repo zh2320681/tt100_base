@@ -4,54 +4,75 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/menu_imgBtn"
+    <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="图片加载测试" />
+        android:layout_height="fill_parent" >
 
-    <Button
-        android:id="@+id/menu_downTestBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="文件下载测试" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/menu_dbTestBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="数据库操作" />
+            <Button
+                android:id="@+id/menu_imgBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="图片加载测试" />
 
-    <Button
-        android:id="@+id/menu_restTestBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="REST请求测试" />
-    <Button
-        android:id="@+id/menu_errorTestBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="异常捕获测试" />
-    <Button
-        android:id="@+id/menu_logPrintTestBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="日志打印关闭测试" />
-    <Button
-        android:id="@+id/menu_netTestBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="网络环境变化测试" />
-    
-    <Button
-        android:id="@+id/menu_fragmentTestBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="fragment测试" />
-    
-    <Button
-        android:id="@+id/menu_listTestBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="List Holder测试" />
+            <Button
+                android:id="@+id/menu_downTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="文件下载测试" />
+
+            <Button
+                android:id="@+id/menu_dbTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="数据库操作" />
+
+            <Button
+                android:id="@+id/menu_restTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="REST请求测试" />
+
+            <Button
+                android:id="@+id/menu_errorTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="异常捕获测试" />
+
+            <Button
+                android:id="@+id/menu_logPrintTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="日志打印关闭测试" />
+
+            <Button
+                android:id="@+id/menu_netTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="网络环境变化测试" />
+
+            <Button
+                android:id="@+id/menu_fragmentTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="fragment测试" />
+
+            <Button
+                android:id="@+id/menu_listTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="List Holder测试" />
+
+            <Button
+                android:id="@+id/menu_appDataBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="appData 数据测试" />
+        </LinearLayout>
+    </ScrollView>
+
 </LinearLayout>
