@@ -137,13 +137,16 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 		trans.commit();
 	}
 
-	public void addFragment(final int parentId , final ZWFragment fragment){
+	public void addFragment(final int parentId , final ZWFragment... fragments){
 		fragmentOpt(new FragmentOperator() {
 
 			@Override
 			public void operator(FragmentTransaction trans) {
 				// TODO Auto-generated method stub
-				trans.add(parentId, fragment, fragment.getTagInfo());
+				for(ZWFragment fragment : fragments){
+					trans.add(parentId, fragment, fragment.getTagInfo());
+				}
+				
 			}
 		});
 	}

@@ -315,6 +315,7 @@ public class ZWApplication extends Application {
 		// TODO Auto-generated method stub
 		super.onTerminate();
 		// clearDataCache();
+		mActivityManager.popAllActivity();
 		mActivityManager = null;
 		closeLoggerPrint();
 		System.gc();
