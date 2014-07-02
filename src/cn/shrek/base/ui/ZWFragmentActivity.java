@@ -9,6 +9,7 @@ import java.util.Observer;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import cn.shrek.base.ModelObservable;
@@ -150,6 +151,15 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 			}
 		});
 	}
+	
+	/**
+	 * 通过tag查找fragment
+	 * @param tag
+	 * @return
+	 */
+	public Fragment findFragmentByTag(String tag){
+		return getSupportFragmentManager().findFragmentByTag(tag);
+	}
 
 	@Override
 	protected void onDestroy() {
@@ -204,7 +214,7 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 	 * @author shrek
 	 *
 	 */
-	interface FragmentOperator{
+	public interface FragmentOperator{
 		void operator(FragmentTransaction trans);
 	}
 }

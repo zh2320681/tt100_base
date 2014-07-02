@@ -19,10 +19,17 @@ public abstract class ZWFragment extends Fragment {
 //		this.layoutId = layoutId;
 //	}
 
+	protected void onPreCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+
+	}
+	
 	@Override
 	public final View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		onPreCreateView(inflater,container,savedInstanceState);
 		int layoutId = 0;
 		Class<?> clazz = getClass();
 		LayoutSelector selector = clazz.getAnnotation(LayoutSelector.class);

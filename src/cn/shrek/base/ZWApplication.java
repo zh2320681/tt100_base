@@ -37,6 +37,8 @@ import cn.shrek.base.util.net.ZWNetworkStateReceiver;
 public class ZWApplication extends Application {
 	// 是否开启debug模式
 	public static boolean isDebugMode = false;
+	// 是否捕获异常
+	public static boolean isCaptureError = false;
 	// 是否监听网络变化
 	public static boolean isMonitorNetChange = false;
 	// 是否开启日志打印
@@ -98,8 +100,11 @@ public class ZWApplication extends Application {
 	public final void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
-		// 注册App异常崩溃处理器
-		Thread.setDefaultUncaughtExceptionHandler(getUncaughtExceptionHandler());
+		if(isCaptureError){
+			// 注册App异常崩溃处理器
+			Thread.setDefaultUncaughtExceptionHandler(getUncaughtExceptionHandler());
+		}
+		
 		onPreCreateApplication();
 		initParameterWithProperties();
 
@@ -236,6 +241,7 @@ public class ZWApplication extends Application {
 			Properties prop = new Properties();
 			prop.load(iStream);
 			isDebugMode = Boolean.parseBoolean(prop.getProperty("isDebugMode"));
+			isCaptureError = Boolean.parseBoolean(prop.getProperty("isCaptureError"));
 			isMonitorNetChange = Boolean.parseBoolean(prop
 					.getProperty("isMonitorNetChange"));
 			isLoggerPrint = Boolean.parseBoolean(prop
