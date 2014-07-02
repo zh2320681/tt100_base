@@ -2,6 +2,8 @@ package cn.shrek.base.ormlite;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,14 +21,16 @@ import cn.shrek.base.ZWBo;
 import cn.shrek.base.ormlite.dao.DBDao;
 import cn.shrek.base.ormlite.dao.DBDaoImpl;
 import cn.shrek.base.ormlite.dao.DBTransforFactory;
+import cn.shrek.base.util.AndroidVersionCheckUtils;
 import cn.shrek.base.util.ZWLogger;
 
 public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	private static final int CLOSE_DBOPERATOR = 0x89;
 
 	private static Map<Class<? extends ZWBo>, DBDao> allDBDaos = new HashMap<Class<? extends ZWBo>, DBDao>();
-	//DatabaseErrorHandler是API 11的
-//	private static DatabaseErrorHandler mErrorHandler = new DefaultDatabaseErrorHandler();
+	// DatabaseErrorHandler是API 11的
+	// private static DatabaseErrorHandler mErrorHandler = new
+	// DefaultDatabaseErrorHandler();
 	private static SQLiteDatabase currentDBOperator;
 
 	private static final Object SQLITEDATABASE_LOCK = new Object();
@@ -153,7 +157,6 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 		return obj;
 	}
 
-	
 	/**
 	 * 不用生成 dao对象 直接做操作
 	 * 
@@ -167,21 +170,22 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 		List<ParseObjec> list = new ArrayList<ParseObjec>();
 		while (cursor.moveToNext()) {
 			ParseObjec obj = getObjByCursor(cursor, objClass);
-			if(obj != null){
+			if (obj != null) {
 				list.add(obj);
 			}
 		}
 		return list;
 	}
-	
+
 	/**
 	 * 通过sql查询 得到map的映射
+	 * 
 	 * @param sql
 	 * @return
 	 */
-	public Map<String,Object> queryMap(String sql){
+	public Map<String, Object> queryMap(String sql) {
 		Cursor cursor = getDatabase(true).rawQuery(sql, null);
-		Map<String,Object>  map  = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		if (cursor.moveToNext()) {
 			int columnCount = cursor.getColumnCount();
 			for (int i = 0; i < columnCount; i++) {
@@ -192,14 +196,14 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 		}
 		return map;
 	}
-	
-	public List<Map<String,Object>> queryMaps(String sql){
+
+	public List<Map<String, Object>> queryMaps(String sql) {
 		Cursor cursor = getDatabase(true).rawQuery(sql, null);
-		List<Map<String,Object>> lists = new ArrayList<Map<String,Object>>();
-		
+		List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
+
 		while (cursor.moveToNext()) {
 			int columnCount = cursor.getColumnCount();
-			Map<String,Object>  map  = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			for (int i = 0; i < columnCount; i++) {
 				String columnName = cursor.getColumnName(i);
 				Object obj = getObjectValueByCursor(cursor, i);
@@ -209,9 +213,10 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 		}
 		return lists;
 	}
-	
+
 	/**
 	 * 通过游标 直接得到对象
+	 * 
 	 * @param cursor
 	 * @param objClass
 	 * @return
@@ -278,23 +283,31 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	 */
 	private Object getObjectValueByCursor(Cursor cursor, int index) {
 		Object columnValue = new Object();
-		switch (cursor.getType(index)) {
-		case Cursor.FIELD_TYPE_STRING:
+		// 兼容性 2.3
+		if (AndroidVersionCheckUtils.hasHoneycomb()) {
+			switch (cursor.getType(index)) {
+			case Cursor.FIELD_TYPE_STRING:
+				columnValue = cursor.getString(index);
+				break;
+			case Cursor.FIELD_TYPE_FLOAT:
+				columnValue = cursor.getFloat(index);
+				break;
+			case Cursor.FIELD_TYPE_INTEGER:
+				columnValue = cursor.getInt(index);
+				break;
+			case Cursor.FIELD_TYPE_NULL:
+				columnValue = null;
+				break;
+			case Cursor.FIELD_TYPE_BLOB:
+				columnValue = cursor.getBlob(index);
+				break;
+			}
+		} else {
+
 			columnValue = cursor.getString(index);
-			break;
-		case Cursor.FIELD_TYPE_FLOAT:
-			columnValue = cursor.getFloat(index);
-			break;
-		case Cursor.FIELD_TYPE_INTEGER:
-			columnValue = cursor.getInt(index);
-			break;
-		case Cursor.FIELD_TYPE_NULL:
-			columnValue = null;
-			break;
-		case Cursor.FIELD_TYPE_BLOB:
-			columnValue = cursor.getBlob(index);
-			break;
+
 		}
+
 		return columnValue;
 	}
 

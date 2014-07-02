@@ -4,7 +4,7 @@
  *  Created on: 2014年6月20日
  *      Author: shrek
  */
-#include  "com_example_hellondk_AppData.h"
+#include "cn_shrek_base_util_data_ZWAppData.h"
 #include <android/log.h>
 #include "secretFileOpt.h"
 #include <string.h>
@@ -17,7 +17,7 @@
  * Method:    putData
  * Signature: (Ljava/lang/String;Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_com_example_hellondk_AppData_putData
+JNIEXPORT void JNICALL Java_cn_shrek_base_util_data_ZWAppData_putData
   (JNIEnv *env, jobject obj, jstring key, jstring value){
 	char* keyStr = (char*)(*env)->GetStringUTFChars(env,key,NULL);
 	char* valueStr = (char*)(*env)->GetStringUTFChars(env,value,NULL);
@@ -30,7 +30,7 @@ JNIEXPORT void JNICALL Java_com_example_hellondk_AppData_putData
  * Method:    saveDataInfoFile
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_example_hellondk_AppData_saveDataInfoFile
+JNIEXPORT void JNICALL Java_cn_shrek_base_util_data_ZWAppData_saveDataInfoFile
   (JNIEnv *env, jobject obj){
 	saveAllInfo();
 }
@@ -40,19 +40,19 @@ JNIEXPORT void JNICALL Java_com_example_hellondk_AppData_saveDataInfoFile
  * Method:    getValue
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_example_hellondk_AppData_getValue
+JNIEXPORT jstring JNICALL Java_cn_shrek_base_util_data_ZWAppData_getValue
   (JNIEnv *env, jobject obj, jstring key){
 	char* keyStr = (char*)(*env)->GetStringUTFChars(env,key,NULL);
 	char* value = getValueInfo(keyStr);
 	return (*env)->NewStringUTF(env, value);
 }
 
-JNIEXPORT void JNICALL Java_com_example_hellondk_AppData_loadData
+JNIEXPORT void JNICALL Java_cn_shrek_base_util_data_ZWAppData_loadData
   (JNIEnv *env, jobject obj){
 	loadAllSecInfos();
 }
 
-JNIEXPORT void JNICALL Java_com_example_hellondk_AppData_nativeSetAssetManager
+JNIEXPORT void JNICALL Java_cn_shrek_base_util_data_ZWAppData_nativeSetAssetManager
   (JNIEnv *env, jobject obj, jobject assetManager, jstring jfilePath){
 	AAssetManager* pAssetMgr = AAssetManager_fromJava(env, assetManager);
 	char* filePath = (char*)(*env)->GetStringUTFChars(env,jfilePath,NULL);

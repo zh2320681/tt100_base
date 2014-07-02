@@ -48,6 +48,7 @@ public class DBTestActivity extends ZWActivity {
 				SQLiteDatabase mDatabase = mZWDBHelper.getDatabase(false);
 				DBUtil.createTable(mDatabase, Company.class, true);
 				DBUtil.createTable(mDatabase, Employee.class, true);
+				
 			} else if (v == insertBtn) {
 				// DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
 				// List<Company> coms = new ArrayList<Company>();

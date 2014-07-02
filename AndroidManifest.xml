@@ -51,6 +51,12 @@
         <activity
             android:name="cn.shrek.base.example.FragmentTestActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="cn.shrek.base.example.ListTestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="cn.shrek.base.example.AppDataActivity"
+            android:screenOrientation="portrait" />
         
         <!-- 一定要加  -->
         <activity

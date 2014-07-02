@@ -162,6 +162,13 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		task.taskGuid = config.getUniqueKey();
 		task.execute(config);
 	}
+	
+	public static <T> void excuteTaskWithParas(Context ctx, String url,
+			TypeReference<T> reference,AsyncTaskHandler<? extends T> handler, Object... paras) {
+		excuteTaskWithParas(ctx, url, null,reference, (AsyncTaskHandler<T>) handler,
+				paras);
+
+	}
 
 	public static <T> void excuteTaskWithParas(Context ctx, String url,
 			AsyncTaskHandler<? extends T> handler, Object... paras) {

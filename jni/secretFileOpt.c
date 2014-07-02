@@ -33,9 +33,9 @@ FILE* openFile(int isRead) {
 		f = fopen(fileName, "w");
 	}
 	if (f == NULL) {
-		printInfo(TAG,"无法打开文件:%s\n", fileName);
+		printInfo(TAG, "无法打开文件:%s\n", fileName);
 	} else {
-		printInfo(TAG,"已经打开文件:%s\n", fileName);
+		printInfo(TAG, "已经打开文件:%s\n", fileName);
 	}
 	return f;
 }
@@ -63,7 +63,7 @@ void closeFile(FILE* f) {
 int getFileSize(FILE *aasset) {
 	if (aasset == NULL) {
 //		__android_log_print(ANDROID_LOG_ERROR, TAG, "【 aasset is null 】");
-		printError(TAG, "【 FILE is null 】",NULL);
+		printError(TAG, "【 FILE is null 】", NULL);
 	} else {
 		fseek(aasset, 0, SEEK_END);
 	}
@@ -74,10 +74,15 @@ char* encode(char* source) {
 	char* tagetStr = malloc(strlen(source));
 	int i;
 	for (i = 0; i < strlen(source); i++) {
-        tagetStr[i] = source[i]^CUSTOMKEYSTON;
-//		tagetStr[i] = source[i];
+//		if (source[i] == '\0') {
+//			tagetStr[i] = '\0'
+//			break;
+//		}
+//        tagetStr[i] = source[i]^CUSTOMKEYSTON;
+		tagetStr[i] = source[i];
 	}
 	printError(TAG, "加密后的内容是:%s", tagetStr);
+//	free(source);
 	return tagetStr;
 }
 
@@ -85,10 +90,15 @@ char* decode(char* source) {
 	char* tagetStr = malloc(strlen(source));
 	int i;
 	for (i = 0; i < strlen(source); i++) {
-		tagetStr[i] = source[i]^CUSTOMKEYSTON;
-//		tagetStr[i] = source[i];
+//		if (source[i] == '\0') {
+//			tagetStr[i] = '\0'
+//			break;
+//		}
+//		tagetStr[i] = source[i]^CUSTOMKEYSTON;
+		tagetStr[i] = source[i];
 	}
 	printError(TAG, "解码后的内容是:%s", tagetStr);
+//	free(source);
 	return tagetStr;
 }
 
@@ -101,8 +111,8 @@ char* readInfos() {
 	int size = getFileSize(aasset);
 //    printInfo(TAG,"=================>%d",size);
 	char* buff = malloc(size + 1);
-    fseek(aasset, 0, SEEK_SET);
-    fread(buff, sizeof(unsigned char), size, aasset);
+	fseek(aasset, 0, SEEK_SET);
+	fread(buff, sizeof(unsigned char), size, aasset);
 	buff[size] = '\0';
 //    printInfo(TAG,"=================>%s",buff);
 	closeFile(aasset);
@@ -118,16 +128,22 @@ SecretMap* addLineObj(char* content, int lineIndex) {
 			break;
 		}
 	}
-	char *titleStr = malloc(searchIndex);
-	char *contentStr = malloc(strlen(content) - searchIndex);
+
+	char *titleStr = malloc(searchIndex+1);
+	char *contentStr = malloc(strlen(content) - searchIndex+1);
 
 	SecretMap* map = malloc(sizeof(SecretMap));
 	strncpy(titleStr, content, searchIndex);
 	strncpy(contentStr, &content[0] + searchIndex + 1,
 			strlen(content) - searchIndex);
+	titleStr[searchIndex] = '\0';
+	contentStr[strlen(content) - searchIndex] = '\0';
 	map->key = titleStr;
 	map->value = contentStr;
-	printInfo(TAG,"line.title = %s \n", titleStr);
+//	printInfo(TAG, "line.title = %s \n", titleStr);
+	__android_log_print(ANDROID_LOG_INFO,TAG,"line.title = %s,line.content = %s \n", titleStr,contentStr);
+	free(titleStr);
+	free(contentStr);
 	return map;
 }
 
@@ -156,6 +172,7 @@ void loadAllSecInfos() {
 				lastLineIndex = (j + 1);
 				//字符串查找
 				allLine[index] = addLineObj(line, index);
+				free(line);
 				//memset(line, 0, 1024);
 				index++;
 			}
@@ -167,15 +184,13 @@ void loadAllSecInfos() {
 char* getValueInfo(char* keyStr) {
 	int i;
 	int arraySize;
-	GET_ARRAY_LEN(allLine,arraySize);
+	GET_ARRAY_LEN(allLine, arraySize);
 	for (i = 0; i < arraySize; i++) {
 		SecretMap *map = allLine[i];
 //		__android_log_print(ANDROID_LOG_ERROR,TAG,"key====>%s , keyStr=====>%s",map->key,keyStr);
 //		__android_log_print(ANDROID_LOG_ERROR,TAG,"key====>%p  ",map);
 //		__android_log_print(ANDROID_LOG_ERROR,TAG," keyStr=====>%s",keyStr);
-		if (map != NULL
-				&& map->key != NULL
-				&& keyStr != NULL
+		if (map != NULL && map->key != NULL && keyStr != NULL
 				&& strcmp(keyStr, map->key) == 0) {
 			return map->value;
 		}
@@ -191,7 +206,7 @@ void putValue(char *key, char *value) {
 	int i;
 
 	int arraySize;
-	GET_ARRAY_LEN(allLine,arraySize);
+	GET_ARRAY_LEN(allLine, arraySize);
 	for (i = 0; i < arraySize; i++) {
 		SecretMap *map = allLine[i];
 		if (map != NULL) {
@@ -218,27 +233,26 @@ void saveAllInfo() {
 
 	int i;
 	int arraySize;
-	GET_ARRAY_LEN(allLine,arraySize);
+	GET_ARRAY_LEN(allLine, arraySize);
 	for (i = 0; i < arraySize; i++) {
 		SecretMap *map = allLine[i];
-		if (map != NULL
-				&& map->key != NULL
-				&& map->value != NULL) {
+		if (map != NULL && map->key != NULL && map->value != NULL) {
 			strcat(sourInfo, map->key);
 			strcat(sourInfo, "=");
 			strcat(sourInfo, map->value);
 			strcat(sourInfo, "\n");
 		}
 	}
-
-    FILE *f = openWriteFile();
-    if (f != NULL) {
-        int size = fprintf(f, encode(sourInfo));
-        printInfo(TAG,"保存到文件的数据长度: %d\n",size);
-     }else{
-    	 printError(TAG,"文件打不开!!!!\n",NULL);
-     }
-    closeFile(f);
+	strcat(sourInfo, "\0");
+	FILE *f = openWriteFile();
+	if (f != NULL) {
+		fseek(f, 0, SEEK_SET);
+		int size = fprintf(f, encode(sourInfo));
+		printInfo(TAG, "保存到文件的数据长度: %d\n", size);
+	} else {
+		printError(TAG, "文件打不开!!!!\n", NULL);
+	}
+	closeFile(f);
 }
 
 int char2Int(char c) {
@@ -261,7 +275,7 @@ char int2Char(int i) {
 		return 0;
 }
 
-void setAssetManager(AAssetManager* assetMgr,char* filePath) {
+void setAssetManager(AAssetManager* assetMgr, char* filePath) {
 	pAssetMgr = assetMgr;
 	fileName = filePath;
 }

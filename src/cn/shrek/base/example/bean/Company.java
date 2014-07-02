@@ -24,7 +24,7 @@ public class Company extends ZWBo{
   public String remark;
   
 //  @DatabaseField(foreign = true, foreignColumnName=)
-  public List<Employee> allWorks;
+//  public List<Employee> allWorks;
   
   
   public Company() {
@@ -34,7 +34,7 @@ public class Company extends ZWBo{
   
   
   /**
-   * ²åÈëÊý¾Ý¿âµÄ ÖØ¸´Êý¾Ý¹ýÂË
+   * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½
    */
   @Override
 	public boolean equals(Object o) {
@@ -47,12 +47,12 @@ public class Company extends ZWBo{
 	}
 
 
-@Override
-public String toString() {
-	return "Company [companyName=" + companyName + ", id=" + id + ", info="
-			+ info + ", isITCompany=" + isITCompany + ", remark=" + remark
-			+ ", allWorks=" + allWorks + "]";
-}
+//@Override
+//public String toString() {
+//	return "Company [companyName=" + companyName + ", id=" + id + ", info="
+//			+ info + ", isITCompany=" + isITCompany + ", remark=" + remark
+//			+ ", allWorks=" + allWorks + "]";
+//}
   
   
 }

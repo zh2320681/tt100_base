@@ -2,6 +2,8 @@ package cn.shrek.base.ormlite.dao;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -308,7 +310,24 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 						break;
 					}
 				} else {
-					columnValue = cursor.getString(index);
+					
+					if(Integer.class.isAssignableFrom(fieldType)
+							|| int.class.isAssignableFrom(fieldType)
+							|| Boolean.class.isAssignableFrom(fieldType)
+							|| boolean.class.isAssignableFrom(fieldType)
+							|| Date.class.isAssignableFrom(fieldType)){
+						columnValue = cursor.getInt(index);
+					}else if(Long.class.isAssignableFrom(fieldType)
+							|| long.class.isAssignableFrom(fieldType)
+							|| Calendar.class.isAssignableFrom(fieldType)){
+						columnValue = cursor.getLong(index);
+					}else if(Float.class.isAssignableFrom(fieldType)
+							|| float.class.isAssignableFrom(fieldType)){
+						columnValue = cursor.getFloat(index);
+					}else{
+						columnValue = cursor.getString(index);
+					}
+					
 				}
 
 				/**

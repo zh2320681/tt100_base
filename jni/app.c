@@ -7,7 +7,7 @@
 
 #include "app.h"
 
-int isDebug = NO;
+int isDebug = YES;
 
 void printInfo(const char * TAG,const char* info,void* para){
 	if(isDebug == YES){

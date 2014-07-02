@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import cn.shrek.base.ZWBo;
 import cn.shrek.base.annotation.DatabaseField;
@@ -81,7 +82,7 @@ public class DBUtil {
 			String columnTypeStr = getObjMapping(columnField);
 			createSqlSB.append(columnName+" "+columnTypeStr);
 			
-			/**  ---------------- 约束 ----------------------  */
+			/**  ---------------- 约束 ----------------------  */  
 			if(!mDatabaseField.canBeNull()){
 				createSqlSB.append(NOT_NULL_CONSTRAINT);
 			}
@@ -135,7 +136,12 @@ public class DBUtil {
 		
 		/**  ---------------- 创建触发器 ----------------------  */
 		for(String trige : trigeerArr){
-			mDatabase.execSQL(trige);
+			try {
+				mDatabase.execSQL(trige);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+//				e.printStackTrace();
+			}
 		}
   }
 
