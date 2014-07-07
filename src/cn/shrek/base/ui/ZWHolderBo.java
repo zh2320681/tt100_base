@@ -94,6 +94,9 @@ public class ZWHolderBo extends ZWBo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(t != null){
+			parentView = t.rootView;
+		}
 		return t;
 	}
 	

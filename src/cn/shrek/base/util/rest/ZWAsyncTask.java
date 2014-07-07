@@ -306,8 +306,9 @@ public class ZWAsyncTask<PARSEOBJ> extends
 						config.httpMethod, requestEntity, String.class);
 			}
 
+			
 			String result = responseEntity.getBody();
-
+			r.headers = responseEntity.getHeaders();
 			r.requestCode = responseEntity.getStatusCode();
 			
 //			if(reference.getType().getClass().isAssignableFrom(String.class)){

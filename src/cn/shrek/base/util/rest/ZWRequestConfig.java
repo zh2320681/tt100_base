@@ -1,5 +1,12 @@
 package cn.shrek.base.util.rest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -93,7 +100,35 @@ public class ZWRequestConfig {
 		config.headers.putAll(defaultConfig.headers);
 		config.maps.putAll(defaultConfig.maps);
 		config.body = defaultConfig.body;
-		return config;
+		
+		ByteArrayOutputStream bos = null;
+		ObjectOutputStream oos = null;
+		ByteArrayInputStream bis = null;
+		ObjectInputStream ois = null;
+		try {
+			/* 写入当前对象的二进制流 */  
+			bos = new ByteArrayOutputStream();  
+			oos = new ObjectOutputStream(bos);  
+			oos.writeObject(defaultConfig);  
+			oos.flush();
+			
+			/* 读出二进制流产生的新对象 */  
+			bis = new ByteArrayInputStream(bos.toByteArray());  
+			ois = new ObjectInputStream(bis);  
+			return (ZWRequestConfig)(ois.readObject());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  finally{
+			try{if(bos != null)bos.close();}catch(Exception e){}
+			try{if(oos != null)bos.close();}catch(Exception e){}
+			try{if(bis != null)bos.close();}catch(Exception e){}
+			try{if(ois != null)bos.close();}catch(Exception e){}
+		}
+		return null;
 	}
 	
 	public static void setDefault(ZWRequestConfig config){
