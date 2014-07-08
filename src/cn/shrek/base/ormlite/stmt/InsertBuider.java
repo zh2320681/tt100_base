@@ -33,6 +33,7 @@ public class InsertBuider<T extends ZWBo> extends StmtBuilder {
 			String columnName = tableInfo.allColumnNames.get(i);
 
 			try {
+				field.setAccessible(true);
 				Object fieldValue = field.get(t);
 				if(tableInfo.allforeignMaps.containsKey(columnName)){
 					/**

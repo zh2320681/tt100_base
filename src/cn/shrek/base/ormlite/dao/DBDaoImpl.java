@@ -47,19 +47,29 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 	public long insertObjs(List<T> t) {
 		// TODO Auto-generated method stub
 		// T[] ts = (T[]) t.toArray();
-		return insertObjs(false, t);
+		return insertObjs(false,false, t);
 	}
 
-	public long insertObjs(boolean isAddFKObject, T... t) {
+	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist, T... t) {
 		List<T> list = new ArrayList<T>();
 		for (T obj : t) {
 			list.add(obj);
 		}
-		return insertObjs(isAddFKObject, list);
+		return insertObjs(isAddFKObject,isUpdateWhenExist, list);
 	}
 
 	@Override
-	public long insertObjs(boolean isAddFKObject, List<T> t) {
+	public long insertOrUpdateObjs(List<T> t){
+		return insertObjs(false,true, t);
+	}
+	
+	@Override
+	public long insertOrUpdateObjs(T... t){
+		return insertObjs(false,true, t);
+	}
+	
+	@Override
+	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist, List<T> t) {
 		Set<Object> allFKs = new HashSet<Object>();
 		InsertBuider<T> buider = insertBuider();
 		for (T obj : t) {
@@ -89,8 +99,15 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 
 		for (T obj : t) {
 			buider.addValue(obj);
-			helper.getDatabase(false).insert(buider.tableInfo.tableName, null,
-					buider.cvs);
+			try {
+				helper.getDatabase(false).insert(buider.tableInfo.tableName, null,
+						buider.cvs);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				if(isUpdateWhenExist){
+					updateAllObjs(obj);
+				}
+			}
 			optNum++;
 		}
 		return optNum;

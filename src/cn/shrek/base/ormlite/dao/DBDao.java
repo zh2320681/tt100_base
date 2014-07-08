@@ -52,9 +52,13 @@ public interface DBDao<T extends ZWBo> {
 	 * @param t
 	 * @return
 	 */
-	public long insertObjs(boolean isAddFKObject,T... t);
+	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist,T... t);
 	
-	public long insertObjs(boolean isAddFKObject,List<T> t);
+	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist ,List<T> t);
+	
+	public long insertOrUpdateObjs(List<T> t);
+	
+	public long insertOrUpdateObjs(T... t);
 	/**
 	 * 删除对象
 	 */

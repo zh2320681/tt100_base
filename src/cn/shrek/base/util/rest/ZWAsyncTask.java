@@ -50,7 +50,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	private AtomicBoolean isCancel;
 	// private Class<PARSEOBJ> parseObjClazz;
-	private TypeReference<PARSEOBJ> reference;
+	public TypeReference<PARSEOBJ> reference;
 	// 缓存保存时间(单位:s) 如果为NO_CACHE 不开启缓存
 	public int cacheSaveTime;
 
@@ -61,10 +61,21 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	private Queue<ZWAsyncTask<?>> allTask;
 
 	public ZWAsyncTask(Context ctx, AsyncTaskHandler<PARSEOBJ> handler) {
+		this(ctx,null,handler);
+	}
+	
+	public ZWAsyncTask(Context ctx,TypeReference<PARSEOBJ> reference , AsyncTaskHandler<PARSEOBJ> handler) {
 		this.ctx = new WeakReference<Context>(ctx);
 		this.handler = handler;
 		isCancel = new AtomicBoolean(false);
 		cacheSaveTime = NO_CACHE;
+		
+		if(reference == null){
+			this.reference = new TypeReference<PARSEOBJ>(){};
+		}else{
+			this.reference = reference;
+		}
+		
 		if (handler != null) {
 			handler.setTask(this);
 		}
@@ -364,7 +375,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 					}
 					ZWLogger.printLog(TAG, "队列有任务,继续执行!");
 					ZWAsyncTask<?> task = allTask.poll();
-					task.execute(config);
+					task.execute(task.config);
 				}
 			} else {
 				cycle();

@@ -334,11 +334,14 @@ public class ZWCache {
 		 */
 		public <T> T getAsJsonObject(String key,TypeReference<T> reference) {
 			String JSONString = getAsString(key);
+			if(JSONString == null){
+				return null;
+			}
 			try {
 				T t = JSON.parseObject(JSONString, reference);
 				return t;
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 				return null;
 			}
 		}
