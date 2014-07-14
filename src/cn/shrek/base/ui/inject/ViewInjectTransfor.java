@@ -80,8 +80,10 @@ public class ViewInjectTransfor implements InjectTransfor {
 						// TODO Auto-generated catch block
 						ZWLogger.printLog(BaseUtil.class, field.getName()
 								+ "赋值时访问失败!");
-					} catch (InvocationTargetException e) {
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
+						ZWLogger.printLog(BaseUtil.class, field.getName()
+								+ "赋值时  失败!");
 						e.printStackTrace();
 					}
 

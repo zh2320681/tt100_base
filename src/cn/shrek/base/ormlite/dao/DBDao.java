@@ -1,5 +1,6 @@
 package cn.shrek.base.ormlite.dao;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public interface DBDao<T extends ZWBo> {
 	 */
 	public long insertObj(T t);
 	
-	public long insertObjs(List<T> t);
+	public long insertObjs(Collection<T> t);
 	
 	public long insertObjs(T... t);
 	
@@ -54,9 +55,9 @@ public interface DBDao<T extends ZWBo> {
 	 */
 	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist,T... t);
 	
-	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist ,List<T> t);
+	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist ,Collection<T> t);
 	
-	public long insertOrUpdateObjs(List<T> t);
+	public long insertOrUpdateObjs(Collection<T> t);
 	
 	public long insertOrUpdateObjs(T... t);
 	/**
@@ -77,12 +78,25 @@ public interface DBDao<T extends ZWBo> {
 	/**
 	 * 更新 对象
 	 */
-	public long updateAllObjs(T t);
+	public long updateObj(T t);
 	
-	public long updateObjs(UpdateBuider<T> mUpdateBuider);
+	public long updateObj(UpdateBuider<T> mUpdateBuider);
 	
-	public long updateObjs(Map<String,Object> updateMap);
+	public long updateObj(Map<String,Object> updateMap);
 	
+	
+	/**
+	 * 替换 对象
+	 */
+	public long replaceObj(T t);
+	
+	public long replaceObj(UpdateBuider<T> mUpdateBuider);
+	
+	public long replaceObj(Map<String,Object> updateMap);
+	
+	public long replaceObjs(Collection<T> ts);
+	
+	public long replaceObjs(T... ts);
 	
 	/**
 	 * 查询对象

@@ -124,7 +124,7 @@ public class DBTestActivity extends ZWActivity {
 				Company c = new Company();
 				comDao.clearObj(c);
 				c.info = "更新测试看看";
-				long optNum = comDao.updateAllObjs(c);
+				long optNum = comDao.updateObj(c);
 				showToast(optNum);
 			} else if (v == updateConBtn) {
 				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
@@ -137,19 +137,19 @@ public class DBTestActivity extends ZWActivity {
 				c.companyName = "更新去除Boolean特殊";
 				c.isExpired = true;
 				updateBuider.addValue(c, "isITCompany");
-				long optNum = comDao.updateObjs(updateBuider);
+				long optNum = comDao.updateObj(updateBuider);
 				showToast(optNum);
 			} else if (v == updateMapBtn) {
 				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("createTime", new Date());
-				long optNum = comDao.updateObjs(map);
+				long optNum = comDao.updateObj(map);
 				showToast(optNum);
 			} else if (v == updateCaceadeBtn) {
 				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("id", 99);
-				long optNum = comDao.updateObjs(map);
+				long optNum = comDao.updateObj(map);
 				showToast(optNum);
 			} else if (v == queryAllBtn) {
 				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);

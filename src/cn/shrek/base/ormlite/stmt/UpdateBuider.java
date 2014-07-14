@@ -46,6 +46,7 @@ public class UpdateBuider<T extends ZWBo> extends StmtBuilder {
 					}
 				}
 				
+				field.setAccessible(true);
 				Object obj = DBTransforFactory.getColumnValue(field.get(t));
 				if (obj instanceof String) {
 					String str = (String) obj;

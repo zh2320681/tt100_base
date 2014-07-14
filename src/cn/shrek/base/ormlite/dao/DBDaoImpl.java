@@ -3,6 +3,7 @@ package cn.shrek.base.ormlite.dao;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -44,7 +45,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 	}
 
 	@Override
-	public long insertObjs(List<T> t) {
+	public long insertObjs(Collection<T> t) {
 		// TODO Auto-generated method stub
 		// T[] ts = (T[]) t.toArray();
 		return insertObjs(false,false, t);
@@ -59,7 +60,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 	}
 
 	@Override
-	public long insertOrUpdateObjs(List<T> t){
+	public long insertOrUpdateObjs(Collection<T> t){
 		return insertObjs(false,true, t);
 	}
 	
@@ -69,7 +70,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 	}
 	
 	@Override
-	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist, List<T> t) {
+	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist, Collection<T> t) {
 		Set<Object> allFKs = new HashSet<Object>();
 		InsertBuider<T> buider = insertBuider();
 		for (T obj : t) {
@@ -105,7 +106,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				if(isUpdateWhenExist){
-					updateAllObjs(obj);
+					updateObj(obj);
 				}
 			}
 			optNum++;
@@ -197,15 +198,15 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 	}
 
 	@Override
-	public long updateAllObjs(T t) {
+	public long updateObj(T t) {
 		// TODO Auto-generated method stub
 		UpdateBuider<T> updateBuider = updateBuider();
 		updateBuider.addValue(t);
-		return updateObjs(updateBuider);
+		return updateObj(updateBuider);
 	}
 
 	@Override
-	public long updateObjs(UpdateBuider<T> mUpdateBuider) {
+	public long updateObj(UpdateBuider<T> mUpdateBuider) {
 		// TODO Auto-generated method stub
 		return helper.getDatabase(false).update(
 				mUpdateBuider.tableInfo.tableName, mUpdateBuider.cvs,
@@ -213,11 +214,54 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 	}
 
 	@Override
-	public long updateObjs(Map<String, Object> updateMap) {
+	public long updateObj(Map<String, Object> updateMap) {
 		// TODO Auto-generated method stub
 		UpdateBuider<T> updateBuider = updateBuider();
 		updateBuider.addValue(updateMap);
-		return updateObjs(updateBuider);
+		return updateObj(updateBuider);
+	}
+	
+	
+	/**
+	 * 替换 对象
+	 */
+	@Override
+	public long replaceObj(T t){
+		UpdateBuider<T> updateBuider = updateBuider();
+		updateBuider.addValue(t);
+		return replaceObj(updateBuider);
+	}
+	
+	@Override
+	public long replaceObj(UpdateBuider<T> mUpdateBuider){
+		return helper.getDatabase(false).replace(
+				mUpdateBuider.tableInfo.tableName,null, mUpdateBuider.cvs);
+	}
+	
+	
+	@Override
+	public long replaceObj(Map<String,Object> updateMap){
+		UpdateBuider<T> updateBuider = updateBuider();
+		updateBuider.addValue(updateMap);
+		return replaceObj(updateBuider);
+	}
+	
+	@Override
+	public long replaceObjs(Collection<T> ts){
+		long sum = 0;
+		for(T obj : ts){
+			sum += replaceObj(obj);
+		}
+		return sum;
+	}
+	
+	@Override
+	public long replaceObjs(T... ts){
+		List<T> list = new ArrayList<T>();
+		for (T obj : ts) {
+			list.add(obj);
+		}
+		return replaceObjs(list);
 	}
 
 	@Override

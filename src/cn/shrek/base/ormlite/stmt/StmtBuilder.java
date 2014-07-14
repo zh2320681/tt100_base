@@ -238,7 +238,7 @@ public abstract class StmtBuilder{
 		Class<?> fieldType = tableInfo.getFieldType(index);
 		
 		if(initContinue(fieldName, mField, columnName, fieldType,false, fieldName)){
-			appendWhereStr(getColumnNameWithAliases(columnName) +(isNull?"IS NULL":"IS NOT NULL"));
+			appendWhereStr(getColumnNameWithAliases(columnName) +(isNull?" IS NULL ":" IS NOT NULL "));
 			isAddCondition = false;
 		}
 		return this;
