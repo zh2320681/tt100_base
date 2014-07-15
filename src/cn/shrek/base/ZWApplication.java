@@ -26,6 +26,8 @@ import cn.shrek.base.imageLoader.core.assist.QueueProcessingType;
 import cn.shrek.base.imageLoader.core.decode.BaseImageDecoder;
 import cn.shrek.base.imageLoader.core.download.BaseImageDownloader;
 import cn.shrek.base.imageLoader.utils.StorageUtils;
+import cn.shrek.base.ui.inject.CustomInstanceFactory;
+import cn.shrek.base.ui.inject.Injector;
 import cn.shrek.base.util.AndroidVersionCheckUtils;
 import cn.shrek.base.util.LogLevel;
 import cn.shrek.base.util.ZWLogger;
@@ -321,6 +323,9 @@ public class ZWApplication extends Application {
 		// TODO Auto-generated method stub
 		super.onTerminate();
 		// clearDataCache();
+		//清空注入器
+		Injector.instance().recycle();
+		
 		mActivityManager.popAllActivity();
 		mActivityManager = null;
 		closeLoggerPrint();
@@ -359,5 +364,15 @@ public class ZWApplication extends Application {
 	}
 	
 	
+	/**
+	 * 设置自定义的示例模式
+	 * @param mFactory
+	 */
+	public void setCustomFactory(CustomInstanceFactory mFactory){
+		if(mFactory == null){
+			throw new NullPointerException("CustomInstanceFactory can not null!");
+		}
+		Injector.instance().setCustomFactory(mFactory);
+	}
 	
 }

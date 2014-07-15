@@ -2,15 +2,15 @@ package cn.shrek.base.ui.inject;
 
 import java.lang.reflect.Field;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.util.ZWLogger;
-import android.app.Activity;
-import android.view.LayoutInflater;
 
 public class LayoutInflaterIT implements InjectTransfor {
 
 	@Override
-	public void setValue(Activity act, Field field, Object objInstance) {
+	public void setValue(Context act, Field field, Object objInstance) {
 		// TODO Auto-generated method stub
 		AutoInject autoInject = field
 				.getAnnotation(AutoInject.class);

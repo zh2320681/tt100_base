@@ -1,11 +1,11 @@
 package cn.shrek.base.ui.inject;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Observer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View.OnClickListener;
 import cn.shrek.base.ModelObservable;
 import cn.shrek.base.ObserverContainer;
@@ -17,10 +17,10 @@ import cn.shrek.base.util.ZWLogger;
 
 public class ViewInjectTransfor implements InjectTransfor {
 
-	private Activity act;
+	private Context act;
 
 	@Override
-	public void setValue(Activity act, Field field, Object objInstance) {
+	public void setValue(Context act, Field field, Object objInstance) {
 		// TODO Auto-generated method stub
 		this.act = act;
 

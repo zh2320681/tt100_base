@@ -1,5 +1,9 @@
 package cn.shrek.base.example;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +12,17 @@ import android.widget.Button;
 import android.widget.Toast;
 import cn.shrek.base.ZWApplication;
 import cn.shrek.base.annotation.AutoInject;
+import cn.shrek.base.example.bean.Company;
+import cn.shrek.base.example.bean.Employee;
 import cn.shrek.base.ui.ZWActivity;
+import cn.shrek.base.ui.inject.CustomInstanceFactory;
+import cn.shrek.base.ui.inject.Identity;
+import cn.shrek.base.ui.inject.Injector;
 
 public class MenuActivity extends ZWActivity {
 	@AutoInject(idFormat = "menu_?",clickSelector = "mClick")
 	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn
-		,fragmentTestBtn,listTestBtn,appDataBtn;
+		,fragmentTestBtn,listTestBtn,appDataBtn,injectBtn;
 
 	@AutoInject
 	private LayoutInflater mInflater;
@@ -61,6 +70,11 @@ public class MenuActivity extends ZWActivity {
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), AppDataActivity.class);
 			    startActivity(intent);
+			}else if(arg0 == injectBtn){
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), AutoInjectActivity.class);
+			    startActivity(intent);
+				
 			}
 		}
 	};
@@ -68,7 +82,37 @@ public class MenuActivity extends ZWActivity {
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
-		System.out.println("==================>"+mInflater);
+		Injector.instance().setCustomFactory(new CustomInstanceFactory() {
+			
+			@Override
+			public Identity getInstanceByTag(String tag) {
+				// TODO Auto-generated method stub
+				if(tag.equals(AutoInjectActivity.TAG1)){
+					Company com = new Company();
+					com.companyName = "天天一百";
+					com.id = new  Random().nextInt(1000);;
+					return com;
+				}else if(tag.equals(AutoInjectActivity.TAG2)){
+					Employee com = new Employee();
+					com.name = "张三";
+					com.id = new  Random().nextInt(1000);;
+					return com;
+				}
+				return null;
+			}
+			
+			@Override
+			public List<Identity> getDefaultInstance() {
+				// TODO Auto-generated method stub
+				List<Identity> list = new ArrayList<Identity>();
+				Company com = new Company();
+				com.companyName = "天天一百";
+				com.id = 250;
+				list.add(com);
+				
+				return list;
+			}
+		});
 	}
 
 	@Override

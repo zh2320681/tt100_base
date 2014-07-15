@@ -3,9 +3,10 @@ package cn.shrek.base.example.bean;
 import cn.shrek.base.ZWBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
+import cn.shrek.base.ui.inject.Identity;
 
 @DatabaseTable
-public class Employee extends ZWBo {
+public class Employee extends ZWBo  implements Identity{
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, foreignColumnName = "id")
 	public Company company;
@@ -42,6 +43,18 @@ public class Employee extends ZWBo {
 		return "Employee [company=" + company + ", id=" + id + ", isNew="
 				+ isNew + ", name=" + name + ", index1=" + index1 + ", index2="
 				+ index2 + "]";
+	}
+
+	@Override
+	public int getIdentityID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void recycle() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

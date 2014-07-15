@@ -17,6 +17,11 @@ public @interface AutoInject
 	
 	String clickSelector() default NULL_STR_VALUE; 
 	
+	//对于自定义 注入方式
+	String tag() default NULL_STR_VALUE;
+	
+	boolean isSingleInstance() default false;
+	
 	//对 fragment的 支持 布局ID R.layout.fragment11
 //	int fragmentLayoutId() default NULL_INT_VALUE;
 }

@@ -5,9 +5,10 @@ import java.util.List;
 import cn.shrek.base.ZWBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
+import cn.shrek.base.ui.inject.Identity;
 
 @DatabaseTable(tableName="_Company")
-public class Company extends ZWBo{
+public class Company extends ZWBo implements Identity{
 
   @DatabaseField
   public String companyName;
@@ -47,12 +48,26 @@ public class Company extends ZWBo{
 	}
 
 
+@Override
+public int getIdentityID() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+
+@Override
+public void recycle() {
+	// TODO Auto-generated method stub
+	
+}
+
+
 //@Override
-//public String toString() {
-//	return "Company [companyName=" + companyName + ", id=" + id + ", info="
-//			+ info + ", isITCompany=" + isITCompany + ", remark=" + remark
-//			+ ", allWorks=" + allWorks + "]";
-//}
+public String toString() {
+	return "Company [companyName=" + companyName + ", id=" + id + ", info="
+			+ info + ", isITCompany=" + isITCompany + ", remark=" + remark
+			+ "]";
+}
   
   
 }

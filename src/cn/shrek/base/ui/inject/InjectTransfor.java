@@ -2,7 +2,7 @@ package cn.shrek.base.ui.inject;
 
 import java.lang.reflect.Field;
 
-import android.app.Activity;
+import android.content.Context;
 
 public interface InjectTransfor {
 	
@@ -12,5 +12,5 @@ public interface InjectTransfor {
 	 * @param field
 	 * @param objInstance 
 	 */
-	void setValue(Activity ctx ,Field field,Object objInstance);
+	void setValue(Context ctx ,Field field,Object objInstance);
 }

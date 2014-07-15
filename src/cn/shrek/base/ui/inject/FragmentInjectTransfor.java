@@ -4,17 +4,17 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
+import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.util.ZWLogger;
 
 public class FragmentInjectTransfor implements InjectTransfor {
 
-	private Activity act;
+	private Context act;
 	
 	@Override
-	public void setValue(Activity act, Field field, Object objInstance) {
+	public void setValue(Context act, Field field, Object objInstance) {
 		// TODO Auto-generated method stub
 		if (act instanceof FragmentActivity) {
 			this.act = act;
