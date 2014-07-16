@@ -58,6 +58,14 @@
             android:name="cn.shrek.base.example.AppDataActivity"
             android:screenOrientation="portrait" />
         
+        <activity
+            android:name="cn.shrek.base.example.AutoInjectActivity"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="cn.shrek.base.example.EventActivity"
+            android:screenOrientation="portrait" />
+        
         <!-- 一定要加  -->
         <activity
             android:name="cn.shrek.base.ErrorActivity"

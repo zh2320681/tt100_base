@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +28,7 @@ public class Injector {
 	//缓存数据
 	private ConcurrentMap<String,Identity> saveCacheObjs;
 	
-	private Vector<Identity> defaultInstances;
+	private ConcurrentMap<Class<?>,Identity> defaultInstances;
 	
 	private CustomInstanceFactory mFactory;
 	
@@ -42,7 +40,7 @@ public class Injector {
 		
 		saveCacheObjs = new ConcurrentHashMap<String, Identity>();
 		
-		defaultInstances = new Vector<Identity>();
+		defaultInstances = new ConcurrentHashMap<Class<?>,Identity>();
 	}
 	
 	public static Injector instance(){
@@ -86,7 +84,7 @@ public class Injector {
 		
 		//初始化 默认的实例
 		if(defaultInstances.size() == 0 && mFactory != null){
-			defaultInstances.addAll(mFactory.getDefaultInstance());
+			defaultInstances.putAll(mFactory.getDefaultInstance());
 		}
 		
 		for (Field f : allFields) {
@@ -131,12 +129,7 @@ public class Injector {
 			
 		}else{
 			//获得默认的值
-			for(Identity obj : defaultInstances){
-				if(fieldClazz.isAssignableFrom(obj.getClass())){
-					value = obj;
-					break;
-				}
-			}
+			value = getDefaultInstance(fieldClazz);
 		}
 		
 		if(value != null){
@@ -154,6 +147,10 @@ public class Injector {
 	}
 	
 	
+	public Identity getDefaultInstance(Class<?> typeClazz){
+		return defaultInstances.get(typeClazz);
+	}
+	
 	public void setCustomFactory(CustomInstanceFactory mFactory){
 		this.mFactory = mFactory;
 	}
@@ -167,8 +164,8 @@ public class Injector {
 			mFactory = null;
 		}
 		
-		for(Identity id : defaultInstances){
-			id.recycle();
+		for(Map.Entry<Class<?>, Identity> entry: defaultInstances.entrySet()){
+			entry.getValue().recycle();
 		}
 		defaultInstances.clear();
 		

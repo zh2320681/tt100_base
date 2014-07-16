@@ -1,7 +1,6 @@
 package cn.shrek.base.example.bean;
 
-import java.util.List;
-
+import android.os.Message;
 import cn.shrek.base.ZWBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
@@ -44,6 +43,7 @@ public class Company extends ZWBo implements Identity{
 		  Company c = (Company)o;
 		  return c.id == this.id;
 	  }
+	  Message msg;
 		return super.equals(o);
 	}
 

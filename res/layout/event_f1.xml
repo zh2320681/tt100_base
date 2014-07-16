@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <Button 
+        android:id="@+id/ef1_sendEventBtn1"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="通过TAG发送事件"
+        />
+    <Button 
+        android:id="@+id/ef1_sendEventBtn2"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="通过TAG发送事件AND自动注入"
+        />
+    <Button 
+        android:id="@+id/ef1_sendEventBtn3"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="通过只对象发送通过TAG发送事件"
+        />
+    <Button 
+        android:id="@+id/ef1_sendEventBtn4"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="发送全标识事件且不注入"
+        />
+	<Button 
+        android:id="@+id/ef1_sendEventBtn5"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="发送Flag事件且不注入"
+        />
+</LinearLayout>

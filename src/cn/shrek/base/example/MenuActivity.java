@@ -1,7 +1,7 @@
 package cn.shrek.base.example;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import cn.shrek.base.ZWApplication;
 import cn.shrek.base.annotation.AutoInject;
+import cn.shrek.base.event.ZWEventBus;
 import cn.shrek.base.example.bean.Company;
 import cn.shrek.base.example.bean.Employee;
 import cn.shrek.base.ui.ZWActivity;
@@ -22,7 +23,7 @@ import cn.shrek.base.ui.inject.Injector;
 public class MenuActivity extends ZWActivity {
 	@AutoInject(idFormat = "menu_?",clickSelector = "mClick")
 	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn
-		,fragmentTestBtn,listTestBtn,appDataBtn,injectBtn;
+		,fragmentTestBtn,listTestBtn,appDataBtn,injectBtn,eventBtn;
 
 	@AutoInject
 	private LayoutInflater mInflater;
@@ -75,6 +76,10 @@ public class MenuActivity extends ZWActivity {
 				intent.setClass(getApplicationContext(), AutoInjectActivity.class);
 			    startActivity(intent);
 				
+			}else if(arg0 == eventBtn){
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), EventActivity.class);
+			    startActivity(intent);
 			}
 		}
 	};
@@ -102,14 +107,16 @@ public class MenuActivity extends ZWActivity {
 			}
 			
 			@Override
-			public List<Identity> getDefaultInstance() {
+			public Map<Class<?>,Identity> getDefaultInstance() {
 				// TODO Auto-generated method stub
-				List<Identity> list = new ArrayList<Identity>();
+				Map<Class<?>,Identity> list = new HashMap<Class<?>,Identity>();
 				Company com = new Company();
 				com.companyName = "天天一百";
 				com.id = 250;
-				list.add(com);
+				list.put(Company.class,com);
 				
+				ZWEventBus bus = new ZWEventBus();
+				list.put(ZWEventBus.class,bus);
 				return list;
 			}
 		});
