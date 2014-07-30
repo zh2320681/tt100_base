@@ -35,7 +35,7 @@ public abstract class DBAsyncTask extends AsyncTask<Object, Void, Integer> {
 		int optNum = 0;
 		synchronized (ZWDBHelper.LOCK_OBJ) {
 			long before = System.currentTimeMillis();
-			SQLiteDatabase db = mHelper.getDatabase(!isTransaction);
+			SQLiteDatabase db = mHelper.getDatabase(false);
 			if(isTransaction){
 				db.beginTransaction();  //手动设置开始事务
 			}

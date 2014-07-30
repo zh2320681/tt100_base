@@ -41,7 +41,7 @@ public class RestActivity extends ZWActivity {
 	@AutoInject(idFormat = "rest_?", clickSelector = "mClick")
 	private Button testBtn, jsonTestBtn, custonTestBtn, asyncTestBtn,
 			queneTestBtn, mineTestBtn, mine1TestBtn, cacheTestBtn,
-			cacheTestBtn11,sameTestBtn;
+			cacheTestBtn11,sameTestBtn,bodyTestBtn;
 
 	@AutoInject(idFormat = "rest_?")
 	private TextView infoView;
@@ -292,7 +292,36 @@ public class RestActivity extends ZWActivity {
 								infoView.setText(result.bodyObj);
 							}
 						}, map);
-			}
+			}else if(arg0 == bodyTestBtn){
+				ZWRequestConfig config = ZWRequestConfig.copyDefault();
+				config.putHeaderValue("accept", "application/json");
+				config.putHeaderValue("Content-Type", "application/json;charset=UTF-8");
+				
+				config.url = "http://192.168.1.4:8080/api/v2/consumptions";
+				config.httpMethod = HttpMethod.POST;
+				Map<String, Object> bodyMap = new HashMap<String, Object>();
+				bodyMap.put("people", 8);
+				bodyMap.put("tables", null);
+				config.setBody(bodyMap);
+
+				ZWAsyncTask<Void> task = new ZWAsyncTask<Void>(RestActivity.this,new DialogTaskHandler<Void>("请求",
+						"请求测试中...") {
+					@Override
+					public void preDoing() {
+						// TODO Auto-generated method stub
+						super.preDoing();
+						getTask().cacheSaveTime = 60;
+					}
+
+					@Override
+					public void postResult(
+							ZWResult<Void> result) {
+						// TODO Auto-generated method stub
+						infoView.setText("请求成功了!!!!!!");
+					}
+				});
+				task.execute(config);
+			}	
 
 		}
 	};

@@ -233,6 +233,14 @@ public class ZWEventBus implements Identity {
 		post(event);
 	}
 
+	public void post(String eventTag, ZWEventPara para) {
+		post(eventTag,  AutoInject.NULL_INT_VALUE, para);
+	}
+	
+	public void post(int eventFlag, ZWEventPara para) {
+		post( AutoInject.NULL_STR_VALUE, eventFlag, para);
+	}
+	
 	public void post(String eventTag, int eventFlag, ZWEventPara para) {
 		ZWEvent event = ZWEvent.obtainObj(eventTag, eventFlag, para);
 		post(event);
@@ -331,6 +339,7 @@ public class ZWEventBus implements Identity {
 			throwRuntimeException(
 					"Could not dispatch event: " + event.getClass()
 							+ " to handler " + wrapper, e);
+			e.printStackTrace();
 		}
 	}
 

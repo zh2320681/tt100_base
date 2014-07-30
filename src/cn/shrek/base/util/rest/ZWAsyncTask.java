@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import android.app.Activity;
@@ -40,10 +41,9 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	private static ZWCache restCache; // 用于请求的
 	/**
-	 * taskGuid用于识别task是否为同一个
-	 * taskUUID 为任务的UUID
+	 * taskGuid用于识别task是否为同一个 taskUUID 为任务的UUID
 	 */
-	private String taskGuid,taskUUID;
+	private String taskGuid, taskUUID;
 	public WeakReference<Context> ctx;
 	// 请求处理器
 	private AsyncTaskHandler<PARSEOBJ> handler;
@@ -61,21 +61,23 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	private Queue<ZWAsyncTask<?>> allTask;
 
 	public ZWAsyncTask(Context ctx, AsyncTaskHandler<PARSEOBJ> handler) {
-		this(ctx,null,handler);
+		this(ctx, null, handler);
 	}
-	
-	public ZWAsyncTask(Context ctx,TypeReference<PARSEOBJ> reference , AsyncTaskHandler<PARSEOBJ> handler) {
+
+	public ZWAsyncTask(Context ctx, TypeReference<PARSEOBJ> reference,
+			AsyncTaskHandler<PARSEOBJ> handler) {
 		this.ctx = new WeakReference<Context>(ctx);
 		this.handler = handler;
 		isCancel = new AtomicBoolean(false);
 		cacheSaveTime = NO_CACHE;
-		
-		if(reference == null){
-			this.reference = new TypeReference<PARSEOBJ>(){};
-		}else{
+
+		if (reference == null) {
+			this.reference = new TypeReference<PARSEOBJ>() {
+			};
+		} else {
 			this.reference = reference;
 		}
-		
+
 		if (handler != null) {
 			handler.setTask(this);
 		}
@@ -99,7 +101,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		if (allTask.size() > 0) {
 			ZWAsyncTask<?> task = allTask.poll();
 			if (task != null) {
-				if(task.config != null){
+				if (task.config != null) {
 					task.taskGuid = task.config.getUniqueKey();
 				}
 				task.execute(task.config);
@@ -123,8 +125,8 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	 *            任务回调用
 	 */
 	public static <T> void excuteTaskWithMap(Context ctx, String url,
-			HttpMethod method, TypeReference<T> reference,AsyncTaskHandler<T> handler,
-			Map<String, String> paras) {
+			HttpMethod method, TypeReference<T> reference,
+			AsyncTaskHandler<T> handler, Map<String, String> paras) {
 		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
 		task.reference = reference;
 
@@ -157,7 +159,8 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	 *            任务回调用
 	 */
 	public static <T> void excuteTaskWithParas(Context ctx, String url,
-			HttpMethod method,TypeReference<T> reference, AsyncTaskHandler<T> handler, Object... paras) {
+			HttpMethod method, TypeReference<T> reference,
+			AsyncTaskHandler<T> handler, Object... paras) {
 		ZWAsyncTask<T> task = new ZWAsyncTask<T>(ctx, handler);
 		task.reference = reference;
 
@@ -173,11 +176,12 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		task.taskGuid = config.getUniqueKey();
 		task.execute(config);
 	}
-	
+
 	public static <T> void excuteTaskWithParas(Context ctx, String url,
-			TypeReference<T> reference,AsyncTaskHandler<? extends T> handler, Object... paras) {
-		excuteTaskWithParas(ctx, url, null,reference, (AsyncTaskHandler<T>) handler,
-				paras);
+			TypeReference<T> reference, AsyncTaskHandler<? extends T> handler,
+			Object... paras) {
+		excuteTaskWithParas(ctx, url, null, reference,
+				(AsyncTaskHandler<T>) handler, paras);
 
 	}
 
@@ -185,29 +189,29 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			AsyncTaskHandler<? extends T> handler, Object... paras) {
 		TypeReference<T> reference = new TypeReference<T>() {
 		};
-		excuteTaskWithParas(ctx, url, null,reference, (AsyncTaskHandler<T>) handler,
-				paras);
+		excuteTaskWithParas(ctx, url, null, reference,
+				(AsyncTaskHandler<T>) handler, paras);
 
 	}
 
 	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,
 			HttpMethod method, TypeReference<T> reference,
 			AsyncTaskHandler<? extends T> handler) {
-		excuteTaskWithMap(ctx, urlWithoutPar, method,reference,
+		excuteTaskWithMap(ctx, urlWithoutPar, method, reference,
 				(AsyncTaskHandler<T>) handler, null);
 	}
 
-	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,TypeReference<T> reference,
-			AsyncTaskHandler<? extends T> handler) {
-		excuteTaskWithMap(ctx, urlWithoutPar, null,reference,
+	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,
+			TypeReference<T> reference, AsyncTaskHandler<? extends T> handler) {
+		excuteTaskWithMap(ctx, urlWithoutPar, null, reference,
 				(AsyncTaskHandler<T>) handler, null);
 	}
-	
+
 	public static <T> void excuteTaskWithMap(Context ctx, String urlWithoutPar,
 			AsyncTaskHandler<? extends T> handler) {
 		TypeReference<T> reference = new TypeReference<T>() {
 		};
-		excuteTaskWithMap(ctx, urlWithoutPar, null,reference,
+		excuteTaskWithMap(ctx, urlWithoutPar, null, reference,
 				(AsyncTaskHandler<T>) handler, null);
 	}
 
@@ -221,31 +225,30 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		// 任务执行前
 		super.onPreExecute();
 		taskUUID = UUID.randomUUID().toString();
-		if(taskGuid == null){
+		if (taskGuid == null) {
 			taskGuid = taskUUID;
 		}
-		
-		if(judgeTaskValid()){
+
+		if (judgeTaskValid()) {
 			Context context = ctx.get();
 			if (context instanceof ZWActivity) {
-				if(!((ZWActivity) context).addTask(this)){
+				if (!((ZWActivity) context).addTask(this)) {
 					isCancel.set(true);
 					setCancel(true);
 					cycle();
 					return;
 				}
-				
+
 			}
-			if ( handler != null) {
+			if (handler != null) {
 				handler.preDoing();
 			}
 		}
-		
-		ZWLogger.printLog(TAG, "任务开始,任务ID为:" + taskGuid+"  任务UUID为:"+taskUUID);
+
+		ZWLogger.printLog(TAG, "任务开始,任务ID为:" + taskGuid + "  任务UUID为:"
+				+ taskUUID);
 		timeingMap.put(taskUUID, System.currentTimeMillis());
 	}
-	
-	
 
 	@Override
 	protected ZWResult<PARSEOBJ> doInBackground(ZWRequestConfig... params) {
@@ -273,7 +276,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 				r.bodyObj = parserObj;
 				ZWLogger.printLog(this, "有效的缓存数据,不必请求网络!");
 				return r;
-			}else{
+			} else {
 				ZWLogger.printLog(this, "缓存数据已经超时,需请求网络!");
 			}
 		}
@@ -284,22 +287,32 @@ public class ZWAsyncTask<PARSEOBJ> extends
 					.entrySet()) {
 				requestHeaders.add(entry.getKey(), entry.getValue());
 			}
-			// requestHeaders.setAccept(Collections.singletonList(new
-			// MediaType("application","json")));
+			
+			Object obj = config.getBody();
 			HttpEntity<?> requestEntity = new HttpEntity<Object>(
-					config.getBody(), requestHeaders);
+					obj == null?obj:JSON.toJSONString(config.getBody()), requestHeaders);
+//			HttpEntity<?> requestEntity = new HttpEntity<Object>(
+//					JSON.toJSON(config.getBody()), requestHeaders);
 
 			RestTemplate restTemplate = new RestTemplate();
 			// 设置超时
 			ClientHttpRequestFactory requestFactory = restTemplate
 					.getRequestFactory();
 			if (requestFactory instanceof HttpComponentsClientHttpRequestFactory) {
+				ZWLogger.printLog(TAG, "设置HttpComponentsClientHttpRequestFactory 超时时间!");
 				HttpComponentsClientHttpRequestFactory mComponentsClientHttpRequestFactory = (HttpComponentsClientHttpRequestFactory) requestFactory;
 				mComponentsClientHttpRequestFactory
 						.setConnectTimeout(config.connTimeOut);
 				mComponentsClientHttpRequestFactory
 						.setReadTimeout(config.readTimeOut);
+			} else if (requestFactory instanceof SimpleClientHttpRequestFactory) {
+				ZWLogger.printLog(TAG, "设置SimpleClientHttpRequestFactory 超时时间!");
+				((SimpleClientHttpRequestFactory) requestFactory)
+						.setConnectTimeout(config.connTimeOut);
+				((SimpleClientHttpRequestFactory) requestFactory)
+						.setReadTimeout(config.readTimeOut);
 			}
+
 			// requestFactory.
 			restTemplate.getMessageConverters().add(config.converter);
 
@@ -317,17 +330,16 @@ public class ZWAsyncTask<PARSEOBJ> extends
 						config.httpMethod, requestEntity, String.class);
 			}
 
-			
 			String result = responseEntity.getBody();
 			r.headers = responseEntity.getHeaders();
 			r.requestCode = responseEntity.getStatusCode();
-			
-//			if(reference.getType().getClass().isAssignableFrom(String.class)){
-//				r.bodyObj = (PARSEOBJ) result;
-//			}else{
-//				
-//			}
-			r.bodyObj = JSON.parseObject(result, reference);		
+
+			// if(reference.getType().getClass().isAssignableFrom(String.class)){
+			// r.bodyObj = (PARSEOBJ) result;
+			// }else{
+			//
+			// }
+			r.bodyObj = JSON.parseObject(result, reference);
 			r.errorException = null;
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -356,7 +368,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 				ZWCache cache = getRestCache(ctx.get());
 				cache.putJson(config.getUniqueKey(), result.bodyObj,
 						cacheSaveTime);
-				ZWLogger.printLog(this, "网络的数据已缓存,缓存时间为:"+cacheSaveTime+"秒");
+				ZWLogger.printLog(this, "网络的数据已缓存,缓存时间为:" + cacheSaveTime + "秒");
 			}
 
 			handler.postResult(result);
@@ -380,7 +392,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			} else {
 				cycle();
 			}
-			
+
 			ZWLogger.printLog(
 					TAG,
 					"任务Over,任务ID为:"
@@ -390,11 +402,10 @@ public class ZWAsyncTask<PARSEOBJ> extends
 									.remove(taskUUID)) + "毫秒!");
 		}
 
-		
 	}
 
 	public final boolean judgeTaskValid() {
-		if(ctx == null){
+		if (ctx == null) {
 			return false;
 		}
 		Context mContext = ctx.get();
@@ -426,12 +437,13 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 	/**
 	 * 判断是否开启缓存
+	 * 
 	 * @return
 	 */
-	public boolean isOpenCache(){
+	public boolean isOpenCache() {
 		return cacheSaveTime != NO_CACHE;
 	}
-	
+
 	/**
 	 * 得到 缓存 管理类
 	 * 
@@ -448,20 +460,19 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	// public static void setRestCache(ZWCache restCache) {
 	// ZWApplication.restCache = restCache;
 	// }
-	
+
 	@Override
 	public boolean equals(Object o) {
 		// TODO Auto-generated method stub
-		if(o instanceof ZWAsyncTask){
-			ZWAsyncTask<?> objTask = (ZWAsyncTask)o;
-			if(taskGuid != null && taskGuid.equals(objTask.taskGuid)){
+		if (o instanceof ZWAsyncTask) {
+			ZWAsyncTask<?> objTask = (ZWAsyncTask) o;
+			if (taskGuid != null && taskGuid.equals(objTask.taskGuid)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	
 	public String getTaskGuid() {
 		return taskGuid;
 	}

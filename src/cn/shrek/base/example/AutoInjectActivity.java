@@ -6,6 +6,7 @@ import cn.shrek.base.annotation.LayoutSelector;
 import cn.shrek.base.example.bean.Company;
 import cn.shrek.base.example.bean.Employee;
 import cn.shrek.base.ui.ZWActivity;
+import cn.shrek.base.ui.inject.Identity;
 import cn.tt100.base.R;
 
 @LayoutSelector(id = R.layout.inject)
@@ -36,6 +37,7 @@ public class AutoInjectActivity extends ZWActivity {
 		sb.append("emp1: "+emp1.toString()+"\n");
 		sb.append("emp2: "+emp2.toString()+"\n");
 		sb.append("emp3: "+emp3.toString()+"\n");
+		sb.append("mIdentity: "+mIdentity.toString()+"\n");
 		infoView.setText(sb.toString());
 		
 	}

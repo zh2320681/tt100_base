@@ -1,8 +1,10 @@
 package cn.shrek.base.util.rest.converter;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.List;
 
 import org.springframework.http.HttpInputMessage;
@@ -28,14 +30,15 @@ public class StringJSONConverter implements HttpMessageConverter<String> {
 	@Override
 	public boolean canWrite(Class<?> arg0, MediaType arg1) {
 		// TODO Auto-generated method stub
-		System.out.println("111111111canWrite");
+		if(arg1 != null && arg1.includes(MediaType.APPLICATION_JSON) ){
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
 		// TODO Auto-generated method stub
-		System.out.println("111111111getSupportedMediaTypes");
 		return null;
 	}
 
@@ -62,7 +65,15 @@ public class StringJSONConverter implements HttpMessageConverter<String> {
 	public void write(String arg0, MediaType arg1, HttpOutputMessage arg2)
 			throws IOException, HttpMessageNotWritableException {
 		// TODO Auto-generated method stub
-		System.out.println("111111111write");
+		ZWLogger.printLog(this, "输入的body数据:"+arg0);
+		BufferedWriter bWriter = null;
+		try{
+		bWriter =  new BufferedWriter(new OutputStreamWriter(arg2.getBody()));
+		bWriter.write(arg0);
+		bWriter.flush();
+		}finally{
+			if(bWriter != null) bWriter.close();
+		}
 	}
 
 

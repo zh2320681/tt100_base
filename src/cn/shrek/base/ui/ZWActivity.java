@@ -11,8 +11,10 @@ import android.app.Application;
 import android.os.Bundle;
 import cn.shrek.base.ModelObservable;
 import cn.shrek.base.ZWApplication;
+import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.annotation.LayoutSelector;
 import cn.shrek.base.exception.ZWAppException;
+import cn.shrek.base.ui.inject.Identity;
 import cn.shrek.base.ui.inject.Injector;
 import cn.shrek.base.util.ZWLogger;
 import cn.shrek.base.util.net.ZWNetChangeObserver;
@@ -26,6 +28,9 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 	private static String packageName;
 	private String activityName;
 
+	@AutoInject
+	protected Identity mIdentity;
+	
 	@Override
 	protected final void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub

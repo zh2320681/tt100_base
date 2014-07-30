@@ -117,6 +117,8 @@ public class MenuActivity extends ZWActivity {
 				
 				ZWEventBus bus = new ZWEventBus();
 				list.put(ZWEventBus.class,bus);
+				
+				list.put(Identity.class,com);
 				return list;
 			}
 		});
