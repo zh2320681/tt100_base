@@ -9,7 +9,7 @@ public class MyAppData extends ZWAppData {
 	@DataSave(defaultInteger=1987)
 	public int parInt;
 	
-	@DataSave(isSecret = true,defaultString="ADMIN")
+	@DataSave(isSecret = true,defaultString="中文测试")
 	public String acount;
 	
 	@DataSave(isSecret = true)

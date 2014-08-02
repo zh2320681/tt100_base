@@ -2,6 +2,7 @@ package cn.shrek.base.util.data;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,6 +15,7 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 import cn.shrek.base.annotation.DataSave;
 import cn.shrek.base.util.ZWLogger;
+import cn.shrek.base.util.rest.ZWRequestConfig;
 
 public abstract class ZWAppData {
 	private static final String SECRET_NAME = "MINE.Secret";
@@ -317,7 +319,7 @@ public abstract class ZWAppData {
 			newBytes[i] = (byte) (bytes[i] ^ sercetChars[i % sercetChars.length]);
 		}
 //		System.out.println("编码后===============>" + new String(newBytes));
-		return new String(newBytes);
+		return new String(newBytes,Charset.forName(ZWRequestConfig.UTF8_CHARSET));
 	}
 
 	private String decode(String value) {
@@ -328,6 +330,6 @@ public abstract class ZWAppData {
 			newBytes[i] = (byte) (bytes[i] ^ sercetChars[i % sercetChars.length]);
 		}
 //		System.out.println("转码后===============>" + new String(newBytes));
-		return new String(newBytes);
+		return new String(newBytes,Charset.forName(ZWRequestConfig.UTF8_CHARSET));
 	}
 }

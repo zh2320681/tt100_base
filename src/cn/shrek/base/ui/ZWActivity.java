@@ -29,7 +29,7 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 	private String activityName;
 
 	@AutoInject
-	protected Identity mIdentity;
+	public Identity mIdentity;
 	
 	@Override
 	protected final void onCreate(Bundle savedInstanceState) {
