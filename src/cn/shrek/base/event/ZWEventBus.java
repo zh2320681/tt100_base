@@ -25,22 +25,32 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import cn.shrek.base.annotation.AutoInject;
+import android.os.Handler;
+import android.os.Looper;
+import cn.shrek.base.ZWConstants;
 import cn.shrek.base.ui.inject.Identity;
 import cn.shrek.base.util.ZWLogger;
 
 public class ZWEventBus implements Identity {
 	public static final String DEFAULT_IDENTIFIER = "ZWEventBus";
 
+	/** thread event*/
+	private Handler mainThreadHandler;
+	private ExecutorService backgroudHandler;
+	
 	/** All registered event handlers, indexed by event type. */
 	private ConcurrentMap<ZWEvent, Set<EventHandler>> handlersByType = new ConcurrentHashMap<ZWEvent, Set<EventHandler>>();
-
+	/** All registered event interceptors, indexed by event type. */
+	private ConcurrentMap<ZWEvent, EventHandler> interceptorsByType = new ConcurrentHashMap<ZWEvent,EventHandler>();
+	
 	/** Identifier used to differentiate the event bus instance. */
 	private String identifier;
 
 	/** Thread enforcer for register, unregister, and posting events. */
-	private ThreadEnforcer enforcer;
+//	private ThreadEnforcer enforcer;
 
 	/** Used to find handler methods in register and unregister. */
 	private HandlerFinder handlerFinder;
@@ -121,7 +131,7 @@ public class ZWEventBus implements Identity {
 	 */
 	ZWEventBus(ThreadEnforcer enforcer, String identifier,
 			HandlerFinder handlerFinder) {
-		this.enforcer = enforcer;
+//		this.enforcer = enforcer;
 		this.identifier = identifier;
 		this.handlerFinder = handlerFinder;
 	}
@@ -153,8 +163,7 @@ public class ZWEventBus implements Identity {
 			throw new NullPointerException(
 					"Object to register must not be null.");
 		}
-		enforcer.enforce(this);
-
+//		enforcer.enforce(this);
 		Map<ZWEvent, Set<EventHandler>> foundHandlersMap = handlerFinder
 				.findAllSubscribers(object);
 		for (ZWEvent event : foundHandlersMap.keySet()) {
@@ -173,6 +182,37 @@ public class ZWEventBus implements Identity {
 	}
 
 	/**
+	 * register interceptor for bus
+	 * @param interceptor
+	 */
+	public void registerInterceptor(ZWEventInterceptor interceptor) {
+		if (interceptor == null) {
+			throw new NullPointerException(
+					"Object to register must not be null.");
+		}
+		
+		if(!interceptorsByType.isEmpty()){
+			throw new IllegalArgumentException("interceptor 已经注册过了!");
+		}
+		
+		interceptor.setBus(this);
+		
+//		enforcer.enforce(this);
+		Map<ZWEvent, EventHandler> foundHandlersMap = handlerFinder.findAllInterceptors(interceptor);
+		for (ZWEvent event : foundHandlersMap.keySet()) {
+			EventHandler handlers = interceptorsByType.get(event);
+			if (handlers == null) {
+				// concurrent put if absent
+				EventHandler handlersCreation = foundHandlersMap.get(event);
+				handlers = interceptorsByType.putIfAbsent(event, handlersCreation);
+				if (handlers == null) {
+					handlers = handlersCreation;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Unregisters all producer and handler methods on a registered
 	 * {@code object}.
 	 *
@@ -189,7 +229,7 @@ public class ZWEventBus implements Identity {
 			throw new NullPointerException(
 					"Object to unregister must not be null.");
 		}
-		enforcer.enforce(this);
+//		enforcer.enforce(this);
 
 		Map<ZWEvent, Set<EventHandler>> handlersInListener = handlerFinder
 				.findAllSubscribers(object);
@@ -214,31 +254,35 @@ public class ZWEventBus implements Identity {
 			currentHandlers.removeAll(eventMethodsInListener);
 		}
 	}
+	
+	public void unregisterInterceptor() {
+		interceptorsByType.clear();
+	}
 
 	public void post(String eventTag) {
-		ZWEvent event = ZWEvent.obtainObj(eventTag, AutoInject.NULL_INT_VALUE,
+		ZWEvent event = ZWEvent.obtainObj(eventTag, ZWConstants.NULL_INT_VALUE,
 				null);
 		post(event);
 	}
 
 	public void post(int eventFlag) {
-		ZWEvent event = ZWEvent.obtainObj(AutoInject.NULL_STR_VALUE, eventFlag,
+		ZWEvent event = ZWEvent.obtainObj(ZWConstants.NULL_STR_VALUE, eventFlag,
 				null);
 		post(event);
 	}
 
 	public void post(ZWEventPara para) {
-		ZWEvent event = ZWEvent.obtainObj(AutoInject.NULL_STR_VALUE,
-				AutoInject.NULL_INT_VALUE, para);
+		ZWEvent event = ZWEvent.obtainObj(ZWConstants.NULL_STR_VALUE,
+				ZWConstants.NULL_INT_VALUE, para);
 		post(event);
 	}
 
 	public void post(String eventTag, ZWEventPara para) {
-		post(eventTag,  AutoInject.NULL_INT_VALUE, para);
+		post(eventTag,  ZWConstants.NULL_INT_VALUE, para);
 	}
 	
 	public void post(int eventFlag, ZWEventPara para) {
-		post( AutoInject.NULL_STR_VALUE, eventFlag, para);
+		post( ZWConstants.NULL_STR_VALUE, eventFlag, para);
 	}
 	
 	public void post(String eventTag, int eventFlag, ZWEventPara para) {
@@ -262,12 +306,36 @@ public class ZWEventBus implements Identity {
 	 *             if the event is null.
 	 */
 	public void post(ZWEvent event) {
+		post(event, true);
+	}
+	
+	/**
+	 * 
+	 * @param event
+	 * @param isIntercept  是否拦截
+	 */
+	void post(ZWEvent event,boolean isIntercept) {
 		if (event == null) {
 			throw new NullPointerException("Event to post must not be null.");
 		}
-		enforcer.enforce(this);
-
+//		enforcer.enforce(this);
 		// Set<Class<?>> dispatchTypes = flattenHierarchy(event.getClass());
+		if(isIntercept){
+			EventHandler handler = null;
+			for(Map.Entry<ZWEvent, EventHandler> entry : interceptorsByType.entrySet()){
+				if(entry.getKey().equals(event)){
+					handler = entry.getValue();
+					break;
+				}
+			}
+			if(handler != null){
+				Object obj = dispatch(event, handler);
+				if(obj == null || !Boolean.parseBoolean(obj.toString())){
+					return;
+				}
+			}
+		}
+		
 		// 发送事件时候 他的父类 也随着触发
 		Set<EventHandler> wrappers = getHandlersForEventType(event);
 
@@ -276,7 +344,7 @@ public class ZWEventBus implements Identity {
 				enqueueEvent(event, wrapper);
 			}
 		} else {
-			ZWLogger.printLog(DEFAULT_IDENTIFIER, event.toString() + "没有监听者!");
+			ZWLogger.i(DEFAULT_IDENTIFIER, event.toString() + "没有监听者!");
 		}
 
 		dispatchQueuedEvents();
@@ -332,15 +400,64 @@ public class ZWEventBus implements Identity {
 	 * @param wrapper
 	 *            wrapper that will call the handler.
 	 */
-	protected void dispatch(ZWEvent event, EventHandler wrapper) {
+	protected Object dispatch(final ZWEvent event,final EventHandler wrapper) {
+		Object obj = null;
 		try {
-			wrapper.handleEvent(event);
+			ThreadMode tMode = wrapper.getThreadMode();
+			switch (tMode) {
+			case MainThread:
+				if(Looper.myLooper() == Looper.getMainLooper()){
+					obj = wrapper.handleEvent(event);
+				}else{
+					if(mainThreadHandler == null){
+						mainThreadHandler = new Handler(Looper.getMainLooper());
+					}
+					mainThreadHandler.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							try {
+								wrapper.handleEvent(event);
+							} catch (InvocationTargetException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+				break;
+			case BackgroundThread:
+				if(backgroudHandler == null){
+					backgroudHandler = Executors.newSingleThreadExecutor();
+				}
+				backgroudHandler.execute(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						try {
+							wrapper.handleEvent(event);
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
+				break;
+			case PostThread:
+			default:
+				obj = wrapper.handleEvent(event);
+				break;
+			}
+			
 		} catch (InvocationTargetException e) {
 			throwRuntimeException(
 					"Could not dispatch event: " + event.getClass()
 							+ " to handler " + wrapper, e);
 			e.printStackTrace();
 		}
+		return obj;
 	}
 
 	/**
@@ -403,7 +520,7 @@ public class ZWEventBus implements Identity {
 
 		identifier = null;
 
-		enforcer = null;
+//		enforcer = null;
 
 		handlerFinder = null;
 

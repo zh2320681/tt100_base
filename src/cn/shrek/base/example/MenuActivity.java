@@ -12,23 +12,26 @@ import android.widget.Button;
 import android.widget.Toast;
 import cn.shrek.base.ZWApplication;
 import cn.shrek.base.annotation.AutoInject;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.event.ZWEventBus;
 import cn.shrek.base.example.bean.Company;
 import cn.shrek.base.example.bean.Employee;
+import cn.shrek.base.example.bean.MyInterceptor;
 import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.ui.inject.CustomInstanceFactory;
 import cn.shrek.base.ui.inject.Identity;
 import cn.shrek.base.ui.inject.Injector;
 
+@Controller
 public class MenuActivity extends ZWActivity {
-	@AutoInject(idFormat = "menu_?",clickSelector = "mClick")
+	@AutoInject(clickSelector = "mClick")
 	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn
 		,fragmentTestBtn,listTestBtn,appDataBtn,injectBtn,eventBtn;
 
 	@AutoInject
 	private LayoutInflater mInflater;
 	
-	private OnClickListener mClick = new OnClickListener() {
+	OnClickListener mClick = new OnClickListener() {
 		
 		@Override
 		public void onClick(View arg0) {
@@ -116,6 +119,8 @@ public class MenuActivity extends ZWActivity {
 				list.put(Company.class,com);
 				
 				ZWEventBus bus = new ZWEventBus();
+				//拦截器
+				bus.registerInterceptor(new MyInterceptor(MenuActivity.this));
 				list.put(ZWEventBus.class,bus);
 				
 				list.put(Identity.class,com);

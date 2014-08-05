@@ -23,6 +23,8 @@ import java.util.Set;
 interface HandlerFinder {
 
 	Map<ZWEvent, Set<EventHandler>> findAllSubscribers(Object listener);
+	
+	Map<ZWEvent, EventHandler> findAllInterceptors(Object listener);
 
 	HandlerFinder ANNOTATED = new HandlerFinder() {
 
@@ -30,6 +32,12 @@ interface HandlerFinder {
 		public Map<ZWEvent, Set<EventHandler>> findAllSubscribers(
 				Object listener) {
 			return AnnotatedHandlerFinder.findAllSubscribers(listener);
+		}
+
+		@Override
+		public Map<ZWEvent, EventHandler> findAllInterceptors(Object listener) {
+			// TODO Auto-generated method stub
+			return AnnotatedHandlerFinder.findAllInterceptors(listener);
 		}
 	};
 }

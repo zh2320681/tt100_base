@@ -13,7 +13,7 @@ public class ZWEvent implements Identity {
 
 	// 支持int 类型
 	int eventFlag;
-
+	
 	// 作为参数和匹配类型
 	Class<? extends ZWEventPara> objClazz;
 
@@ -62,7 +62,6 @@ public class ZWEvent implements Identity {
 		event.eventTag = eventTag;
 		event.eventFlag = eventFlag;
 		event.objClazz = clazz;
-
 		return event;
 	}
 
@@ -79,6 +78,7 @@ public class ZWEvent implements Identity {
 
 		return event;
 	}
+	
 
 	public long getWhen() {
 		return when;

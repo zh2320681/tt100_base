@@ -2,14 +2,14 @@ package cn.shrek.base.example;
 
 import android.widget.TextView;
 import cn.shrek.base.annotation.AutoInject;
-import cn.shrek.base.annotation.LayoutSelector;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.example.bean.Company;
 import cn.shrek.base.example.bean.Employee;
 import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.ui.inject.Identity;
 import cn.tt100.base.R;
 
-@LayoutSelector(id = R.layout.inject)
+@Controller(layoutId = R.layout.inject)
 public class AutoInjectActivity extends ZWActivity {
 	public static final String TAG1 = "TAG1";
 	public static final String TAG2 = "TAG2";

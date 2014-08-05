@@ -1,13 +1,13 @@
 package cn.shrek.base.example;
 
 import cn.shrek.base.annotation.AutoInject;
-import cn.shrek.base.annotation.LayoutSelector;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.example.fragment.EventFragment1;
 import cn.shrek.base.example.fragment.EventFragment2;
 import cn.shrek.base.ui.ZWFragmentActivity;
 import cn.tt100.base.R;
 
-@LayoutSelector(id =R.layout.event)
+@Controller(layoutId =R.layout.event)
 public class EventActivity extends ZWFragmentActivity {
 
 	@AutoInject(idFormat="ft_?")

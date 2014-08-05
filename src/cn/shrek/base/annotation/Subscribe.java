@@ -21,14 +21,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import cn.shrek.base.ZWConstants;
+import cn.shrek.base.event.ThreadMode;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Subscribe {
 	
-	String tag() default AutoInject.NULL_STR_VALUE;
+	String tag() default ZWConstants.NULL_STR_VALUE;
 	
-	int flag() default AutoInject.NULL_INT_VALUE;
+	int flag() default ZWConstants.NULL_INT_VALUE;
 	
 	//是否自动注入参数
 	boolean isInjectParas() default true;
+	
+	//线程模式
+	ThreadMode threadMode() default ThreadMode.MainThread;
 }

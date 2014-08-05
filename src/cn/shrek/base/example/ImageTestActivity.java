@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import cn.shrek.base.annotation.AutoInject;
-import cn.shrek.base.annotation.LayoutSelector;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.example.custom.MyImageView;
 import cn.shrek.base.imageLoader.core.DisplayImageOptions;
 import cn.shrek.base.imageLoader.core.ImageLoader;
@@ -15,7 +15,7 @@ import cn.shrek.base.imageLoader.core.listener.SimpleImageLoadingListener;
 import cn.shrek.base.ui.ZWActivity;
 import cn.tt100.base.R;
 
-@LayoutSelector(id=R.layout.image_test)
+@Controller(layoutId=R.layout.image_test)
 public class ImageTestActivity extends ZWActivity {
 
 	@AutoInject(idFormat = "it_?",clickSelector = "myClick")

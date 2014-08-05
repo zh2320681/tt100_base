@@ -11,6 +11,14 @@ public interface ILogger {
 	void w(String tag, String message);
 
 	void e(String tag, String message);
+	
+	void d(Object obj, String message);
+
+	void i(Object obj, String message);
+
+	void w(Object obj, String message);
+
+	void e(Object obj, String message);
 
 	void open();
 

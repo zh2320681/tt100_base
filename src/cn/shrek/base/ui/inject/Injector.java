@@ -12,6 +12,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import cn.shrek.base.ZWConstants;
 import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.util.ZWLogger;
 
@@ -98,7 +99,24 @@ public class Injector {
 			
 			for(Map.Entry<Class<?>,InjectTransfor> entry : supportInject.entrySet()){
 				if(entry.getKey().isAssignableFrom(fieldClazz)){
-					entry.getValue().setValue(atc, f, objIntance);
+					try {
+						entry.getValue().setValue(atc, f, objIntance);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						String fieldName = f.getName();
+						if(e instanceof IllegalArgumentException){
+							ZWLogger.e(this, fieldName + "赋值失败!");
+						}else if(e instanceof IllegalAccessException){
+							ZWLogger.e(this, fieldName + "赋值时访问失败!");
+						}else if(e instanceof NoSuchMethodException){
+							ZWLogger.e(this, fieldName + "找不到属性里面setOnClickListener()方法失败!");
+						}else if(e instanceof InstantiationException){
+							ZWLogger.e(this, fieldName + "调用实例化方面方法失败!");
+						}else{
+							ZWLogger.e(this, fieldName + "赋值失败!");
+						}
+						e.printStackTrace();
+					}
 					break;
 				}
 			}
@@ -117,7 +135,7 @@ public class Injector {
 		Class<?> fieldClazz = f.getType();
 		AutoInject auto = f.getAnnotation(AutoInject.class);
 		Identity value = null;
-		if(auto.tag()!=null && !auto.tag().equals(AutoInject.NULL_STR_VALUE)){
+		if(auto.tag()!=null && !auto.tag().equals(ZWConstants.NULL_STR_VALUE)){
 			if(saveCacheObjs.containsKey(auto.tag())){
 				value = saveCacheObjs.get(auto.tag());
 			}else{

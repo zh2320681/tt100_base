@@ -11,8 +11,9 @@ import android.app.Application;
 import android.os.Bundle;
 import cn.shrek.base.ModelObservable;
 import cn.shrek.base.ZWApplication;
+import cn.shrek.base.ZWConstants;
 import cn.shrek.base.annotation.AutoInject;
-import cn.shrek.base.annotation.LayoutSelector;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.exception.ZWAppException;
 import cn.shrek.base.ui.inject.Identity;
 import cn.shrek.base.ui.inject.Injector;
@@ -63,10 +64,10 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 
 	protected void onBaseCreate(Bundle savedInstanceState) {
 		Class<? extends Activity> clazz = getClass();
-		LayoutSelector selector = clazz.getAnnotation(LayoutSelector.class);
+		Controller selector = clazz.getAnnotation(Controller.class);
 		try {
-			if (selector != null) {
-				setContentView(selector.id());
+			if (selector != null && selector.layoutId() != ZWConstants.NULL_INT_VALUE) {
+				setContentView(selector.layoutId());
 			} else {
 				setContentView(getResources().getIdentifier(
 						activityName.toLowerCase().replace("activity", ""),

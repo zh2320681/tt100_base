@@ -14,7 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import cn.shrek.base.ModelObservable;
 import cn.shrek.base.ZWApplication;
-import cn.shrek.base.annotation.LayoutSelector;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.exception.ZWAppException;
 import cn.shrek.base.ui.inject.Injector;
 import cn.shrek.base.util.ZWLogger;
@@ -61,10 +61,10 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 
 	protected void onBaseCreate(Bundle savedInstanceState) {
 		Class<? extends Activity> clazz = getClass();
-		LayoutSelector selector = clazz.getAnnotation(LayoutSelector.class);
+		Controller selector = clazz.getAnnotation(Controller.class);
 		try {
 			if (selector != null) {
-				setContentView(selector.id());
+				setContentView(selector.layoutId());
 			} else {
 				setContentView(getResources().getIdentifier(
 						activityName.toLowerCase().replace("activity", ""),

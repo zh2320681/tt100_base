@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import cn.shrek.base.annotation.AutoInject;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.example.bean.Flavor;
 import cn.shrek.base.example.bean.GalleryDate;
 import cn.shrek.base.example.bean.JSONConverter;
@@ -33,17 +34,19 @@ import cn.shrek.base.util.rest.ZWAsyncTask;
 import cn.shrek.base.util.rest.ZWRequestConfig;
 import cn.shrek.base.util.rest.ZWResult;
 import cn.shrek.base.util.rest.converter.StringJSONConverter;
+import cn.tt100.base.R;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
+@Controller(layoutId=R.layout.rest)
 public class RestActivity extends ZWActivity {
-	@AutoInject(idFormat = "rest_?", clickSelector = "mClick")
+	@AutoInject(clickSelector = "mClick")
 	private Button testBtn, jsonTestBtn, custonTestBtn, asyncTestBtn,
 			queneTestBtn, mineTestBtn, mine1TestBtn, cacheTestBtn,
 			cacheTestBtn11,sameTestBtn,bodyTestBtn;
 
-	@AutoInject(idFormat = "rest_?")
+	@AutoInject
 	private TextView infoView;
 
 	private int pageNo;//测试1

@@ -70,6 +70,11 @@ class EventHandler {
 	public void invalidate() {
 		valid = false;
 	}
+	
+	public ThreadMode getThreadMode(){
+		Subscribe sub =method.getAnnotation(Subscribe.class);
+		return sub.threadMode();
+	}
 
 	/**
 	 * Invokes the wrapped handler method to handle {@code event}.
@@ -82,7 +87,7 @@ class EventHandler {
 	 *             if the wrapped method throws any {@link Throwable} that is
 	 *             not an {@link Error} ({@code Error}s are propagated as-is).
 	 */
-	public void handleEvent(ZWEvent event) throws InvocationTargetException {
+	public Object handleEvent(ZWEvent event) throws InvocationTargetException {
 		if (!valid) {
 			throw new IllegalStateException(toString()
 					+ " has been invalidated and can no longer handle events.");
@@ -114,8 +119,9 @@ class EventHandler {
 			objs[i] = null;
 		}
 		
+		Object obj;
 		try {
-			method.invoke(target, objs);
+			obj = method.invoke(target, objs);
 		} catch (IllegalAccessException e) {
 			throw new AssertionError(e);
 		} catch (InvocationTargetException e) {
@@ -124,6 +130,7 @@ class EventHandler {
 			}
 			throw e;
 		}
+		return obj;
 	}
 
 	@Override

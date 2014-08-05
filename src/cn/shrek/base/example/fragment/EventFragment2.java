@@ -3,8 +3,9 @@ package cn.shrek.base.example.fragment;
 import android.os.Bundle;
 import android.widget.TextView;
 import cn.shrek.base.annotation.AutoInject;
-import cn.shrek.base.annotation.LayoutSelector;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.annotation.Subscribe;
+import cn.shrek.base.event.ThreadMode;
 import cn.shrek.base.event.ZWEvent;
 import cn.shrek.base.event.ZWEventBus;
 import cn.shrek.base.example.bean.Company;
@@ -12,10 +13,10 @@ import cn.shrek.base.example.bean.Employee;
 import cn.shrek.base.ui.ZWFragment;
 import cn.tt100.base.R;
 
-@LayoutSelector(id = R.layout.event_f2)
+@Controller(layoutId = R.layout.event_f2,idFormat = "ef2_?")
 public class EventFragment2 extends ZWFragment {
 
-	@AutoInject(idFormat = "ef2_?")
+	@AutoInject
 	TextView infoView;
 
 	@AutoInject
@@ -60,5 +61,14 @@ public class EventFragment2 extends ZWFragment {
 		infoView.setText(com.toString()+"\n"+event.toString()+"\n"+emp.toString());
 	}
 	
+	@Subscribe(tag=EventFragment1.EVENT4,threadMode=ThreadMode.BackgroundThread)
+	public void onEventNotMain(){
+		infoView.setText("非主线程改ui坑定报错!");
+	}
 	
+	
+	@Subscribe(tag=EventFragment1.EVENT5,threadMode=ThreadMode.MainThread)
+	public void onEventMain(){
+		infoView.setText("非主线程发给我,我主线程处理!");
+	}
 }

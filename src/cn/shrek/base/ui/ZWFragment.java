@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import cn.shrek.base.annotation.LayoutSelector;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.ui.inject.Injector;
 import cn.shrek.base.util.ZWLogger;
 
@@ -32,10 +32,10 @@ public abstract class ZWFragment extends Fragment {
 		onPreCreateView(inflater,container,savedInstanceState);
 		int layoutId = 0;
 		Class<?> clazz = getClass();
-		LayoutSelector selector = clazz.getAnnotation(LayoutSelector.class);
+		Controller selector = clazz.getAnnotation(Controller.class);
 		try {
 			if (selector != null) {
-				layoutId = selector.id();
+				layoutId = selector.layoutId();
 			} else {
 				layoutId = getResources().getIdentifier(
 						clazz.getSimpleName().toLowerCase().replace("fragment", ""),

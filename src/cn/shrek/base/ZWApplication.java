@@ -375,4 +375,11 @@ public class ZWApplication extends Application {
 		Injector.instance().setCustomFactory(mFactory);
 	}
 	
+	/**
+	 * 得到当前的activity
+	 * @return
+	 */
+	public Activity getCurrActivity(){
+		return mActivityManager.currentActivity();
+	}
 }

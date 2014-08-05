@@ -4,9 +4,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import cn.shrek.base.ZWConstants;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target({java.lang.annotation.ElementType.TYPE})
-public @interface LayoutSelector
+public @interface Controller
 {
-   int id();
+   int layoutId() default ZWConstants.NULL_INT_VALUE;
+   
+   String idFormat() default ZWConstants.NULL_STR_VALUE;
 }

@@ -8,12 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import cn.shrek.base.annotation.AutoInject;
-import cn.shrek.base.annotation.LayoutSelector;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.ui.ZWHolderBo;
 import cn.tt100.base.R;
 
-@LayoutSelector(id = R.layout.list_test)
+@Controller(layoutId = R.layout.list_test)
 public class ListTestActivity extends ZWActivity {
 	@AutoInject(idFormat = "lt_?")
 	ListView listView;

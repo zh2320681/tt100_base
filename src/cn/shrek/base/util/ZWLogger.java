@@ -2,8 +2,9 @@ package cn.shrek.base.util;
 
 import android.util.Log;
 import cn.shrek.base.ZWApplication;
+import cn.shrek.base.util.logger.ILogger;
 
-public class ZWLogger {
+public class ZWLogger{
 	public static boolean isDebug = true;
 	
 	public static void printLog(Object obj,String msg){
@@ -39,6 +40,44 @@ public class ZWLogger {
 			
 		}
 	}
-	
-	
+
+	public static void d(String tag, String message) {
+		// TODO Auto-generated method stub
+		printLog(LogLevel.DEBUG, tag, message);
+	}
+
+	public  static void i(String tag, String message) {
+		// TODO Auto-generated method stub
+		printLog(LogLevel.INFO, tag, message);
+	}
+
+	public static void w(String tag, String message) {
+		// TODO Auto-generated method stub
+		printLog(LogLevel.WARNING, tag, message);
+	}
+
+	public static void e(String tag, String message) {
+		// TODO Auto-generated method stub
+		printLog(LogLevel.ERROR, tag, message);
+	}
+
+	public static void d(Object obj, String message) {
+		// TODO Auto-generated method stub
+		d( obj.getClass().getSimpleName(), message);
+	}
+
+	public static void i(Object obj, String message) {
+		// TODO Auto-generated method stub
+		i(obj.getClass().getSimpleName(), message);
+	}
+
+	public static void w(Object obj, String message) {
+		// TODO Auto-generated method stub
+		w(obj.getClass().getSimpleName(), message);
+	}
+
+	public static void e(Object obj, String message) {
+		// TODO Auto-generated method stub
+		e(obj.getClass().getSimpleName(), message);
+	}
 }

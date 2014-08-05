@@ -187,4 +187,28 @@ public class ZWPrintToFileLogger implements ILogger {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void d(Object obj, String message) {
+		// TODO Auto-generated method stub
+		d(obj.getClass().getSimpleName(), message);
+	}
+
+	@Override
+	public void i(Object obj, String message) {
+		// TODO Auto-generated method stub
+		i(obj.getClass().getSimpleName(), message);
+	}
+
+	@Override
+	public void w(Object obj, String message) {
+		// TODO Auto-generated method stub
+		w(obj.getClass().getSimpleName(), message);
+	}
+
+	@Override
+	public void e(Object obj, String message) {
+		// TODO Auto-generated method stub
+		e(obj.getClass().getSimpleName(), message);
+	}
 }
