@@ -72,6 +72,17 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="appData 数据测试" />
+            
+            <Button
+                android:id="@+id/menu_injectBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="多数据注入 测试测试" />
+            <Button
+                android:id="@+id/menu_eventBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="事件测试" />
         </LinearLayout>
     </ScrollView>
 

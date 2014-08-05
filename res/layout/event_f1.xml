@@ -33,4 +33,17 @@
     	android:layout_height="wrap_content"
     	android:text="发送Flag事件且不注入"
         />
+	
+	<Button 
+        android:id="@+id/ef1_sendEventBtn6"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="发送事件非主线程处理改UI肯定报错"
+        />
+	<Button 
+        android:id="@+id/ef1_sendEventBtn7"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="非主线程发送事件改UI"
+        />
 </LinearLayout>
