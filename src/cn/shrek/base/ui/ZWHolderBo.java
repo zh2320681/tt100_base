@@ -1,107 +1,91 @@
 package cn.shrek.base.ui;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import cn.shrek.base.ZWBo;
-import cn.shrek.base.example.ListTestActivity;
 import cn.shrek.base.util.BaseUtil;
 import cn.shrek.base.util.ZWLogger;
 
 public class ZWHolderBo extends ZWBo {
+	int position;
+	// public Object data;
+
 	View rootView;
-	
+
 	public ZWHolderBo() {
-//		super();
+		// super();
 	}
 
-	// public void initViewWeight(Context ctx){
-	// initViewWeight(ctx, null, "?");
-	// }
-
-	// public void initViewWeight(Context ctx,String regex){
-	// initViewWeight(ctx, null, regex);
-	// }
-
-	void initViewWeight(Context ctx, int layoutId ,View parentView, String regex) {
-		LayoutInflater inflater = LayoutInflater.from(ctx);
-		rootView = inflater.inflate(layoutId, null);
-		BaseUtil.initViews(ctx, rootView, this, regex);
-		parentView = rootView;
-		parentView.setTag(this);
+	public int getPosition() {
+		return position;
 	}
 
 	public View getRootView() {
-		if (rootView == null) {
-			new Exception(
-					"RootView is null, please invoke \'initViewWeight()\' method");
-		}
 		return rootView;
 	}
 
 	/**
-	 * 实例化 得到listHolder
-	 * 注意 如果ZWHolderBo内部类  要填写 class对象 和 在谁的内部类里面hostObj
+	 * 实例化 得到listHolder 注意 如果ZWHolderBo内部类 要填写 class对象 和 在谁的内部类里面hostObj
 	 * 必须提供无参数的构造方法
+	 * 
 	 * @param ctx
-	 * @param clazz 外部类 ZWHolderBo.class  内部类 xxx.xxx.ZWHolderBo.class
-	 * @param hostObj  null 不是内部类   内部类 为外部类的示例
+	 * @param clazz
+	 *            外部类 ZWHolderBo.class 内部类 xxx.xxx.ZWHolderBo.class
+	 * @param hostObj
+	 *            null 不是内部类 内部类 为外部类的示例
 	 * @param layoutId
 	 * @param parentView
 	 * @param regex
 	 * @return
 	 */
-	public static <T extends ZWHolderBo> T newInstance(Context ctx,
-			Class<T> clazz, Object hostObj,int layoutId, View parentView, String regex) {
-		T t = null;
-		try {
-			if(parentView == null){
-				Constructor<T> constructor = null;
-				if(hostObj == null){
-					constructor = clazz.getDeclaredConstructor();
-				}else{
-					constructor = clazz.getDeclaredConstructor(hostObj.getClass());
-				}
+	public static <HOLDER extends ZWHolderBo> HOLDER newInstance(Context ctx,
+			Class<HOLDER> holderClazz, Object hostObj, int layoutId,
+			View convertView, String regex) {
+		HOLDER mHolder = null;
+		if (convertView == null) {
+			Constructor<HOLDER> constructor = null;
+			try {
+				constructor = holderClazz.getDeclaredConstructor(hostObj
+						.getClass());
 				constructor.setAccessible(true);
-				if(hostObj == null){
-					t = constructor.newInstance();
-				}else{
-					t = constructor.newInstance(hostObj);
+				mHolder = constructor.newInstance(hostObj);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				ZWLogger.e(ZWHolderBo.class, "Holder类 尝试不用内部类的方式");
+				try {
+					constructor = holderClazz.getDeclaredConstructor();
+					constructor.setAccessible(true);
+					mHolder = constructor.newInstance();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					ZWLogger.e(ZWHolderBo.class, "Holder类 尝试外部类的构造方法，也找不到!");
 				}
-//				t.layoutId = layoutId;
-				t.initViewWeight(ctx, layoutId,parentView ,regex);
-			}else{
-				t = (T)parentView.getTag();
 			}
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			ZWLogger.printLog(clazz.getSimpleName(), "ZWHolderBo的子类 必须有子类的构造方法");
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			mHolder.initViewWeight(ctx, layoutId, convertView, regex);
+		} else {
+			mHolder = (HOLDER) convertView.getTag();
 		}
-		if(t != null){
-			parentView = t.rootView;
+		if (mHolder != null) {
+			convertView = mHolder.rootView;
 		}
-		return t;
+		return mHolder;
 	}
-	
+
 	public static <T extends ZWHolderBo> T newInstance(Context ctx,
-			Class<T> clazz,int layoutId, View parentView, String regex) {
-		return newInstance(ctx,clazz,null,layoutId,parentView,regex);
+			Class<T> clazz, int layoutId, View parentView, String regex) {
+		return newInstance(ctx, clazz, null, layoutId, parentView, regex);
+	}
+
+	void initViewWeight(Context ctx, int layoutId, View parentView, String regex) {
+		LayoutInflater inflater = LayoutInflater.from(ctx);
+		rootView = inflater.inflate(layoutId, null);
+		BaseUtil.initViews(ctx, rootView, this, regex);
+		parentView = rootView;
+		parentView.setTag(this);
 	}
 }

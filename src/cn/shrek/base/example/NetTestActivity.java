@@ -2,6 +2,7 @@ package cn.shrek.base.example;
 
 import android.widget.TextView;
 import cn.shrek.base.annotation.AutoInject;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.util.net.ZWNetworkStateReceiver;
 import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
@@ -11,6 +12,8 @@ import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
  * @author shrek
  *
  */
+
+@Controller(isMonitorNetwork = true)
 public class NetTestActivity extends ZWActivity {
 	@AutoInject(idFormat = "nt_?")
 	private TextView infoView;
@@ -22,7 +25,6 @@ public class NetTestActivity extends ZWActivity {
 	protected void initialize() {
 		// TODO Auto-generated method stub
 		sb = new StringBuffer();
-		ZWNetworkStateReceiver.registerNetworkStateReceiver(this);
 	}
 
 	@Override

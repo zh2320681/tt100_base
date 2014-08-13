@@ -20,7 +20,7 @@ public class ViewInjectTransfor implements InjectTransfor {
 	private Context act;
 
 	@Override
-	public void setValue(Context act, Field field, Object objInstance)
+	public void setValue(Context act, Field field, Object objInstance,String defaultStr)
 			throws Exception {
 		// TODO Auto-generated method stub
 		this.act = act;
@@ -28,11 +28,9 @@ public class ViewInjectTransfor implements InjectTransfor {
 		Class<?> clazz = objInstance.getClass();
 		AutoInject autoInject = field.getAnnotation(AutoInject.class);
 		if (autoInject != null) {
-			String idFormatStr = null;
+			String idFormatStr = defaultStr;
 			if (autoInject.idFormat() != ZWConstants.NULL_STR_VALUE) {
 				idFormatStr = autoInject.idFormat(); // main_textBtn
-			} else {
-				idFormatStr = getClassIdFormat(objInstance);
 			}
 			String idFormat = idFormatStr.replace("?", field.getName()); // main_textBtn
 			int value = getIdValueIntoR(idFormat);
@@ -89,29 +87,4 @@ public class ViewInjectTransfor implements InjectTransfor {
 				act.getPackageName());
 	}
 
-	/**
-	 * 得到类的 idFormat MainActivity ----> main_?
-	 * 
-	 * @param instance
-	 */
-	private String getClassIdFormat(Object instance) {
-		Class<?> clazz = instance.getClass();
-		Controller selecor = clazz.getAnnotation(Controller.class);
-
-		if (selecor != null && selecor.idFormat() != ZWConstants.NULL_STR_VALUE) {
-			return selecor.idFormat();
-		}
-		// activity的布局名字
-		String layoutInfoStr = clazz.getSimpleName().toLowerCase()
-				.replace("activity", "");
-		// char[] chars = layoutInfoStr.toCharArray();
-		// StringBuffer sb = new StringBuffer();
-		// for (int i = 0; i < chars.length; i++) {
-		// char c = chars[i];
-		// if((c >= 'A' && c<='Z') || (c>='1' && c<='9')){
-		// sb.append(c);
-		// }
-		// }
-		return layoutInfoStr + "_?";
-	}
 }

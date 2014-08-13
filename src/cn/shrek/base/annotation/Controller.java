@@ -13,4 +13,8 @@ public @interface Controller
    int layoutId() default ZWConstants.NULL_INT_VALUE;
    
    String idFormat() default ZWConstants.NULL_STR_VALUE;
+   
+   //是否监听网络<只对activity有效>
+   boolean isMonitorNetwork() default false;
+
 }

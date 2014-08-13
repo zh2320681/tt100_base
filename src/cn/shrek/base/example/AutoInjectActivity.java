@@ -37,7 +37,6 @@ public class AutoInjectActivity extends ZWActivity {
 		sb.append("emp1: "+emp1.toString()+"\n");
 		sb.append("emp2: "+emp2.toString()+"\n");
 		sb.append("emp3: "+emp3.toString()+"\n");
-		sb.append("mIdentity: "+mIdentity.toString()+"\n");
 		infoView.setText(sb.toString());
 		
 	}

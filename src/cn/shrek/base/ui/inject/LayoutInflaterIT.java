@@ -10,7 +10,7 @@ import cn.shrek.base.util.ZWLogger;
 public class LayoutInflaterIT implements InjectTransfor {
 
 	@Override
-	public void setValue(Context act, Field field, Object objInstance)
+	public void setValue(Context act, Field field, Object objInstance,String defaultStr)
 			throws Exception {
 		// TODO Auto-generated method stub
 		AutoInject autoInject = field.getAnnotation(AutoInject.class);

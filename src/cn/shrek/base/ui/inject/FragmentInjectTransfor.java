@@ -15,7 +15,7 @@ public class FragmentInjectTransfor implements InjectTransfor {
 	private Context act;
 
 	@Override
-	public void setValue(Context act, Field field, Object objInstance) throws Exception{
+	public void setValue(Context act, Field field, Object objInstance,String defaultStr) throws Exception{
 		// TODO Auto-generated method stub
 		if (act instanceof FragmentActivity) {
 			this.act = act;
@@ -31,16 +31,26 @@ public class FragmentInjectTransfor implements InjectTransfor {
 				String idFormat = autoInject.idFormat().replace("?",
 						field.getName()); // main_textBtn
 				int value = getIdValueIntoR(idFormat);
-				if (value == 0) {
-					// 未通过 idFormat找到 尝试用类名字直接找
-					fragment = getFragment(field);
-				} else {
+				if (value != 0) {
 					fragment = fAct.getSupportFragmentManager()
 							.findFragmentById(value);
-				}
-			} else {
+				} 
+			}
+			
+			if(fragment == null){
+				String idFormat = defaultStr.replace("?",field.getName()); // main_textBtn
+				int value = getIdValueIntoR(idFormat);
+				if (value != 0) {
+					fragment = fAct.getSupportFragmentManager()
+							.findFragmentById(value);
+				} 
+			}
+			
+			if(fragment == null){
+				// 未通过 idFormat找到 尝试用类名字直接找
 				fragment = getFragment(field);
 			}
+			
 			field.setAccessible(true);
 			field.set(objInstance, fragment);
 		}

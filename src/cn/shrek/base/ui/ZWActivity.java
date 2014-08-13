@@ -19,6 +19,7 @@ import cn.shrek.base.ui.inject.Identity;
 import cn.shrek.base.ui.inject.Injector;
 import cn.shrek.base.util.ZWLogger;
 import cn.shrek.base.util.net.ZWNetChangeObserver;
+import cn.shrek.base.util.net.ZWNetworkStateReceiver;
 import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
 import cn.shrek.base.util.rest.ZWAsyncTask;
 
@@ -29,8 +30,9 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 	private static String packageName;
 	private String activityName;
 
-	@AutoInject
-	public Identity mIdentity;
+	protected Controller mController;
+//	@AutoInject
+//	public Identity mIdentity;
 	
 	@Override
 	protected final void onCreate(Bundle savedInstanceState) {
@@ -64,10 +66,10 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 
 	protected void onBaseCreate(Bundle savedInstanceState) {
 		Class<? extends Activity> clazz = getClass();
-		Controller selector = clazz.getAnnotation(Controller.class);
+		mController = clazz.getAnnotation(Controller.class);
 		try {
-			if (selector != null && selector.layoutId() != ZWConstants.NULL_INT_VALUE) {
-				setContentView(selector.layoutId());
+			if (mController != null && mController.layoutId() != ZWConstants.NULL_INT_VALUE) {
+				setContentView(mController.layoutId());
 			} else {
 				setContentView(getResources().getIdentifier(
 						activityName.toLowerCase().replace("activity", ""),
@@ -148,6 +150,25 @@ public abstract class ZWActivity extends Activity implements Observer,ZWNetChang
 		return false;
 	}
 
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		
+		if(mController != null && mController.isMonitorNetwork()){
+			ZWNetworkStateReceiver.registerNetworkStateReceiver(this);
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if(mController != null && mController.isMonitorNetwork()){
+			ZWNetworkStateReceiver.unRegisterNetworkStateReceiver(this);
+		}
+	}
+	
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub

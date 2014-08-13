@@ -14,11 +14,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import cn.shrek.base.ModelObservable;
 import cn.shrek.base.ZWApplication;
+import cn.shrek.base.ZWConstants;
 import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.exception.ZWAppException;
 import cn.shrek.base.ui.inject.Injector;
 import cn.shrek.base.util.ZWLogger;
 import cn.shrek.base.util.net.ZWNetChangeObserver;
+import cn.shrek.base.util.net.ZWNetworkStateReceiver;
 import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
 import cn.shrek.base.util.rest.ZWAsyncTask;
 
@@ -28,6 +30,8 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 
 	private static String packageName;
 	private String activityName;
+	
+	protected Controller mController;
 
 	@Override
 	protected final void onCreate(Bundle savedInstanceState) {
@@ -61,10 +65,10 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 
 	protected void onBaseCreate(Bundle savedInstanceState) {
 		Class<? extends Activity> clazz = getClass();
-		Controller selector = clazz.getAnnotation(Controller.class);
+		mController = clazz.getAnnotation(Controller.class);
 		try {
-			if (selector != null) {
-				setContentView(selector.layoutId());
+			if (mController != null && mController.layoutId() != ZWConstants.NULL_INT_VALUE) {
+				setContentView(mController.layoutId());
 			} else {
 				setContentView(getResources().getIdentifier(
 						activityName.toLowerCase().replace("activity", ""),
@@ -73,7 +77,7 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 		} catch (Exception e) {
 			// 设置布局失败
 			ZWLogger.printLog(activityName, "Activity名称:" + activityName
-					+  "  加载布局名：R.layout."+ activityName.toLowerCase().replace("activity", "") +" 加载布局失败!");
+					+ "加载布局失败!");
 			e.printStackTrace();
 		}
 	}
@@ -161,6 +165,25 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 		return getSupportFragmentManager().findFragmentByTag(tag);
 	}
 
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		
+		if(mController != null && mController.isMonitorNetwork()){
+			ZWNetworkStateReceiver.registerNetworkStateReceiver(this);
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if(mController != null && mController.isMonitorNetwork()){
+			ZWNetworkStateReceiver.unRegisterNetworkStateReceiver(this);
+		}
+	}
+	
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub

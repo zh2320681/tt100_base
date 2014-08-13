@@ -12,5 +12,5 @@ public interface InjectTransfor {
 	 * @param field
 	 * @param objInstance 
 	 */
-	void setValue(Context ctx ,Field field,Object objInstance) throws Exception;
+	void setValue(Context ctx ,Field field,Object objInstance,String defaultStr) throws Exception;
 }

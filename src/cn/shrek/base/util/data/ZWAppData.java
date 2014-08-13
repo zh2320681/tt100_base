@@ -31,9 +31,11 @@ public abstract class ZWAppData {
 	// 是否存在公开的数据 和秘密的数据
 	// protected boolean isExistSecretData,isExistOpenData;
 	protected List<Field> secretDatas, openDatas;
-
+	private Charset gb2312Charset;
+	
 	public ZWAppData(Context ctx) {
 		this.ctx = ctx;
+		gb2312Charset = Charset.forName(ZWRequestConfig.GB2312_CHARSET);
 		initExistFlag();
 
 		// if (secretDatas.size() > 0) {
@@ -313,23 +315,23 @@ public abstract class ZWAppData {
 
 	private String encode(String value) {
 		byte[] sercetChars = SERCET_KEY.getBytes();
-		byte[] bytes = value.getBytes();
+		byte[] bytes = value.getBytes(gb2312Charset);
 		byte[] newBytes = new byte[bytes.length];
 		for (int i = 0; i < bytes.length; i++) {
 			newBytes[i] = (byte) (bytes[i] ^ sercetChars[i % sercetChars.length]);
 		}
 //		System.out.println("编码后===============>" + new String(newBytes));
-		return new String(newBytes,Charset.forName(ZWRequestConfig.UTF8_CHARSET));
+		return new String(newBytes,gb2312Charset);
 	}
 
 	private String decode(String value) {
 		byte[] sercetChars = SERCET_KEY.getBytes();
-		byte[] bytes = value.getBytes();
+		byte[] bytes = value.getBytes(gb2312Charset);
 		byte[] newBytes = new byte[bytes.length];
 		for (int i = 0; i < bytes.length; i++) {
 			newBytes[i] = (byte) (bytes[i] ^ sercetChars[i % sercetChars.length]);
 		}
 //		System.out.println("转码后===============>" + new String(newBytes));
-		return new String(newBytes,Charset.forName(ZWRequestConfig.UTF8_CHARSET));
+		return new String(newBytes,gb2312Charset);
 	}
 }

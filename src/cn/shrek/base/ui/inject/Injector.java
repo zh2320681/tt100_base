@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import cn.shrek.base.ZWConstants;
 import cn.shrek.base.annotation.AutoInject;
+import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.util.ZWLogger;
 
 /**
@@ -87,6 +88,9 @@ public class Injector {
 		if(defaultInstances.size() == 0 && mFactory != null){
 			defaultInstances.putAll(mFactory.getDefaultInstance());
 		}
+	
+		
+		String idFormatStr = getClassIdFormat(objIntance);
 		
 		for (Field f : allFields) {
 			Class<?> fieldClazz = f.getType();
@@ -100,7 +104,7 @@ public class Injector {
 			for(Map.Entry<Class<?>,InjectTransfor> entry : supportInject.entrySet()){
 				if(entry.getKey().isAssignableFrom(fieldClazz)){
 					try {
-						entry.getValue().setValue(atc, f, objIntance);
+						entry.getValue().setValue(atc, f, objIntance,idFormatStr);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						String fieldName = f.getName();
@@ -126,6 +130,32 @@ public class Injector {
 		
 	}
 	
+	
+	/**
+	 * 得到类的 idFormat MainActivity ----> main_?
+	 * 
+	 * @param instance
+	 */
+	private String getClassIdFormat(Object instance) {
+		Class<?> clazz = instance.getClass();
+		Controller selecor = clazz.getAnnotation(Controller.class);
+
+		if (selecor != null && selecor.idFormat() != ZWConstants.NULL_STR_VALUE) {
+			return selecor.idFormat();
+		}
+		// activity的布局名字
+		String layoutInfoStr = clazz.getSimpleName().toLowerCase()
+				.replace("activity", "");
+		// char[] chars = layoutInfoStr.toCharArray();
+		// StringBuffer sb = new StringBuffer();
+		// for (int i = 0; i < chars.length; i++) {
+		// char c = chars[i];
+		// if((c >= 'A' && c<='Z') || (c>='1' && c<='9')){
+		// sb.append(c);
+		// }
+		// }
+		return layoutInfoStr + "_?";
+	}
 	
 	public boolean customInstance(Field f, Object objIntance){
 		if(mFactory == null){
