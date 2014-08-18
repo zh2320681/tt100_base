@@ -5,37 +5,38 @@ import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
 import cn.shrek.base.download.DLConstant;
 @DatabaseTable
-public class DLTask extends ZWBo implements Serializable {
-	//ÏÂÔØ»¨·ÑÊ±¼ä
+public class DLTask extends ZWDatabaseBo implements Serializable {
+	//ï¿½ï¿½ï¿½Ø»ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 	@DatabaseField
 	public long costTime;
-	//ÈÎÎñ´´½¨Ê±¼ä
+	//ï¿½ï¿½ï¿½ñ´´½ï¿½Ê±ï¿½ï¿½
 	@DatabaseField
 	public long createTime;
-	//ÏÂÔØµÄÊıÁ¿
+	//ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 	@DatabaseField
 	public int dlThreadNum;
-	//ÏÂÔØµÄÂ·¾¶
+	//ï¿½ï¿½ï¿½Øµï¿½Â·ï¿½ï¿½
 	@DatabaseField(id =true)
 	public String downLoadUrl;
-	//errorĞÅÏ¢
+	//errorï¿½ï¿½Ï¢
 	@DatabaseField
 	public String errorMessage;
-	//ÎÄ¼şÃû
+	//ï¿½Ä¼ï¿½ï¿½ï¿½
 	@DatabaseField
 	public String fileName;
-	//ÏÂÔØÍêºó ÊÇ·ñ×Ô¶¯´ò¿ª
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç·ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½
 	public boolean isAutoOpen;
-	//ÊÇ·ñ·¢ËÍ¹ã²¥
+	//ï¿½Ç·ï¿½ï¿½Í¹ã²¥
 	public boolean isSendBrocadcast;
-	//ÊÇ·ñÏÔÊ¾×´Ì¬À¸
+	//ï¿½Ç·ï¿½ï¿½ï¿½Ê¾×´Ì¬ï¿½ï¿½
 //	public boolean isShowNotify;
 
-	//±£³ÖµÄÂ·¾¶
+	//ï¿½ï¿½ï¿½Öµï¿½Â·ï¿½ï¿½
 	@DatabaseField
 	public String savePath;
 	public AtomicInteger states;

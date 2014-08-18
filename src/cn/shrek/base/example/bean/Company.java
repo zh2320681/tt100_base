@@ -2,12 +2,13 @@ package cn.shrek.base.example.bean;
 
 import android.os.Message;
 import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
 import cn.shrek.base.ui.inject.Identity;
 
 @DatabaseTable(tableName="_Company")
-public class Company extends ZWBo implements Identity{
+public class Company extends ZWDatabaseBo implements Identity{
 
   @DatabaseField
   public String companyName;

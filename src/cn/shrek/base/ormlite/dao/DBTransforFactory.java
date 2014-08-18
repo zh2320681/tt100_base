@@ -145,7 +145,7 @@ public class DBTransforFactory {
 			map = allTransforMap.get();
 		}
 		if(map == null){
-			ZWLogger.printLog("DBTransforFactory", "allTransforMap 已被回收!");
+			ZWLogger.i("DBTransforFactory", "allTransforMap 已被回收!");
 //			throw new Exception("allTransforMap 已被回收!");
 			
 			map = new HashMap<Class<?>, DBTransforDao<?,?>>();
@@ -154,6 +154,7 @@ public class DBTransforFactory {
 			map.put(Date.class, new DateTransfor());
 			map.put(Calendar.class, new CalendarTransfor());
 			map.put(String.class, new StringTransfor());
+			
 			allTransforMap = new SoftReference<HashMap<Class<?>,DBTransforDao<?,?>>>(map);
 		}
 		return map;

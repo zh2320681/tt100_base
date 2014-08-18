@@ -25,6 +25,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="设置密码为password1试试看" />
+    
+    <Button
+        android:id="@+id/ad_btn5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="保存后重新取值" />
 
     <TextView
         android:id="@+id/ad_tvShow"

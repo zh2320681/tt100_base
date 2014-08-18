@@ -1,10 +1,11 @@
 package cn.shrek.base.ormlite.stmt;
 
 import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 
 public class DeleteBuider extends StmtBuilder {
 	
-	public DeleteBuider(Class<? extends ZWBo> clazz) {
+	public DeleteBuider(Class<? extends ZWDatabaseBo> clazz) {
 		super(clazz);
 		// TODO Auto-generated constructor stub
 	}

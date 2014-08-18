@@ -1,30 +1,30 @@
 package cn.shrek.base.download.bo;
 
-import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
 
 @DatabaseTable
-public class DLThreadTask extends ZWBo{
-	//¶ÏµãÎ»ÖÃ
+public class DLThreadTask extends ZWDatabaseBo{
+	//ï¿½Ïµï¿½Î»ï¿½ï¿½
 	@DatabaseField
 	public volatile long breakPointPosition;
-	//»¨·ÑÊ±¼ä
+	//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 	@DatabaseField
 	public int costTime;
-	//ÒªÏÂÔØµÄ³¤¶È
+	//Òªï¿½ï¿½ï¿½ØµÄ³ï¿½ï¿½ï¿½
 	@DatabaseField
 	public long downloadBlock;
-	//ÒÑ¾­ÏÂÔØµÄ³¤¶È
+	//ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ØµÄ³ï¿½ï¿½ï¿½
 	@DatabaseField
 	public volatile long hasDownloadLength;
-	//Êý¾Ý¿âµÄÖ÷¼ü
+	//ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	@DatabaseField(id = true)
 	public int idCode;
 
 	@DatabaseField
 	public int taskHashCode;
-	//Ïß³ÌµÄid
+	//ï¿½ß³Ìµï¿½id
 	@DatabaseField
 	public int threadId;
 

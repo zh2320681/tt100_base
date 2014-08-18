@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.util.ZWLogger;
 
 /**
@@ -28,7 +29,7 @@ public class QueryBuilder extends StmtBuilder {
 	//连接查询语句  joinSelect查询时候添加的
 	public StringBuffer joinSB,joinSelect;
 	
-	public QueryBuilder(Class<? extends ZWBo> clazz) {
+	public QueryBuilder(Class<? extends ZWDatabaseBo> clazz) {
 		super(clazz);
 		// TODO Auto-generated constructor stub
 		sqlBuffer = new StringBuffer(SELECT_KEYWORD+" ");

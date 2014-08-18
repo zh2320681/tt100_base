@@ -12,6 +12,7 @@ import java.util.Set;
 
 import android.database.Cursor;
 import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.ormlite.DBUtil;
 import cn.shrek.base.ormlite.TableInfo;
 import cn.shrek.base.ormlite.ZWDBHelper;
@@ -22,7 +23,7 @@ import cn.shrek.base.ormlite.stmt.UpdateBuider;
 import cn.shrek.base.util.AndroidVersionCheckUtils;
 import cn.shrek.base.util.ZWLogger;
 
-public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
+public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	private Class<T> clazz;
 	private ZWDBHelper helper;
 
@@ -83,9 +84,9 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 
 		if (isAddFKObject) {
 			for (Object fkObject : allFKs) {
-				if (fkObject instanceof ZWBo) {
-					ZWBo bo = (ZWBo) fkObject;
-					Class<? extends ZWBo> fkClazz = (Class<? extends ZWBo>) fkObject
+				if (fkObject instanceof ZWDatabaseBo) {
+					ZWDatabaseBo bo = (ZWDatabaseBo) fkObject;
+					Class<? extends ZWDatabaseBo> fkClazz = (Class<? extends ZWDatabaseBo>) fkObject
 							.getClass();
 					DBDao dao = helper.getDao(fkClazz);
 					try {
@@ -331,7 +332,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 		return countNum;
 	}
 
-	public <F extends ZWBo> F parseCurser(Cursor cursor, Class<F> giveClazz) {
+	public <F extends ZWDatabaseBo> F parseCurser(Cursor cursor, Class<F> giveClazz) {
 		TableInfo info = TableInfo.newInstance(giveClazz);
 
 		String logColumnName = null;
@@ -409,7 +410,7 @@ public class DBDaoImpl<T extends ZWBo> implements DBDao<T> {
 					// foreignField.getType());
 					// foreignField.set(forgienObj, fieldValues);
 					Object forgienObj = parseCurser(cursor,
-							(Class<? extends ZWBo>) forgienClazz);
+							(Class<? extends ZWDatabaseBo>) forgienClazz);
 					// 方便log输出
 					logObj = forgienObj;
 					field.setAccessible(true);

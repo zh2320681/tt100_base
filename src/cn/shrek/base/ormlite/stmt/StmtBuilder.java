@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Date;
 
-import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.ormlite.DBUtil;
 import cn.shrek.base.ormlite.TableInfo;
 import cn.shrek.base.ormlite.dao.DBTransforFactory;
@@ -35,7 +35,7 @@ public abstract class StmtBuilder{
 	//括号数量 空值(  )
 	private int bracketsNum = 0;
 	
-	public StmtBuilder(Class<? extends ZWBo> clazz){
+	public StmtBuilder(Class<? extends ZWDatabaseBo> clazz){
 		tableInfo = TableInfo.newInstance(clazz);
 		whereBuffer = new StringBuffer();
 //		sqlBuffer = new StringBuffer();

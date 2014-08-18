@@ -8,9 +8,10 @@ import java.util.Set;
 
 import android.content.ContentValues;
 import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.ormlite.dao.DBTransforFactory;
 
-public class InsertBuider<T extends ZWBo> extends StmtBuilder {
+public class InsertBuider<T extends ZWDatabaseBo> extends StmtBuilder {
 	public ContentValues cvs;
 	
 	public InsertBuider(Class<T> clazz) {

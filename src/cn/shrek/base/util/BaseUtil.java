@@ -236,6 +236,15 @@ public class BaseUtil {
 	}
 
 	/**
+	 * 判断 字符串 是否有效
+	 * @param string
+	 * @return
+	 */
+	public static boolean isStringValid(String string){
+		return string != null && "".equals(string);
+	}
+	
+	/**
 	 * 判断 是不是这个Activity
 	 */
 	@SuppressWarnings("unchecked")

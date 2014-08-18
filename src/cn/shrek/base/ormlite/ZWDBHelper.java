@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.ReflectionUtils;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
@@ -15,19 +17,22 @@ import android.database.DefaultDatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import cn.shrek.base.ZWApplication;
 import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.ormlite.dao.DBDao;
 import cn.shrek.base.ormlite.dao.DBDaoImpl;
 import cn.shrek.base.ormlite.dao.DBTransforFactory;
 import cn.shrek.base.util.AndroidVersionCheckUtils;
+import cn.shrek.base.util.ReflectUtil;
 import cn.shrek.base.util.ZWLogger;
 
 public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	private static final int CLOSE_DBOPERATOR = 0x89;
 
-	private static Map<Class<? extends ZWBo>, DBDao> allDBDaos = new HashMap<Class<? extends ZWBo>, DBDao>();
+	private static Map<Class<? extends ZWDatabaseBo>, DBDao> allDBDaos = new HashMap<Class<? extends ZWDatabaseBo>, DBDao>();
 	// DatabaseErrorHandler是API 11的
 	// private static DatabaseErrorHandler mErrorHandler = new
 	// DefaultDatabaseErrorHandler();
@@ -36,16 +41,18 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	private static final Object SQLITEDATABASE_LOCK = new Object();
 	public static final Object LOCK_OBJ = new Object();
 	private static Handler mHandler;
+	
+	private Class<? extends ZWDatabaseBo>[] loadDbBos;
 
 	public ZWDBHelper(Context context) {
 		super(context, ZWApplication.dbName, null, ZWApplication.dbVersion);
 		// TODO Auto-generated constructor stub
 		if (mHandler == null) {
-			mHandler = new Handler() {
+			mHandler = new Handler(Looper.getMainLooper(),new Handler.Callback() {
+				
 				@Override
-				public void handleMessage(Message msg) {
+				public boolean handleMessage(Message msg) {
 					// TODO Auto-generated method stub
-					super.handleMessage(msg);
 					switch (msg.what) {
 					case CLOSE_DBOPERATOR:
 						if (currentDBOperator != null) {
@@ -56,41 +63,61 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 					default:
 						break;
 					}
+					return true;
 				}
-
-			};
-
+			}); 
+			loadDbBos = loadDatabaseClazz();
 			// Looper.prepare();
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public abstract void onCreate(SQLiteDatabase arg0);
+	public void onCreate(SQLiteDatabase arg0){
+		createTables(arg0, loadDbBos);
+	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public abstract void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2);
+	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2){
+		dropTables(arg0, loadDbBos);
+		onCreate(arg0);
+	}
+	
+	public abstract Class<? extends ZWDatabaseBo>[] loadDatabaseClazz();
 
 	public SQLiteDatabase getDatabase(boolean isReadOnly) {
 		synchronized (SQLITEDATABASE_LOCK) {
 			if (currentDBOperator != null && currentDBOperator.isOpen()) {
-				if (currentDBOperator.isReadOnly() == isReadOnly) {
-					mHandler.removeMessages(CLOSE_DBOPERATOR);
-					mHandler.sendEmptyMessageDelayed(CLOSE_DBOPERATOR,
-							ZWApplication.dbOPeratorAvailTime);
-					return currentDBOperator;
-				} else {
-					mHandler.removeMessages(CLOSE_DBOPERATOR);
-					currentDBOperator.close();
+				//之前写的
+//				if (currentDBOperator.isReadOnly() == isReadOnly) {
+//					mHandler.removeMessages(CLOSE_DBOPERATOR);
+//					mHandler.sendEmptyMessageDelayed(CLOSE_DBOPERATOR,
+//							ZWApplication.dbOPeratorAvailTime);
+//					return currentDBOperator;
+//				} else {
+//					mHandler.removeMessages(CLOSE_DBOPERATOR);
+//					currentDBOperator.close();
+//				}
+				mHandler.removeMessages(CLOSE_DBOPERATOR);
+				mHandler.sendEmptyMessageDelayed(CLOSE_DBOPERATOR,
+						ZWApplication.dbOPeratorAvailTime);
+				return currentDBOperator;
+			}
+//			if (isReadOnly) {
+//				currentDBOperator = getReadableDatabase();
+//			} else {
+//				currentDBOperator = getWritableDatabase();
+//			}
+			try {
+				currentDBOperator = getWritableDatabase();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				ZWLogger.e(ZWDBHelper.class, "创建数据库出现异常,尝试获取只读操作");
+				if(isReadOnly){
+					currentDBOperator = getReadableDatabase();
+				}else{
+					e.printStackTrace();
 				}
 			}
-			if (isReadOnly) {
-				currentDBOperator = getReadableDatabase();
-			} else {
-				currentDBOperator = getWritableDatabase();
-			}
-
 			mHandler.sendEmptyMessageDelayed(CLOSE_DBOPERATOR,
 					ZWApplication.dbOPeratorAvailTime);
 			return currentDBOperator;
@@ -104,7 +131,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	 * @param clazz
 	 * @return
 	 */
-	public <T extends ZWBo> DBDao<T> getDao(Class<T> clazz) {
+	public <T extends ZWDatabaseBo> DBDao<T> getDao(Class<T> clazz) {
 		if (allDBDaos.containsKey(clazz)) {
 			return allDBDaos.get(clazz);
 		}
@@ -120,9 +147,9 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	 * @param arg0
 	 * @param createTablClss
 	 */
-	protected void createTables(SQLiteDatabase arg0,
-			Class<? extends ZWBo>... createTablClss) {
-		for (Class<? extends ZWBo> clazz : createTablClss) {
+	private void createTables(SQLiteDatabase arg0,
+			Class<? extends ZWDatabaseBo>... createTablClss) {
+		for (Class<? extends ZWDatabaseBo> clazz : createTablClss) {
 			DBUtil.createTable(arg0, clazz, true);
 		}
 	}
@@ -133,9 +160,9 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	 * @param arg0
 	 * @param createTablClss
 	 */
-	protected void dropTables(SQLiteDatabase arg0,
-			Class<? extends ZWBo>... createTablClss) {
-		for (Class<? extends ZWBo> clazz : createTablClss) {
+	private void dropTables(SQLiteDatabase arg0,
+			Class<? extends ZWDatabaseBo>... createTablClss) {
+		for (Class<? extends ZWDatabaseBo> clazz : createTablClss) {
 			DBUtil.dropTable(arg0, clazz);
 		}
 	}
@@ -228,49 +255,23 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 			obj = objClass.getConstructor().newInstance();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			ZWLogger.printLog(objClass.getSimpleName(), "请提供一个无参的构造方法!");
+			ZWLogger.e(objClass.getSimpleName(), "请提供一个无参的构造方法!");
 			e.printStackTrace();
 			return null;
 		}
+		
 		int columnCount = cursor.getColumnCount();
 		for (int i = 0; i < columnCount; i++) {
 			String columnName = cursor.getColumnName(i);
-			// 处理掉异常 不抛出
-			Field field = null;
-			try {
-				field = objClass.getField(columnName);
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-
-			}
-			if (field == null) {
-				try {
-					field = objClass.getDeclaredField(columnName);
-				} catch (NoSuchFieldException e) {
-					// TODO Auto-generated catch block
-					ZWLogger.printLog(objClass.getSimpleName(), "类名:"
-							+ objClass.getSimpleName() + "找不到叫" + columnName
-							+ "属性名!");
-					e.printStackTrace();
-					return null;
-				}
-			}
+			Field field = ReflectUtil.getFieldByName(objClass, columnName);
 			// 属性类型
 			Class<?> fieldType = field.getType();
-
 			// 从字段的值 转换为 Java里面的值
-			Object fieldValues = DBTransforFactory.getFieldValue(
+			Object fieldValue = DBTransforFactory.getFieldValue(
 					getObjectValueByCursor(cursor, i), fieldType);
-			try {
-				field.setAccessible(true);
-				field.set(obj, fieldValues);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				ZWLogger.printLog(objClass.getSimpleName(), "给字段名:"
-						+ columnName + "赋值，值:" + fieldValues + ",失败!");
-				e.printStackTrace();
-			}
+			ReflectUtil.setFieldValue(obj, field, fieldValue);
 		}
+		
 		return obj;
 	}
 

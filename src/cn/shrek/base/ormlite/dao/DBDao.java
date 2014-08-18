@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.ormlite.stmt.DeleteBuider;
 import cn.shrek.base.ormlite.stmt.InsertBuider;
 import cn.shrek.base.ormlite.stmt.QueryBuilder;
 import cn.shrek.base.ormlite.stmt.UpdateBuider;
 
-public interface DBDao<T extends ZWBo> {
+public interface DBDao<T extends ZWDatabaseBo> {
 	
 	/**
 	 * 得到 插入的 构造器

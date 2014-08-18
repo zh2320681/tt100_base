@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.example.bean.Company;
 import cn.shrek.base.example.bean.Employee;
@@ -286,16 +287,9 @@ public class DBTestActivity extends ZWActivity {
 		mZWDBHelper = new ZWDBHelper(getApplicationContext()) {
 
 			@Override
-			public void onCreate(SQLiteDatabase arg0) {
+			public Class<? extends ZWDatabaseBo>[] loadDatabaseClazz() {
 				// TODO Auto-generated method stub
-				createTables(arg0, Company.class, Employee.class);
-			}
-
-			@Override
-			public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
-				// TODO Auto-generated method stub
-				dropTables(arg0, Company.class, Employee.class);
-				this.onCreate(arg0);
+				return new Class[]{Company.class, Employee.class};
 			}
 
 		};

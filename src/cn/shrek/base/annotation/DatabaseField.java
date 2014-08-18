@@ -4,6 +4,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import cn.shrek.base.ormlite.foreign.CascadeType;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ java.lang.annotation.ElementType.FIELD })
 public @interface DatabaseField {
@@ -59,6 +61,12 @@ public @interface DatabaseField {
 	 * @return
 	 */
 	boolean foreignAutoRefresh() default false;
+	
+	/**
+	 * 级联操作
+	 * @return
+	 */
+	CascadeType[] cascade() default {};
 
 	/**
 	 * 外键 对于属性名 例如 Student.java中 Teacher对象  指向 Teacher的id的属性名
