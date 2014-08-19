@@ -30,9 +30,12 @@ public class TableInfo {
 	public List<Field> allField;
 	// 所有外键 key:外键字段名 value:对于Teacher 的id属性
 	public List<ForeignInfo> allforeignInfos;
-	
+
 	public Class<? extends ZWDatabaseBo> clazz;
-	public String tableName;
+	/**
+	 * tableName：表名 indexTableName: 索引表名
+	 */
+	String tableName, indexTableName;
 
 	private TableInfo(Class<? extends ZWDatabaseBo> clazz) {
 		this.clazz = clazz;
@@ -50,42 +53,40 @@ public class TableInfo {
 
 		this.allforeignInfos = new ArrayList<ForeignInfo>();
 
-		allField = ReflectUtil.getAllClassField(clazz, new FieldCondition() {
+		List<Field> allFieldCache = ReflectUtil.getAllClassField(clazz,
+				new FieldCondition() {
 
-			@Override
-			public boolean isFieldValid(Field field) {
-				// TODO Auto-generated method stub
-				return DBUtil.judgeFieldAvaid(field);
-			}
-		});
+					@Override
+					public boolean isFieldValid(Field field) {
+						// TODO Auto-generated method stub
+						return DBUtil.judgeFieldAvaid(field);
+					}
+				});
 
-		for (Field field : allField) {
+		for (Field field : allFieldCache) {
 			// 属性的类型
 			Class<?> fieldType = field.getType();
 			// 添加字段名
-			String fieldName = DBUtil.getFeildName(field);
-			allColumnNames.add(fieldName);
+			String fieldName = DBUtil.getColumnName(field);
+
 			/**
 			 * ########## 外键判断 ##########
 			 */
 			Foreign foreignAnn = field.getAnnotation(Foreign.class);
 			if (foreignAnn != null) {
 				String originalName = foreignAnn.originalColumnName();
-				String fkName = foreignAnn.foreignColumnName();
+				String fkFieldName = foreignAnn.foreignColumnName();
 
 				String errorInfo = "设置了无效的外键:" + fieldName;
-				
+
 				if (!BaseUtil.isStringValid(originalName)
-						|| !DBUtil.isFKNameValid(fkName)) {
+						|| !BaseUtil.isStringValid(fkFieldName)) {
 					ZWLogger.e(this, errorInfo);
 					throw new ForeignKeyValidException(errorInfo);
 				}
 
-				String foreignColumnName = DBUtil.getFieldNameByFkName(fkName);
-				String foreignClazzName = DBUtil.getClazzNameByFkName(fkName);
-				
 				Class<?> genericClazz = null;
-				
+
 				if (ZWDatabaseBo.class.isAssignableFrom(fieldType)) {
 					genericClazz = fieldType;
 				} else if (Collection.class.isAssignableFrom(fieldType)) {
@@ -94,59 +95,64 @@ public class TableInfo {
 					if (fc == null) {
 						ZWLogger.printLog(this,
 								"外键指向的 类名：" + fieldType.getSimpleName()
-										+ "字段名:" + foreignColumnName
-										+ " list 未设置泛型");
+										+ "字段名:" + fkFieldName + " list 未设置泛型");
 						continue;
 					}
 
 					if (fc instanceof ParameterizedType) {// 【3】如果是泛型参数的类型
 						ParameterizedType pt = (ParameterizedType) fc;
-						genericClazz = (Class<?>) pt
-								.getActualTypeArguments()[0]; // 得到泛型里的class类型对象。
+						genericClazz = (Class<?>) pt.getActualTypeArguments()[0]; // 得到泛型里的class类型对象。
 					}
 				}
-				
-				if(genericClazz == null){
+
+				if (genericClazz == null) {
 					continue;
 				}
-				
-				String foreignName =  genericClazz.getName();
-				if(!foreignClazzName.equals(foreignName)){
-					throw new ForeignKeyValidException(errorInfo+" 请属性是"+foreignName+"类型  设置的外键竟然是"+foreignClazzName);
-				}
-				// 外键是ZWDatabaseBo类型
-				Field objField;
-				try {
-					objField = fieldType.getField(foreignColumnName);
-					if (DBUtil.judgeFieldAvaid(objField)) {
-						ForeignInfo fInfo = new ForeignInfo();
-						fInfo.setOriginalField(field);
-						fInfo.setForeignField(objField);
-						fInfo.setOriginalClazz(clazz);
-						fInfo.setForeignClazz((Class<? extends ZWDatabaseBo>) genericClazz);
-						fInfo.setMiddleTableName(DBUtil.getIntermediateTableName(clazz, genericClazz));
-						
-						allforeignInfos.add(fInfo);
-					} else {
-						ZWLogger.printLog(this,
-								"外键指向的 类名：" + fieldType.getSimpleName()
-										+ "字段名:" + foreignColumnName
-										+ "不符合DataBaseField的条件!");
-					}
 
-				} catch (NoSuchFieldException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					throw new ForeignKeyValidException(errorInfo+" 类名:"+foreignName+"里面根本没有叫"+foreignColumnName+"字段");
+				String foreignName = genericClazz.getName();
+				// if(!foreignClazzName.equals(foreignName)){
+				// throw new
+				// ForeignKeyValidException(errorInfo+" 请属性是"+foreignName+"类型  设置的外键竟然是"+foreignClazzName);
+				// }
+				// 外键是ZWDatabaseBo类型
+				Field objField = ReflectUtil.getFieldByName(fieldType,
+						fkFieldName);
+				Field valueField = ReflectUtil.getFieldByName(clazz,originalName);
+				
+				if (DBUtil.judgeFieldAvaid(objField)) {
+					ForeignInfo fInfo = new ForeignInfo();
+					fInfo.valueField = valueField;
+					fInfo.setOriginalField(field);
+					fInfo.setForeignField(objField);
+					fInfo.setOriginalClazz(clazz);
+					fInfo.setForeignClazz((Class<? extends ZWDatabaseBo>) genericClazz);
+					fInfo.initValue();
+
+					allforeignInfos.add(fInfo);
+				} else {
+					ZWLogger.printLog(this,
+							"外键指向的 类名：" + fieldType.getSimpleName() + "字段名:"
+									+ fkFieldName + "不符合DataBaseField的条件!");
 				}
+
+				// } catch (NoSuchFieldException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// throw new
+				// ForeignKeyValidException(errorInfo+" 类名:"+foreignName+"里面根本没有叫"+fkFieldName+"字段");
+				// }
 				continue;
+			} else {
+				allField.add(field);
+				allColumnNames.add(fieldName);
 			}
 
 		}
 
 	}
 
-	public static final TableInfo newInstance(Class<? extends ZWDatabaseBo> clazz) {
+	public static final TableInfo newInstance(
+			Class<? extends ZWDatabaseBo> clazz) {
 		TableInfo mTableInfo = null;
 		if (tableInfoFactory.containsKey(clazz)) {
 			mTableInfo = tableInfoFactory.get(clazz);
@@ -200,15 +206,24 @@ public class TableInfo {
 	 * @return
 	 */
 	public Class<?> getFieldType(int index) {
-//		String columnName = allColumnNames.get(index);
+		// String columnName = allColumnNames.get(index);
 		Field field = allField.get(index);
 		Class<?> fieldType = null;
 		// 判断属性是否 外键
-//		if (allforeignClassMaps.containsKey(columnName)) {
-//			fieldType = allforeignClassMaps.get(columnName);
-//		} else {
-			fieldType = field.getType();
-//		}
+		// if (allforeignClassMaps.containsKey(columnName)) {
+		// fieldType = allforeignClassMaps.get(columnName);
+		// } else {
+		fieldType = field.getType();
+		// }
 		return fieldType;
 	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public String getIndexTableName() {
+		return indexTableName;
+	}
+
 }

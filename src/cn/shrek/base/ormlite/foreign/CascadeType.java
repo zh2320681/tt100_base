@@ -15,11 +15,11 @@ public enum CascadeType {
 	 */
 	, REMOVE
 	/**
-	 * 级联刷新
+	 * 刷新 检测
 	 */
 	, REFRESH
 	/**
-	 * （级联更新）中选择一个或多个。
+	 * 级联更新
 	 */
 	, MERGE
 

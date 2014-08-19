@@ -365,7 +365,7 @@ public abstract class StmtBuilder{
 //		if(tableAliases != null){
 //			return tableInfo.tableName+" "+tableAliases;
 //		}
-		return tableInfo.tableName;
+		return tableInfo.getTableName();
 	}
 	
 	

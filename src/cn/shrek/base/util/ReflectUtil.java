@@ -1,8 +1,12 @@
 package cn.shrek.base.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.content.ContentValues;
 
 /**
  * 反射的工具类
@@ -60,6 +64,26 @@ public class ReflectUtil {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 获取 field的值
+	 * @param hostObj
+	 * @param field
+	 */
+	public static Object getFieldValue(Object hostObj, Field field){
+		field.setAccessible(true);
+		try {
+			Object fieldValue = field.get(hostObj);
+			return fieldValue;
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	/**
 	 * 得到 class的所有属性
@@ -101,6 +125,45 @@ public class ReflectUtil {
 		return fields;
 	}
 
+	/**
+	 * 通过 名字和参数类型 返回方法
+	 * @param hostClazz
+	 * @param methodName
+	 * @param paras
+	 * @return
+	 */
+	public static Method getMethodByName(Class<?> hostClazz , String methodName , Class<?>...paras){
+		Method method = null;
+		try {
+			method = hostClazz.getMethod(methodName, paras);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return method;
+	}
+	
+	
+	/**
+	 * 执行方法
+	 * @param method
+	 * @param host
+	 * @param paras
+	 */
+	public static void invokeMethod(Method method,Object host , Object...paras){
+		try {
+			method.invoke(host, paras);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public static List<Field> getAllClassField(Class<?> clazz) {
 		return getAllClassField(clazz, null);

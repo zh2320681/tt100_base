@@ -1,9 +1,13 @@
 package cn.shrek.base.ormlite;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.Foreign;
+import cn.shrek.base.util.BaseUtil;
+import cn.shrek.base.util.ReflectUtil;
 
 /**
  * 外键信息
@@ -15,11 +19,23 @@ public class ForeignInfo {
 	 * 原表属性 和 对应的 新表的属性
 	 */
 	Field originalField,foreignField;
+	/**
+	 * 属性值 可能是集合 或者 实体 
+	 */
+	Field valueField;
+	
 	Class<? extends ZWDatabaseBo> originalClazz,foreignClazz;
-	String middleTableName;
+	
+	String middleTableName,originalColumnName,foreignColumnName;
+	
+	/**
+	 * 触发器
+	 */
+	List<String> trigeerNameArr;
 	
 	public ForeignInfo(){
 		super();
+		trigeerNameArr = new ArrayList<String>();
 	}
 
 	public Field getOriginalField() {
@@ -58,8 +74,44 @@ public class ForeignInfo {
 		return middleTableName;
 	}
 
-	public void setMiddleTableName(String middleTableName) {
-		this.middleTableName = middleTableName;
+	public String getOriginalColumnName() {
+		return originalColumnName;
+	}
+
+	public void setOriginalFieldName(String originalFieldName) {
+		this.originalColumnName = originalFieldName;
+	}
+
+	public String getForeignColumnName() {
+		return foreignColumnName;
+	}
+
+	public void setForeignColumnName(String foreignFieldName) {
+		this.foreignColumnName = foreignFieldName;
+	}
+
+	public Field getValueField() {
+		return valueField;
+	}
+
+	/**
+	 * 初始化值
+	 */
+	public void initValue(){
+		String tableName1 = originalClazz.getSimpleName().toUpperCase();
+		String tableName2 = foreignClazz.getSimpleName().toUpperCase();
+
+		StringBuffer sb = new StringBuffer(DBUtil.INTERMEDIATE_CONSTRAINT);
+		if (tableName1.compareTo(tableName2) > 0) {
+			sb.append(tableName1 + "_" + tableName2);
+		} else {
+			sb.append(tableName2 + "_" + tableName1);
+		}
+		
+		middleTableName = sb.toString();
+		
+		originalColumnName = DBUtil.FK_CONSTRAINT+ tableName1 +"_"+originalField.getName();
+		foreignColumnName = DBUtil.FK_CONSTRAINT+ tableName2 +"_"+foreignField.getName();
 	}
 	
 	/**
@@ -70,5 +122,32 @@ public class ForeignInfo {
 		return originalField.getAnnotation(Foreign.class);
 	}
 	
+	/**
+	 * 添加触发器的 名字
+	 * @param trigger
+	 */
+	public void addTiggerName(String trigger){
+		if(BaseUtil.isStringValid(trigger)){
+			trigeerNameArr.add(trigger);
+		}
+	}
 	
+	/**
+	 * 得到 原属性值
+	 * @param host
+	 * @return
+	 */
+	public Object getOriginalFieldValue(Object host){
+		return ReflectUtil.getFieldValue(host, originalField);
+	}
+	
+	
+	/**
+	 * 得到 指向的属性值
+	 * @param host
+	 * @return
+	 */
+	public Object getForeignFieldValue(Object host){
+		return ReflectUtil.getFieldValue(host, foreignField);
+	}
 }

@@ -22,6 +22,7 @@ import android.os.Message;
 import cn.shrek.base.ZWApplication;
 import cn.shrek.base.ZWBo;
 import cn.shrek.base.ZWDatabaseBo;
+import cn.shrek.base.exception.TableInfoInvalidException;
 import cn.shrek.base.ormlite.dao.DBDao;
 import cn.shrek.base.ormlite.dao.DBDaoImpl;
 import cn.shrek.base.ormlite.dao.DBTransforFactory;
@@ -150,7 +151,11 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	private void createTables(SQLiteDatabase arg0,
 			Class<? extends ZWDatabaseBo>... createTablClss) {
 		for (Class<? extends ZWDatabaseBo> clazz : createTablClss) {
-			DBUtil.createTable(arg0, clazz, true);
+			TableInfo info = TableInfo.newInstance(clazz);
+			if(info == null){
+				throw new TableInfoInvalidException("获取不到 类:"+clazz.getSimpleName()+" TableInfo对象!");
+			}
+			DBUtil.createTable(arg0, info, true);
 		}
 	}
 
@@ -163,7 +168,11 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	private void dropTables(SQLiteDatabase arg0,
 			Class<? extends ZWDatabaseBo>... createTablClss) {
 		for (Class<? extends ZWDatabaseBo> clazz : createTablClss) {
-			DBUtil.dropTable(arg0, clazz);
+			TableInfo info = TableInfo.newInstance(clazz);
+			if(info == null){
+				throw new TableInfoInvalidException("获取不到 类:"+clazz.getSimpleName()+" TableInfo对象!");
+			}
+			DBUtil.dropTable(arg0, info);
 		}
 	}
 

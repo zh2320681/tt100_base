@@ -14,15 +14,16 @@ import android.os.AsyncTask;
 import cn.shrek.base.download.bo.DLTask;
 import cn.shrek.base.download.bo.DLThreadTask;
 import cn.shrek.base.ormlite.DBUtil;
+import cn.shrek.base.ormlite.TableInfo;
 import cn.shrek.base.ormlite.ZWDBHelper;
 import cn.shrek.base.util.ZWLogger;
 
 public class DLDatabaseHelper extends SQLiteOpenHelper {
 	/**
-	 * Êı¾İ¿â°æ±¾
+	 * ï¿½ï¿½ï¿½İ¿ï¿½æ±¾
 	 */
 	private static final int DATABASE_VERSION = 1;
-	// Ëø
+	// ï¿½ï¿½
 	private final Object LOCK = new Object();
 
 	private final String LOG_NAME;
@@ -42,13 +43,13 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 		synchronized (LOCK) {
 			SQLiteDatabase mDatabase = getWritableDatabase();
 			int num = mDatabase.delete("DLThreadTask", "taskHashCode = "+taskHashCode, null);
-			ZWLogger.printLog(DLDatabaseHelper.class, "É¾³ıÏß³ÌÏÂÔØÈÎÎñ,É¾³ıÌõÊı:" + num);
+			ZWLogger.printLog(DLDatabaseHelper.class, "É¾ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:" + num);
 			mDatabase.close();
 		}
 	}
 
 	/**
-	 * µÃµ½ËùÓĞÏÂÔØÈÎÎñ
+	 * ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @return
 	 */
@@ -83,7 +84,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * µÃµ½ÒÑ¾­ÏÂÔØµÄÈÎÎñ
+	 * ï¿½Ãµï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @return
 	 */
@@ -144,7 +145,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	// }
 
 	/**
-	 * µÃµ½ÒÑ¾­ÏÂÔØµÄ³¤¶È
+	 * ï¿½Ãµï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ØµÄ³ï¿½ï¿½ï¿½
 	 * @param taskHaseCode
 	 * @return
 	 */
@@ -168,7 +169,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * µÃµ½ÏÂÔØËùÓĞÏß³Ì
+	 * ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
 	 * @param taskHaseCode
 	 * @return
 	 */
@@ -195,7 +196,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Í¨¹ıÏÂÔØÂ·¾¶ »ñÈ¡ Êı¾İ¿âÈÎÎñ¶ÔÏó
+	 * Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ ï¿½ï¿½È¡ ï¿½ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * @param path
 	 * @return
 	 */
@@ -221,7 +222,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * ±£´æÏÂÔØÏß³ÌĞÅÏ¢
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½Ï¢
 	 * @param haseCode
 	 * @param ttSet
 	 */
@@ -250,7 +251,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * ¸üĞÂÏÂÔØÈÎÎñ 
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 	 * @param mDLTask
 	 */
 	public void updateTask(DLTask mDLTask) {
@@ -261,7 +262,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 			
 			int i = mDatabase.update("DLTask", cValues,
 					"downLoadUrl = ?", new String[]{mDLTask.downLoadUrl});
-			ZWLogger.printLog(DLDatabaseHelper.class, "¸üĞÂÏß³ÌÏÂÔØÈÎÎñ,Ïß³Ìid:" + i);
+			ZWLogger.printLog(DLDatabaseHelper.class, "ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ß³ï¿½id:" + i);
 			if (mDatabase.isOpen()){
 				mDatabase.close();
 			}
@@ -270,7 +271,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * ¸üĞÂÏÂÔØÈÎÎñ ºÍÏÂÔØÏß³Ì
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
 	 * @param mTask
 	 * @param ttSet
 	 */
@@ -310,7 +311,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 			cValues.put("errorMessage", task.errorMessage);
 			int num = mDatabase.update("DLTask", cValues,
 					"downLoadUrl = ?", new String[]{task.downLoadUrl});
-			ZWLogger.printLog(DLDatabaseHelper.class, "¸üĞÂÏß³ÌÏÂÔØÈÎÎñ,Ó°ÏìÌõÊı:" + num);
+			ZWLogger.printLog(DLDatabaseHelper.class, "ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:" + num);
 			
 			ContentValues cValues1 = new ContentValues();
 			cValues1.put("downloadBlock", dtTask.downloadBlock);
@@ -319,7 +320,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 			cValues1.put("costTime", dtTask.costTime);
 			int tNum = mDatabase.update("DLThreadTask",
 					cValues1, "idCode = "+ dtTask.idCode, null);
-			ZWLogger.printLog(DLDatabaseHelper.class, "¸üĞÂÏß³ÌÏÂÔØÈÎÎñ,Ó°ÏìÌõÊı:" + tNum);
+			ZWLogger.printLog(DLDatabaseHelper.class, "ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:" + tNum);
 			if (mDatabase.isOpen()){
 				mDatabase.close();
 			}
@@ -327,7 +328,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * ¸üĞÂÏÂÔØÏß³Ì
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
 	 * @param paramDLThreadTask
 	 */
 	public void updateThreadTask(DLThreadTask dtTask) {
@@ -341,7 +342,7 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 			cValues.put("costTime", dtTask.costTime);
 			int num = mDatabase.update("DLThreadTask",
 					cValues, "idCode = "+ dtTask.idCode, null);
-			ZWLogger.printLog(DLDatabaseHelper.class, "¸üĞÂÏß³ÌÏÂÔØÈÎÎñ,Ó°ÏìÌõÊı:" + num);
+			ZWLogger.printLog(DLDatabaseHelper.class, "ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:" + num);
 			if (mDatabase.isOpen()){
 				mDatabase.close();
 			}
@@ -367,15 +368,15 @@ public class DLDatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-		DBUtil.createTable(db, DLTask.class, true);
-		DBUtil.createTable(db, DLThreadTask.class, true);
+		DBUtil.createTable(db, TableInfo.newInstance(DLTask.class), true);
+		DBUtil.createTable(db, TableInfo.newInstance(DLThreadTask.class), true);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
-		DBUtil.dropTable(db, DLTask.class);
-		DBUtil.dropTable(db, DLThreadTask.class);
+		DBUtil.dropTable(db, TableInfo.newInstance(DLTask.class));
+		DBUtil.dropTable(db, TableInfo.newInstance(DLThreadTask.class));
 		onCreate(db);
 	}
 }

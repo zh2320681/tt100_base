@@ -49,29 +49,31 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	public long insertObjs(Collection<T> t) {
 		// TODO Auto-generated method stub
 		// T[] ts = (T[]) t.toArray();
-		return insertObjs(false,false, t);
+		return insertObjs(false, false, t);
 	}
 
-	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist, T... t) {
+	public long insertObjs(boolean isAddFKObject, boolean isUpdateWhenExist,
+			T... t) {
 		List<T> list = new ArrayList<T>();
 		for (T obj : t) {
 			list.add(obj);
 		}
-		return insertObjs(isAddFKObject,isUpdateWhenExist, list);
+		return insertObjs(isAddFKObject, isUpdateWhenExist, list);
 	}
 
 	@Override
-	public long insertOrUpdateObjs(Collection<T> t){
-		return insertObjs(false,true, t);
+	public long insertOrUpdateObjs(Collection<T> t) {
+		return insertObjs(false, true, t);
 	}
-	
+
 	@Override
-	public long insertOrUpdateObjs(T... t){
-		return insertObjs(false,true, t);
+	public long insertOrUpdateObjs(T... t) {
+		return insertObjs(false, true, t);
 	}
-	
+
 	@Override
-	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist, Collection<T> t) {
+	public long insertObjs(boolean isAddFKObject, boolean isUpdateWhenExist,
+			Collection<T> t) {
 		Set<Object> allFKs = new HashSet<Object>();
 		InsertBuider<T> buider = insertBuider();
 		for (T obj : t) {
@@ -102,11 +104,11 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		for (T obj : t) {
 			buider.addValue(obj);
 			try {
-				helper.getDatabase(false).insert(buider.tableInfo.tableName, null,
-						buider.cvs);
+				helper.getDatabase(false).insert(
+						buider.tableInfo.getTableName(), null, buider.cvs);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				if(isUpdateWhenExist){
+				if (isUpdateWhenExist) {
 					updateObj(obj);
 				}
 			}
@@ -166,7 +168,7 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	public long deleteObj(String whereSql) {
 		// TODO Auto-generated method stub
 		TableInfo info = TableInfo.newInstance(clazz);
-		long optNum = helper.getDatabase(false).delete(info.tableName,
+		long optNum = helper.getDatabase(false).delete(info.getTableName(),
 				whereSql, null);
 		return optNum;
 	}
@@ -210,7 +212,7 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	public long updateObj(UpdateBuider<T> mUpdateBuider) {
 		// TODO Auto-generated method stub
 		return helper.getDatabase(false).update(
-				mUpdateBuider.tableInfo.tableName, mUpdateBuider.cvs,
+				mUpdateBuider.tableInfo.getTableName(), mUpdateBuider.cvs,
 				mUpdateBuider.getWhereSql(), null);
 	}
 
@@ -221,43 +223,42 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		updateBuider.addValue(updateMap);
 		return updateObj(updateBuider);
 	}
-	
-	
+
 	/**
 	 * 替换 对象
 	 */
 	@Override
-	public long replaceObj(T t){
+	public long replaceObj(T t) {
 		UpdateBuider<T> updateBuider = updateBuider();
 		updateBuider.addValue(t);
 		return replaceObj(updateBuider);
 	}
-	
+
 	@Override
-	public long replaceObj(UpdateBuider<T> mUpdateBuider){
-		return helper.getDatabase(false).replace(
-				mUpdateBuider.tableInfo.tableName,null, mUpdateBuider.cvs);
+	public long replaceObj(UpdateBuider<T> mUpdateBuider) {
+		return helper.getDatabase(false)
+				.replace(mUpdateBuider.tableInfo.getTableName(), null,
+						mUpdateBuider.cvs);
 	}
-	
-	
+
 	@Override
-	public long replaceObj(Map<String,Object> updateMap){
+	public long replaceObj(Map<String, Object> updateMap) {
 		UpdateBuider<T> updateBuider = updateBuider();
 		updateBuider.addValue(updateMap);
 		return replaceObj(updateBuider);
 	}
-	
+
 	@Override
-	public long replaceObjs(Collection<T> ts){
+	public long replaceObjs(Collection<T> ts) {
 		long sum = 0;
-		for(T obj : ts){
+		for (T obj : ts) {
 			sum += replaceObj(obj);
 		}
 		return sum;
 	}
-	
+
 	@Override
-	public long replaceObjs(T... ts){
+	public long replaceObjs(T... ts) {
 		List<T> list = new ArrayList<T>();
 		for (T obj : ts) {
 			list.add(obj);
@@ -332,7 +333,8 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		return countNum;
 	}
 
-	public <F extends ZWDatabaseBo> F parseCurser(Cursor cursor, Class<F> giveClazz) {
+	public <F extends ZWDatabaseBo> F parseCurser(Cursor cursor,
+			Class<F> giveClazz) {
 		TableInfo info = TableInfo.newInstance(giveClazz);
 
 		String logColumnName = null;
@@ -372,58 +374,34 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 						break;
 					}
 				} else {
-					
-					if(Integer.class.isAssignableFrom(fieldType)
+
+					if (Integer.class.isAssignableFrom(fieldType)
 							|| int.class.isAssignableFrom(fieldType)
 							|| Boolean.class.isAssignableFrom(fieldType)
 							|| boolean.class.isAssignableFrom(fieldType)
-							|| Date.class.isAssignableFrom(fieldType)){
+							|| Date.class.isAssignableFrom(fieldType)) {
 						columnValue = cursor.getInt(index);
-					}else if(Long.class.isAssignableFrom(fieldType)
+					} else if (Long.class.isAssignableFrom(fieldType)
 							|| long.class.isAssignableFrom(fieldType)
-							|| Calendar.class.isAssignableFrom(fieldType)){
+							|| Calendar.class.isAssignableFrom(fieldType)) {
 						columnValue = cursor.getLong(index);
-					}else if(Float.class.isAssignableFrom(fieldType)
-							|| float.class.isAssignableFrom(fieldType)){
+					} else if (Float.class.isAssignableFrom(fieldType)
+							|| float.class.isAssignableFrom(fieldType)) {
 						columnValue = cursor.getFloat(index);
-					}else{
+					} else {
 						columnValue = cursor.getString(index);
 					}
-					
+
 				}
 
-				/**
-				 * 判断属性是否 外键 外键 Worker 里面Company 从数据库捞出是 Company ID 所以要先new
-				 * Company() 把ID值给到Company 在把Company 给Woker对象
-				 */
-				if (info.allforeignClassMaps.containsKey(columnName)) {
-					// Field foreignField = info.allforeignMaps.get(columnName);
-					Class<?> forgienClazz = info.allforeignClassMaps
-							.get(columnName);
-					// 外键指向的对象
-					// Object forgienObj =
-					// forgienClazz.getConstructor().newInstance();
-					// foreignField.setAccessible(true);
-					// 从字段的值 转换为 Java里面的值
-					// Object fieldValues =
-					// DBTransforFactory.getFieldValue(columnValue,
-					// foreignField.getType());
-					// foreignField.set(forgienObj, fieldValues);
-					Object forgienObj = parseCurser(cursor,
-							(Class<? extends ZWDatabaseBo>) forgienClazz);
-					// 方便log输出
-					logObj = forgienObj;
-					field.setAccessible(true);
-					field.set(obj, forgienObj);
-				} else {
-					// 从字段的值 转换为 Java里面的值
-					Object fieldValues = DBTransforFactory.getFieldValue(
-							columnValue, fieldType);
-					// 方便log输出
-					logObj = fieldValues;
-					field.setAccessible(true);
-					field.set(obj, fieldValues);
-				}
+				// 从字段的值 转换为 Java里面的值
+				Object fieldValues = DBTransforFactory.getFieldValue(
+						columnValue, fieldType);
+				// 方便log输出
+				logObj = fieldValues;
+				field.setAccessible(true);
+				field.set(obj, fieldValues);
+
 			}
 			return obj;
 		} catch (Exception e) {
@@ -452,29 +430,29 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	 */
 	@Override
 	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder) {
-		char aliases = 'A';
-		mQueryBuilder.setTableAliases(aliases + "");
-		// TODO Auto-generated method stub
-		for (Map.Entry<String, Field> entry : mQueryBuilder.tableInfo.allforeignMaps
-				.entrySet()) {
-			aliases++;
-
-			String fkName = entry.getKey();
-			Field fkField = entry.getValue();
-			Class<?> fkClazz = mQueryBuilder.tableInfo.allforeignClassMaps
-					.get(fkName);
-
-			// TableInfo fkInfo = TableInfo.newInstance((Class<ZWBo>)fkClazz);
-			mQueryBuilder.joinSB.append("LEFT JOIN "
-					+ DBUtil.getTableName(fkClazz) + " " + aliases + " ON ");
-			mQueryBuilder.joinSB.append(mQueryBuilder
-					.getColumnNameWithAliases(fkName)
-					+ " = "
-					+ aliases
-					+ "."
-					+ DBUtil.getFeildName(fkField));
-			mQueryBuilder.joinSelect.append("," + aliases + ".*");
-		}
+//		char aliases = 'A';
+//		mQueryBuilder.setTableAliases(aliases + "");
+//		// TODO Auto-generated method stub
+//		for (Map.Entry<String, Field> entry : mQueryBuilder.tableInfo.allforeignMaps
+//				.entrySet()) {
+//			aliases++;
+//
+//			String fkName = entry.getKey();
+//			Field fkField = entry.getValue();
+//			Class<?> fkClazz = mQueryBuilder.tableInfo.allforeignClassMaps
+//					.get(fkName);
+//
+//			// TableInfo fkInfo = TableInfo.newInstance((Class<ZWBo>)fkClazz);
+//			mQueryBuilder.joinSB.append("LEFT JOIN "
+//					+ DBUtil.getTableName(fkClazz) + " " + aliases + " ON ");
+//			mQueryBuilder.joinSB.append(mQueryBuilder
+//					.getColumnNameWithAliases(fkName)
+//					+ " = "
+//					+ aliases
+//					+ "."
+//					+ DBUtil.getColumnName(fkField));
+//			mQueryBuilder.joinSelect.append("," + aliases + ".*");
+//		}
 		return queryObjs(mQueryBuilder);
 	}
 }

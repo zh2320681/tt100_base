@@ -7,9 +7,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import cn.shrek.base.ZWBo;
+import cn.shrek.base.ZWConstants;
 import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
@@ -21,13 +23,13 @@ import cn.shrek.base.util.ZWLogger;
 
 public class DBUtil {
 
-	private static final String FK_CONSTRAINT = "FK_";
+	static final String FK_CONSTRAINT = "FK_";
 	private static final String NOT_NULL_CONSTRAINT = " NOT NULL ";
 	private static final String UNIQUE_CONSTRAINT = " UNIQUE ";
 
 	private static final String INDEX_CONSTRAINT = "INDEX_";
 
-	private static final String INTERMEDIATE_CONSTRAINT = "INTERMEDIATE_";
+	static final String INTERMEDIATE_CONSTRAINT = "INTERMEDIATE_";
 	/**
 	 * 数据库 类型
 	 */
@@ -46,13 +48,7 @@ public class DBUtil {
 	private static final String TAG = "DBUtil";
 
 	public static final void createTable(SQLiteDatabase mDatabase,
-			Class<? extends ZWDatabaseBo> clazz, boolean isExists) {
-		TableInfo mTableInfo = TableInfo.newInstance(clazz);
-		if (mTableInfo == null) {
-			throw new NullPointerException("无法获取" + clazz.getSimpleName()
-					+ "表描述对象 TableInfo");
-		}
-
+			TableInfo mTableInfo, boolean isExists) {
 		String tableName = mTableInfo.tableName;
 		StringBuffer createSqlSB = new StringBuffer("create table ");
 		if (isExists) {
@@ -64,7 +60,7 @@ public class DBUtil {
 		StringBuffer premarySB = new StringBuffer();
 		// 索引<支持组合索引>
 		List<String> indexColNames = new ArrayList<String>();
-		
+
 		boolean isFirstAddField = true;
 		for (int i = 0; i < mTableInfo.allColumnNames.size(); i++) {
 			String columnName = mTableInfo.allColumnNames.get(i);
@@ -124,9 +120,10 @@ public class DBUtil {
 		/** ---------------- 创建索引 ---------------------- */
 		if (indexColNames.size() > 0) {
 			boolean isFirstAddIndex = true;
+			String indeName = INDEX_CONSTRAINT + tableName;
 			StringBuffer indexSB = new StringBuffer(
-					"CREATE INDEX  IF NOT EXISTS " + INDEX_CONSTRAINT
-							+ tableName + " ON " + tableName + "(");
+					"CREATE INDEX  IF NOT EXISTS " + indeName + " ON "
+							+ tableName + "(");
 			for (String indexColumn : indexColNames) {
 				indexSB.append(indexColumn + (isFirstAddIndex ? "," : ""));
 				isFirstAddIndex = false;
@@ -134,23 +131,37 @@ public class DBUtil {
 			indexSB.append(");");
 			ZWLogger.printLog(TAG, "创建索引的语句：" + indexSB.toString());
 			mDatabase.execSQL(indexSB.toString());
+
+			mTableInfo.indexTableName = indeName;
 		}
 
 		// 触发器
 		List<String> trigeerArr = new ArrayList<String>();
-		
-		for(ForeignInfo fInfo : mTableInfo.allforeignInfos){
-			/** ---------------- 外键 ---------------------- */
-			Field fkColumnField = mTableInfo.allforeignMaps.get(columnName);
-			if (fkColumnField != null) {
-				Class<?> objClazz = mTableInfo.allforeignClassMaps
-						.get(columnName);
-				// 有外键 得到外键 指向的 那个表名
-				trigeerArr.addAll(getTrigeerFKCaceade(mDatabaseField,
-						getTableName(objClazz), getFeildName(fkColumnField),
-						tableName, columnName));
+
+		/** ---------------- 外键 ---------------------- */
+		for (ForeignInfo fInfo : mTableInfo.allforeignInfos) {
+			trigeerArr.addAll(getTrigeerFKCaceade(fInfo));
+
+			// 创建 中建表
+			if (!tabbleIsExist(mDatabase, fInfo.getMiddleTableName())) {
+				StringBuffer middleCreateSqlSB = new StringBuffer(
+						"create table ");
+				middleCreateSqlSB.append(" IF NOT EXISTS "
+						+ fInfo.getMiddleTableName() + "(");
+				middleCreateSqlSB.append(fInfo.getOriginalColumnName() + " "
+						+ getObjMapping(fInfo.getOriginalField()) + ",");
+				middleCreateSqlSB.append(fInfo.getForeignColumnName() + " "
+						+ getObjMapping(fInfo.getForeignField())
+						+ ",primary key(+" + fInfo.getOriginalColumnName()
+						+ "," + fInfo.getForeignColumnName() + "+));");
+				ZWLogger.printLog(TAG,
+						"创建中建表的语句：" + middleCreateSqlSB.toString());
+
+				mDatabase.execSQL(middleCreateSqlSB.toString());
 			}
+
 		}
+
 		/** ---------------- 创建触发器 ---------------------- */
 		for (String trige : trigeerArr) {
 			try {
@@ -162,22 +173,57 @@ public class DBUtil {
 		}
 	}
 
+	/**
+	 * 删除表 同时 也删除 和该表相关的 索引 触发器 中建表
+	 * 
+	 * @param mDatabase
+	 * @param tableInfo
+	 */
 	public static final void dropTable(SQLiteDatabase mDatabase,
-			Class<? extends ZWDatabaseBo> clazz) {
-		TableInfo mTableInfo = TableInfo.newInstance(clazz);
-		if (mTableInfo == null) {
-			throw new NullPointerException("无法获取" + clazz.getSimpleName()
-					+ "表描述对象 TableInfo");
-		}
+			TableInfo tableInfo) {
 		StringBuffer dropSB = new StringBuffer("DROP TABLE "
-				+ mTableInfo.tableName);
+				+ tableInfo.tableName);
 		ZWLogger.printLog(TAG, "DROP TABLE的语句：" + dropSB.toString());
 		mDatabase.execSQL(dropSB.toString());
+
+		/** --------------- 删除索引 ------------------ */
+		if (BaseUtil.isStringValid(tableInfo.indexTableName)) {
+			String indexDropName = "DROP INDEX IF EXISTS "
+					+ tableInfo.indexTableName + ";";
+			ZWLogger.printLog(TAG, "DROP TRIGGER的语句：" + indexDropName);
+			mDatabase.execSQL(indexDropName);
+		}
+
+		/** --------------- 删除外键 ------------------ */
+		for (ForeignInfo fInfo : tableInfo.allforeignInfos) {
+			dropForeignTable(mDatabase, fInfo);
+		}
+
 	}
 
 	/**
-	 * 主表 和中间表的 级联操作
-	 * 创建触发器 & 级联操作
+	 * 删除外键 和外键相关的
+	 * 
+	 * @param mDatabase
+	 * @param info
+	 */
+	public static final void dropForeignTable(SQLiteDatabase mDatabase,
+			ForeignInfo info) {
+		StringBuffer dropSB = new StringBuffer("DROP TABLE "
+				+ info.middleTableName);
+		ZWLogger.printLog(TAG, "DROP TABLE的语句：" + dropSB.toString());
+		mDatabase.execSQL(dropSB.toString());
+
+		// 删除触发器
+		for (String trigger : info.trigeerNameArr) {
+			String dropTrigger = "DROP TRIGGER IF EXISTS " + trigger + ";";
+			ZWLogger.printLog(TAG, "DROP TRIGGER的语句：" + dropTrigger);
+			mDatabase.execSQL(dropTrigger);
+		}
+	}
+
+	/**
+	 * 主表 和中间表的 级联操作 创建触发器 & 级联操作
 	 * 
 	 * @param mDatabase
 	 * @param paramDatabaseField
@@ -189,85 +235,88 @@ public class DBUtil {
 	 * @param fkFieldName
 	 */
 	private static final List<String> getTrigeerFKCaceade(ForeignInfo info) {
-		Foreign mForeign = info.getForeignAnn(); 
-		String fkTableName= getTableName(info.originalClazz);
-		String fkFieldName= getFeildName(info.originalField);
-		String objTableName = getTableName(info.foreignClazz);
-		String objFieldName = getFeildName(info.foreignField);
-		
+		Foreign mForeign = info.getForeignAnn();
+		String objTableName = getTableName(info.originalClazz);
+		String objFieldName = getColumnName(info.originalField);
+		String middleTableName = info.getMiddleTableName();
+		String middleFieldName = info.getOriginalColumnName();
+
 		List<String> trigeerArr = new ArrayList<String>();
-		
-		boolean isPersist = false,isMerge = false,isRefresh = false ,isRemove = false;
-		
-		for(CascadeType cType : mForeign.cascade()){
-			
-			if(cType == CascadeType.ALL){
+
+		boolean isPersist = false, isMerge = false, isRefresh = false, isRemove = false;
+
+		for (CascadeType cType : mForeign.cascade()) {
+
+			if (cType == CascadeType.ALL) {
 				isPersist = isMerge = isRefresh = isRemove = true;
 				break;
 			}
-			
+
 			switch (cType) {
 			case PERSIST:
-				//插入
+				// 插入
 				isPersist = true;
 				break;
 			case MERGE:
-				//更新
+				// 更新
 				isMerge = true;
 				break;
 			case REFRESH:
-				//更新
+				// 更新
 				isRefresh = true;
 				break;
 			case REMOVE:
-				//删除
+				// 删除
 				isRemove = true;
 				break;
 			default:
 				break;
 			}
 		}
-		
-		if(isPersist){
+
+		if (isPersist) {
 			// 创建插入触发器
+			String triggerTableName = middleFieldName + "_Insert";
 			StringBuffer insertSB = new StringBuffer("CREATE TRIGGER "
-					+ fkFieldName + "_Insert ");
-			insertSB.append(" BEFORE Insert ON " + fkTableName);
+					+ triggerTableName);
+			insertSB.append(" BEFORE Insert ON " + middleTableName);
 			insertSB.append(" FOR EACH ROW BEGIN ");
 			insertSB.append(" SELECT RAISE(ROLLBACK,'没有这个字段名 " + objFieldName
 					+ " in " + objTableName + "')  ");
 			insertSB.append(" WHERE (SELECT " + objFieldName + " FROM "
 					+ objTableName + " WHERE " + objFieldName + " = NEW."
-					+ fkFieldName + ") IS NULL; ");
+					+ middleFieldName + ") IS NULL; ");
 			insertSB.append(" END ");
 			print("创建插入触发器 ：" + insertSB.toString());
 			trigeerArr.add(insertSB.toString());
+
+			info.addTiggerName(triggerTableName);
 		}
-		
-		if(isRefresh){
+
+		if (isRefresh) {
 			// 创建更新触发器
 			StringBuffer updateSB = new StringBuffer("CREATE TRIGGER "
-					+ fkFieldName + "_Update ");
-			updateSB.append(" BEFORE Update ON " + fkTableName);
+					+ middleFieldName + "_Update ");
+			updateSB.append(" BEFORE Update ON " + middleTableName);
 			updateSB.append(" FOR EACH ROW BEGIN ");
 			updateSB.append(" SELECT RAISE(ROLLBACK,'没有这个字段名 " + objFieldName
 					+ " in " + objTableName + "')  ");
 			updateSB.append(" WHERE (SELECT " + objFieldName + " FROM "
 					+ objTableName + " WHERE " + objFieldName + " = NEW."
-					+ fkFieldName + ") IS NULL; ");
+					+ middleFieldName + ") IS NULL; ");
 			updateSB.append(" END ");
 			print("创建更新触发器 ：" + updateSB.toString());
 			trigeerArr.add(updateSB.toString());
 		}
 
-		if(isRemove){
+		if (isRemove) {
 			// 创建Delete触发器
 			StringBuffer deleteSB = new StringBuffer("CREATE TRIGGER "
-					+ fkFieldName + "_Delete ");
+					+ middleFieldName + "_Delete ");
 			deleteSB.append(" BEFORE DELETE ON " + objTableName);
 			deleteSB.append(" FOR EACH ROW BEGIN ");
-			deleteSB.append(" DELETE FROM " + fkTableName + " WHERE " + fkFieldName
-					+ " = OLD." + objFieldName + ";");
+			deleteSB.append(" DELETE FROM " + middleTableName + " WHERE "
+					+ middleFieldName + " = OLD." + objFieldName + ";");
 			deleteSB.append(" END ");
 			print("创建Delete触发器 ：" + deleteSB.toString());
 			trigeerArr.add(deleteSB.toString());
@@ -276,12 +325,12 @@ public class DBUtil {
 		if (isMerge) {
 			// 创建级联操作
 			StringBuffer caceadeUpdateSB = new StringBuffer("CREATE TRIGGER "
-					+ fkFieldName + "_Caceade_Update ");
+					+ middleFieldName + "_Caceade_Update ");
 			caceadeUpdateSB.append(" AFTER Update ON " + objTableName);
 			caceadeUpdateSB.append(" FOR EACH ROW BEGIN ");
-			caceadeUpdateSB.append(" update " + fkTableName + " set "
-					+ fkFieldName + " = new." + objFieldName + " where "
-					+ fkFieldName + " = old." + objFieldName + ";");
+			caceadeUpdateSB.append(" update " + middleTableName + " set "
+					+ middleFieldName + " = new." + objFieldName + " where "
+					+ middleFieldName + " = old." + objFieldName + ";");
 			caceadeUpdateSB.append(" END ");
 			print("创建级联操作 更新触发器 ：" + caceadeUpdateSB.toString());
 			trigeerArr.add(caceadeUpdateSB.toString());
@@ -290,12 +339,11 @@ public class DBUtil {
 	}
 
 	/**
-	 * 得到属性名
-	 * 
+	 * 得到属性 在数据库中的字段名
 	 * @param field
 	 * @return
 	 */
-	public static final String getFeildName(Field field) {
+	public static final String getColumnName(Field field) {
 		String fieldName = field.getAnnotation(DatabaseField.class)
 				.columnName();
 		if (fieldName == null || "".equals(fieldName)) {
@@ -306,7 +354,6 @@ public class DBUtil {
 
 	/**
 	 * 返回外键名称 FK_TEACHER_ID
-	 * 
 	 * @param paramString
 	 * @param clazz
 	 * @return
@@ -338,44 +385,6 @@ public class DBUtil {
 	}
 
 	/**
-	 * 判断外键的名字是否 有效 Teacher.id
-	 * 
-	 * @param fkName
-	 * @return
-	 */
-	public static final boolean isFKNameValid(String fkName) {
-		if (BaseUtil.isStringValid(fkName)) {
-			int index = fkName.indexOf(".");
-			if (index > 0 && index < (fkName.length() - 1)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * 通过 fkName 得到 对于的 class Name
-	 * 
-	 * @param fkName
-	 * @return
-	 */
-	public static final String getClazzNameByFkName(String fkName) {
-		int index = fkName.indexOf(".");
-		return fkName.substring(0, index);
-	}
-
-	/**
-	 * 通过 fkName 得到 对于的 外键属性 Name
-	 * 
-	 * @param fkName
-	 * @return
-	 */
-	public static final String getFieldNameByFkName(String fkName) {
-		int index = fkName.indexOf(".");
-		return fkName.substring(index + 1, fkName.length());
-	}
-
-	/**
 	 * 通过 field类型 得到对应数据库的字段类型
 	 * 
 	 * @param field
@@ -403,10 +412,9 @@ public class DBUtil {
 			}
 		} else if (fieldClazz.isAssignableFrom(ZWBo.class)) {
 			print("可能是外键");
-		} else if (fieldClazz.isAssignableFrom(List.class)) {
+		} else if (fieldClazz.isAssignableFrom(Collection.class)) {
 			print("可能是List");
 		}
-
 		return columnTypeName;
 	}
 
@@ -442,6 +450,7 @@ public class DBUtil {
 						.isAssignableFrom(clazz)))) {
 			return true;
 		}
+		ZWLogger.i(TAG, "属性" + field.getName() + "判定为无效的属性!");
 		return false;
 	}
 
@@ -463,6 +472,41 @@ public class DBUtil {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * 判断表 是否存在
+	 * 
+	 * @param tableName
+	 * @return
+	 */
+	private static boolean tabbleIsExist(SQLiteDatabase mDatabase,
+			String tableName) {
+		boolean result = false;
+		if (tableName == null) {
+			return false;
+		}
+		Cursor cursor = null;
+		try {
+			String sql = "select count(*) as c from "
+					+ ZWConstants.DATABASE_NAME
+					+ " where type ='table' and name ='" + tableName.trim()
+					+ "' ";
+			cursor = mDatabase.rawQuery(sql, null);
+			if (cursor.moveToNext()) {
+				int count = cursor.getInt(0);
+				if (count > 0) {
+					result = true;
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
+		return result;
 	}
 
 	private static void print(String paramString) {

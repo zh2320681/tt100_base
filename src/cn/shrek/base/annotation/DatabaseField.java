@@ -45,34 +45,6 @@ public @interface DatabaseField {
 	 * @return
 	 */
 	String defaultValue() default DEFAULT_STRING;
-
-	/**
-	 * 是否是外键 
-	 * @return
-	 */
-	boolean foreign() default false;
-	/**
-	 * 建表的时候 是否自动创建
-	 * @return
-	 */
-	boolean foreignAutoCreate() default false;
-	/**
-	 * 级联操作
-	 * @return
-	 */
-	boolean foreignAutoRefresh() default false;
-	
-	/**
-	 * 级联操作
-	 * @return
-	 */
-	CascadeType[] cascade() default {};
-
-	/**
-	 * 外键 对于属性名 例如 Student.java中 Teacher对象  指向 Teacher的id的属性名
-	 * @return
-	 */
-	String foreignColumnName() default "";
 	
 	/**
 	 * 暂时用在日期的 格式化
@@ -96,7 +68,6 @@ public @interface DatabaseField {
 	
 	/**
 	 * 是否 创建 索引
-	 * 暂不支持 
 	 * @return
 	 */
 	boolean index() default false;

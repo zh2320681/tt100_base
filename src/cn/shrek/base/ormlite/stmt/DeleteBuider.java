@@ -13,7 +13,7 @@ public class DeleteBuider extends StmtBuilder {
 	@Override
 	public String getSql() {
 		// TODO Auto-generated method stub
-		return "DELETE FROM "+tableInfo.tableName+" WHERE "+getWhereSql();
+		return "DELETE FROM "+tableInfo.getTableName()+" WHERE "+getWhereSql();
 	}
 
 	protected void appendWhereStr(String str){

@@ -201,9 +201,9 @@ public class QueryBuilder extends StmtBuilder {
 	
 	public String getTableNameWithAliases(){ 
 		if(tableAliases != null){
-			return tableInfo.tableName+" "+tableAliases;
+			return tableInfo.getTableName()+" "+tableAliases;
 		}
-		return tableInfo.tableName;
+		return tableInfo.getTableName();
 	}
 	
 	

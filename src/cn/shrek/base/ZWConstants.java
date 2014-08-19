@@ -12,4 +12,6 @@ public class ZWConstants {
 	public static final String NULL_STR_VALUE = "NULL_VALUE";
 	public static final int NULL_INT_VALUE = Integer.MIN_VALUE;
 	
+	
+	public static final String DATABASE_NAME = "sqlite_master";
 }

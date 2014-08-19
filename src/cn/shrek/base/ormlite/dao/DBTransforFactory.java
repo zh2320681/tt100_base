@@ -108,7 +108,11 @@ public class DBTransforFactory {
 		return null;
 	}
 	
-	
+	/**
+	 * 判断 是不是 空值
+	 * @param object
+	 * @return
+	 */
 	public static boolean isFieldNullValue(Object object){
 		if(object == null){
 			return true;
