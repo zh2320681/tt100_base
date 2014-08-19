@@ -17,6 +17,7 @@ import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.example.bean.Company;
 import cn.shrek.base.example.bean.Employee;
 import cn.shrek.base.ormlite.DBUtil;
+import cn.shrek.base.ormlite.TableInfo;
 import cn.shrek.base.ormlite.ZWDBHelper;
 import cn.shrek.base.ormlite.dao.DBDao;
 import cn.shrek.base.ormlite.stmt.DeleteBuider;
@@ -29,7 +30,7 @@ import cn.shrek.base.util.ZWLogger;
 public class DBTestActivity extends ZWActivity {
 
 	@AutoInject(idFormat = "dt_?",clickSelector = "mClick")
-	private Button createBtn, insertBtn, delConBtn, delAllBtn, updateAllBtn,
+	private Button createBtn,dropBtn, insertBtn, delConBtn, delAllBtn, updateAllBtn,
 			updateConBtn, updateMapBtn, queryAllBtn, queryAllBtn1, queryConBtn,
 			queryCountBtn, delConAliBtn, queryConAliBtn, queryJoinBtn,
 			updateCaceadeBtn, deleteCaceadeBtn, asyncBtn, sqlToMapBtn,
@@ -47,7 +48,11 @@ public class DBTestActivity extends ZWActivity {
 			// TODO Auto-generated method stub
 			if (v == createBtn) {
 				SQLiteDatabase mDatabase = mZWDBHelper.getDatabase(false);
-			} else if (v == insertBtn) {
+			} else if(v == dropBtn){
+				SQLiteDatabase mDatabase = mZWDBHelper.getDatabase(false);
+				DBUtil.dropTable(mDatabase, TableInfo.newInstance(Company.class));
+				DBUtil.dropTable(mDatabase, TableInfo.newInstance(Employee.class));
+			}else if (v == insertBtn) {
 				// DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
 				// List<Company> coms = new ArrayList<Company>();
 				// for (int i = 0; i < 30; i++) {
@@ -70,7 +75,7 @@ public class DBTestActivity extends ZWActivity {
 				List<Employee> coms = new ArrayList<Employee>();
 
 				Company company = new Company();
-				company.id = 100;
+				company.comId = 100;
 				company.companyName = "天天一百网络科技";
 				company.info = "好公司";
 				company.isITCompany = true;
@@ -229,7 +234,7 @@ public class DBTestActivity extends ZWActivity {
 						List<Employee> coms = new ArrayList<Employee>();
 
 						Company company = new Company();
-						company.id = 100;
+						company.comId = 100;
 						company.companyName = "天天一百网络科技";
 						company.info = "好公司";
 						company.isITCompany = true;
@@ -289,6 +294,7 @@ public class DBTestActivity extends ZWActivity {
 				return new Class[]{Company.class, Employee.class};
 			}
 
+			
 		};
 
 	}

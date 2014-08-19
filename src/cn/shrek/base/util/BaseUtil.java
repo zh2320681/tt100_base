@@ -241,7 +241,7 @@ public class BaseUtil {
 	 * @return
 	 */
 	public static boolean isStringValid(String string){
-		return string != null && "".equals(string);
+		return string != null && !"".equals(string);
 	}
 	
 	/**

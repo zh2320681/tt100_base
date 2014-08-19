@@ -107,12 +107,12 @@ public class ReflectUtil {
 			}
 		}
 		for (Field field : publicFields) {
+			if (fieldCondition != null && !fieldCondition.isFieldValid(field)) {
+				continue;
+			}
 			boolean isFind = false;
 			for (int i = 0; i < declaredFields.length; i++) {
 				Field oldField = declaredFields[i];
-				if (fieldCondition != null && !fieldCondition.isFieldValid(field)) {
-					continue;
-				}
 				if ( oldField.getName().equals(field.getName())) {
 					isFind = true;
 					break;

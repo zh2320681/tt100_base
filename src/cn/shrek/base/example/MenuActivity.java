@@ -98,7 +98,7 @@ public class MenuActivity extends ZWActivity {
 				if(tag.equals(AutoInjectActivity.TAG1)){
 					Company com = new Company();
 					com.companyName = "天天一百";
-					com.id = new  Random().nextInt(1000);;
+					com.comId = new  Random().nextInt(1000);;
 					return com;
 				}else if(tag.equals(AutoInjectActivity.TAG2)){
 					Employee com = new Employee();
@@ -115,7 +115,7 @@ public class MenuActivity extends ZWActivity {
 				Map<Class<?>,Identity> list = new HashMap<Class<?>,Identity>();
 				Company com = new Company();
 				com.companyName = "天天一百";
-				com.id = 250;
+				com.comId = 250;
 				list.put(Company.class,com);
 				
 				ZWEventBus bus = new ZWEventBus();

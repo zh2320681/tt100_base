@@ -119,7 +119,7 @@ public class ForeignInfo {
 	 * @return
 	 */
 	public Foreign getForeignAnn(){
-		return originalField.getAnnotation(Foreign.class);
+		return valueField.getAnnotation(Foreign.class);
 	}
 	
 	/**

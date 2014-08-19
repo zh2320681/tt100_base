@@ -50,7 +50,9 @@ public class TableInfo {
 		}
 		tableName = DBUtil.getTableName(clazz);
 		allColumnNames = new ArrayList<String>();
-
+		
+		allField = new ArrayList<Field>();
+		
 		this.allforeignInfos = new ArrayList<ForeignInfo>();
 
 		List<Field> allFieldCache = ReflectUtil.getAllClassField(clazz,
@@ -66,8 +68,6 @@ public class TableInfo {
 		for (Field field : allFieldCache) {
 			// 属性的类型
 			Class<?> fieldType = field.getType();
-			// 添加字段名
-			String fieldName = DBUtil.getColumnName(field);
 
 			/**
 			 * ########## 外键判断 ##########
@@ -77,7 +77,7 @@ public class TableInfo {
 				String originalName = foreignAnn.originalColumnName();
 				String fkFieldName = foreignAnn.foreignColumnName();
 
-				String errorInfo = "设置了无效的外键:" + fieldName;
+				String errorInfo = "设置了无效的外键:" + field.getName();
 
 				if (!BaseUtil.isStringValid(originalName)
 						|| !BaseUtil.isStringValid(fkFieldName)) {
@@ -109,20 +109,14 @@ public class TableInfo {
 					continue;
 				}
 
-				String foreignName = genericClazz.getName();
-				// if(!foreignClazzName.equals(foreignName)){
-				// throw new
-				// ForeignKeyValidException(errorInfo+" 请属性是"+foreignName+"类型  设置的外键竟然是"+foreignClazzName);
-				// }
-				// 外键是ZWDatabaseBo类型
-				Field objField = ReflectUtil.getFieldByName(fieldType,
+				Field objField = ReflectUtil.getFieldByName(genericClazz,
 						fkFieldName);
-				Field valueField = ReflectUtil.getFieldByName(clazz,originalName);
+				Field orgField = ReflectUtil.getFieldByName(clazz,originalName);
 				
 				if (DBUtil.judgeFieldAvaid(objField)) {
 					ForeignInfo fInfo = new ForeignInfo();
-					fInfo.valueField = valueField;
-					fInfo.setOriginalField(field);
+					fInfo.valueField = field;
+					fInfo.setOriginalField(orgField);
 					fInfo.setForeignField(objField);
 					fInfo.setOriginalClazz(clazz);
 					fInfo.setForeignClazz((Class<? extends ZWDatabaseBo>) genericClazz);
@@ -143,6 +137,8 @@ public class TableInfo {
 				// }
 				continue;
 			} else {
+				// 添加字段名
+				String fieldName = DBUtil.getColumnName(field);
 				allField.add(field);
 				allColumnNames.add(fieldName);
 			}

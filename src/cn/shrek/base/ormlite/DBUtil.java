@@ -140,8 +140,6 @@ public class DBUtil {
 
 		/** ---------------- 外键 ---------------------- */
 		for (ForeignInfo fInfo : mTableInfo.allforeignInfos) {
-			trigeerArr.addAll(getTrigeerFKCaceade(fInfo));
-
 			// 创建 中建表
 			if (!tabbleIsExist(mDatabase, fInfo.getMiddleTableName())) {
 				StringBuffer middleCreateSqlSB = new StringBuffer(
@@ -152,14 +150,14 @@ public class DBUtil {
 						+ getObjMapping(fInfo.getOriginalField()) + ",");
 				middleCreateSqlSB.append(fInfo.getForeignColumnName() + " "
 						+ getObjMapping(fInfo.getForeignField())
-						+ ",primary key(+" + fInfo.getOriginalColumnName()
-						+ "," + fInfo.getForeignColumnName() + "+));");
+						+ ",primary key(" + fInfo.getOriginalColumnName()
+						+ "," + fInfo.getForeignColumnName() + "));");
 				ZWLogger.printLog(TAG,
 						"创建中建表的语句：" + middleCreateSqlSB.toString());
 
 				mDatabase.execSQL(middleCreateSqlSB.toString());
 			}
-
+			trigeerArr.addAll(getTrigeerFKCaceade(fInfo));
 		}
 
 		/** ---------------- 创建触发器 ---------------------- */
@@ -181,7 +179,7 @@ public class DBUtil {
 	 */
 	public static final void dropTable(SQLiteDatabase mDatabase,
 			TableInfo tableInfo) {
-		StringBuffer dropSB = new StringBuffer("DROP TABLE "
+		StringBuffer dropSB = new StringBuffer("DROP TABLE IF EXISTS "
 				+ tableInfo.tableName);
 		ZWLogger.printLog(TAG, "DROP TABLE的语句：" + dropSB.toString());
 		mDatabase.execSQL(dropSB.toString());
@@ -209,7 +207,7 @@ public class DBUtil {
 	 */
 	public static final void dropForeignTable(SQLiteDatabase mDatabase,
 			ForeignInfo info) {
-		StringBuffer dropSB = new StringBuffer("DROP TABLE "
+		StringBuffer dropSB = new StringBuffer("DROP TABLE IF EXISTS "
 				+ info.middleTableName);
 		ZWLogger.printLog(TAG, "DROP TABLE的语句：" + dropSB.toString());
 		mDatabase.execSQL(dropSB.toString());
@@ -295,8 +293,10 @@ public class DBUtil {
 
 		if (isRefresh) {
 			// 创建更新触发器
+			String triggerTableName = middleFieldName + "_Update";
+			
 			StringBuffer updateSB = new StringBuffer("CREATE TRIGGER "
-					+ middleFieldName + "_Update ");
+					+ triggerTableName);
 			updateSB.append(" BEFORE Update ON " + middleTableName);
 			updateSB.append(" FOR EACH ROW BEGIN ");
 			updateSB.append(" SELECT RAISE(ROLLBACK,'没有这个字段名 " + objFieldName
@@ -307,12 +307,16 @@ public class DBUtil {
 			updateSB.append(" END ");
 			print("创建更新触发器 ：" + updateSB.toString());
 			trigeerArr.add(updateSB.toString());
+			
+			info.addTiggerName(triggerTableName);
 		}
 
 		if (isRemove) {
 			// 创建Delete触发器
+			String triggerTableName = middleFieldName + "_Delete";
+			
 			StringBuffer deleteSB = new StringBuffer("CREATE TRIGGER "
-					+ middleFieldName + "_Delete ");
+					+ triggerTableName);
 			deleteSB.append(" BEFORE DELETE ON " + objTableName);
 			deleteSB.append(" FOR EACH ROW BEGIN ");
 			deleteSB.append(" DELETE FROM " + middleTableName + " WHERE "
@@ -320,10 +324,13 @@ public class DBUtil {
 			deleteSB.append(" END ");
 			print("创建Delete触发器 ：" + deleteSB.toString());
 			trigeerArr.add(deleteSB.toString());
+			
+			info.addTiggerName(triggerTableName);
 		}
 
 		if (isMerge) {
 			// 创建级联操作
+			String triggerTableName = middleFieldName + "_Caceade_Update";
 			StringBuffer caceadeUpdateSB = new StringBuffer("CREATE TRIGGER "
 					+ middleFieldName + "_Caceade_Update ");
 			caceadeUpdateSB.append(" AFTER Update ON " + objTableName);
@@ -334,6 +341,8 @@ public class DBUtil {
 			caceadeUpdateSB.append(" END ");
 			print("创建级联操作 更新触发器 ：" + caceadeUpdateSB.toString());
 			trigeerArr.add(caceadeUpdateSB.toString());
+			
+			info.addTiggerName(triggerTableName);
 		}
 		return trigeerArr;
 	}
@@ -496,6 +505,7 @@ public class DBUtil {
 			if (cursor.moveToNext()) {
 				int count = cursor.getInt(0);
 				if (count > 0) {
+					ZWLogger.i(TAG, "表名叫:"+tableName+"已经存在!!!!!");
 					result = true;
 				}
 			}

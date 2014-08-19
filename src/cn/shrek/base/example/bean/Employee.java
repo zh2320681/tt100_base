@@ -5,6 +5,7 @@ import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
 import cn.shrek.base.annotation.Foreign;
 import cn.shrek.base.event.ZWEventPara;
+import cn.shrek.base.ormlite.foreign.CascadeType;
 import cn.shrek.base.ormlite.foreign.MappingType;
 import cn.shrek.base.ui.inject.Identity;
 
@@ -16,7 +17,7 @@ public class Employee extends ZWDatabaseBo implements Identity, ZWEventPara {
 	 */
 	private static final long serialVersionUID = -608798915010079053L;
 
-	@Foreign(foreignColumnName = "id", originalColumnName = "id", mappingType = MappingType.ONE_TO_MANY)
+	@Foreign(foreignColumnName = "comId", originalColumnName = "id", mappingType = MappingType.ONE_TO_MANY,cascade={CascadeType.ALL})
 	public Company company;
 
 	// @DatabaseField(canBeNull = false)
