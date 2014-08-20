@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.view.View;
@@ -29,9 +30,10 @@ import cn.shrek.base.util.ZWLogger;
 
 public class DBTestActivity extends ZWActivity {
 
-	@AutoInject(idFormat = "dt_?",clickSelector = "mClick")
-	private Button createBtn,dropBtn, insertBtn, delConBtn, delAllBtn, updateAllBtn,
-			updateConBtn, updateMapBtn, queryAllBtn, queryAllBtn1, queryConBtn,
+	@AutoInject(idFormat = "dt_?", clickSelector = "mClick")
+	private Button createBtn, dropBtn, insertBtn, mergeInsertBtn,
+			mergeInsertBtn1, delConBtn, delAllBtn, updateAllBtn, updateConBtn,
+			updateMapBtn, queryAllBtn, queryAllBtn1, conQueryManyAllBtn,conQueryOneAllBtn,queryConBtn,
 			queryCountBtn, delConAliBtn, queryConAliBtn, queryJoinBtn,
 			updateCaceadeBtn, deleteCaceadeBtn, asyncBtn, sqlToMapBtn,
 			sqlToObjectBtn;
@@ -48,29 +50,28 @@ public class DBTestActivity extends ZWActivity {
 			// TODO Auto-generated method stub
 			if (v == createBtn) {
 				SQLiteDatabase mDatabase = mZWDBHelper.getDatabase(false);
-			} else if(v == dropBtn){
+			} else if (v == dropBtn) {
 				SQLiteDatabase mDatabase = mZWDBHelper.getDatabase(false);
-				DBUtil.dropTable(mDatabase, TableInfo.newInstance(Company.class));
-				DBUtil.dropTable(mDatabase, TableInfo.newInstance(Employee.class));
-			}else if (v == insertBtn) {
-				// DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
-				// List<Company> coms = new ArrayList<Company>();
-				// for (int i = 0; i < 30; i++) {
-				// Company c = new Company();
-				// c.id = i;
-				// c.companyName="公司名称"+i;
-				// if(i%10 == 0){
-				// c.info = StmtBuilder.NULL_STR;
-				// }else{
-				// c.info = "info"+i;
-				// }
-				//
-				// c.isITCompany = (i%2==1);
-				// coms.add(c);
-				// }
-				// long optNum = comDao.insertObjs(coms);
-				// showToast(optNum);
+				DBUtil.dropTable(mDatabase,
+						TableInfo.newInstance(Company.class));
+				DBUtil.dropTable(mDatabase,
+						TableInfo.newInstance(Employee.class));
+			} else if (v == insertBtn) {
 
+				List<Company> coms = new ArrayList<Company>();
+				for (int i = 101; i < 130; i++) {
+					Company company = new Company();
+					company.comId = i;
+					company.companyName = "天天" + i + "网络科技";
+					company.info = "好公司";
+					company.isITCompany = true;
+
+					coms.add(company);
+				}
+
+				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
+				comDao.insertObjs(coms);
+			} else if (v == mergeInsertBtn) {
 				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);
 				List<Employee> coms = new ArrayList<Employee>();
 
@@ -80,9 +81,6 @@ public class DBTestActivity extends ZWActivity {
 				company.info = "好公司";
 				company.isITCompany = true;
 
-				DBDao<Company> companyDao = mZWDBHelper.getDao(Company.class);
-				companyDao.insertObj(company);
-
 				for (int i = 0; i < 30; i++) {
 					Employee e = new Employee();
 					e.id = i;
@@ -91,24 +89,47 @@ public class DBTestActivity extends ZWActivity {
 					e.isNew = (i % 2 == 1);
 					coms.add(e);
 				}
-				long optNum = comDao.insertObjs(coms);
+				long optNum = comDao.insertObjs(true, coms);
+				showToast(optNum);
+			} else if (v == mergeInsertBtn1) {
+				// 多表 一对多 插入
+				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
+				List<Employee> coms = new ArrayList<Employee>();
+
+				Company company = new Company();
+				company.comId = 100;
+				company.companyName = "天天一百网络科技";
+				company.info = "好公司";
+				company.isITCompany = true;
+
+				for (int i = 0; i < 30; i++) {
+					Employee e = new Employee();
+					e.id = i;
+					e.name = "钱骚货" + i + "号";
+					e.isNew = (i % 2 == 1);
+					coms.add(e);
+				}
+
+				company.allWorks = coms;
+
+				long optNum = comDao.insertObjs(true, company);
 				showToast(optNum);
 			} else if (v == delConBtn) {
-				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
+				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);
 				DeleteBuider deleteBuider = comDao.deleteBuider();
 				deleteBuider.leftBrackets().between("id", 10, 15).and()
-						.like("info", "12", true, true).rightBrackets().or()
+						.like("name", "骚货", true, true).rightBrackets().or()
 						.in("id", 22, 24, 26);
 				ZWLogger.printLog(DBTestActivity.this, "删除SQL测试:::"
 						+ deleteBuider.getSql());
 				long optNum = comDao.deleteObjs(deleteBuider);
 				showToast(optNum);
 			} else if (v == delConAliBtn) {
-				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
+				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);
 				DeleteBuider deleteBuider = comDao.deleteBuider();
 				deleteBuider.setTableAliases("A");
 				deleteBuider.leftBrackets().between("id", 10, 15).and()
-						.like("info", "12", true, true).rightBrackets().or()
+						.like("name", "骚货", true, true).rightBrackets().or()
 						.in("id", 22, 24, 26);
 				ZWLogger.printLog(DBTestActivity.this, "删除SQL测试:::"
 						+ deleteBuider.getSql());
@@ -121,6 +142,9 @@ public class DBTestActivity extends ZWActivity {
 			} else if (v == delAllBtn) {
 				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
 				long optNum = comDao.deleteAll();
+
+				DBDao<Employee> empDao = mZWDBHelper.getDao(Employee.class);
+				optNum += empDao.deleteAll();
 				showToast(optNum);
 			} else if (v == updateAllBtn) {
 				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
@@ -130,16 +154,16 @@ public class DBTestActivity extends ZWActivity {
 				long optNum = comDao.updateObj(c);
 				showToast(optNum);
 			} else if (v == updateConBtn) {
-				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
-				UpdateBuider<Company> updateBuider = comDao.updateBuider();
+				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);
+				UpdateBuider<Employee> updateBuider = comDao.updateBuider();
 				updateBuider.leftBrackets().between("id", 10, 15).and()
-						.like("info", "12", true, true).rightBrackets().or()
+						.like("name", "骚货", true, true).rightBrackets().or()
 						.in("id", 22, 24, 26);
-				Company c = new Company();
-				comDao.clearObj(c);
-				c.companyName = "更新去除Boolean特殊";
-				c.isExpired = true;
-				updateBuider.addValue(c, "isITCompany");
+				Employee e = new Employee();
+				comDao.clearObj(e);
+				e.name = "更新去除Boolean特殊";
+				e.isExpired = true;
+				updateBuider.addValue(e, "isITCompany");
 				long optNum = comDao.updateObj(updateBuider);
 				showToast(optNum);
 			} else if (v == updateMapBtn) {
@@ -163,7 +187,32 @@ public class DBTestActivity extends ZWActivity {
 					sb.append(j + ". " + e.toString() + "\n");
 				}
 				infoView.setText(sb.toString());
-			} else if (v == queryAllBtn1) {
+			} else if(v == conQueryManyAllBtn){
+				//条件查询(包括多对一外键对象)
+				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);
+				QueryBuilder qBuilder = comDao.queryBuilder();
+				qBuilder.in("id", 10, 15, 18);
+				
+				List<Employee> emps = comDao.queryJoinObjs(qBuilder);
+				
+				StringBuffer sb = new StringBuffer();
+				for (int j = 0; j < emps.size(); j++) {
+					Employee e = emps.get(j);
+					sb.append(j + ". " + e.toString() + "\n");
+				}
+				infoView.setText(sb.toString());
+			}else if(v == conQueryOneAllBtn){
+				//条件查询(包括一对多外键对象)
+				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
+				List<Company> emps = comDao.queryJoinAllObjs();
+				
+				StringBuffer sb = new StringBuffer();
+				for (int j = 0; j < emps.size(); j++) {
+					Company e = emps.get(j);
+					sb.append(j + ". " + e.toString() + "\n");
+				}
+				infoView.setText(sb.toString());
+			}else if (v == queryAllBtn1) {
 				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);
 				List<Employee> emps = comDao
 						.queryObjs("select a.*,b.* from Employee a LEFT JOIN _Company b on a.FK_Company_id = b._ID");
@@ -269,8 +318,8 @@ public class DBTestActivity extends ZWActivity {
 				}
 				infoView.setText(sb.toString());
 			} else if (v == sqlToObjectBtn) {
-				List<Employee> list = mZWDBHelper
-						.queryObjs("select * from Employee ",Employee.class);
+				List<Employee> list = mZWDBHelper.queryObjs(
+						"select * from Employee ", Employee.class);
 
 				StringBuffer sb = new StringBuffer();
 				for (int j = 0; j < list.size(); j++) {
@@ -291,10 +340,9 @@ public class DBTestActivity extends ZWActivity {
 			@Override
 			public Class<? extends ZWDatabaseBo>[] loadDatabaseClazz() {
 				// TODO Auto-generated method stub
-				return new Class[]{Company.class, Employee.class};
+				return new Class[] { Company.class, Employee.class };
 			}
 
-			
 		};
 
 	}

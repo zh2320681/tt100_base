@@ -183,12 +183,12 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	 * @param objClass
 	 * @return
 	 */
-	public <ParseObjec> ParseObjec queryObj(String sql,
+	public <ParseObjec extends ZWDatabaseBo> ParseObjec queryObj(String sql,
 			Class<ParseObjec> objClass) {
 		Cursor cursor = getDatabase(true).rawQuery(sql, null);
 		ParseObjec obj = null;
 		if (cursor.moveToNext()) {
-			obj = getObjByCursor(cursor, objClass);
+			obj = DBUtil.parseCurser(cursor, objClass);
 		}
 		return obj;
 	}
@@ -200,12 +200,12 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	 * @param objClass
 	 * @return
 	 */
-	public <ParseObjec> List<ParseObjec> queryObjs(String sql,
+	public <ParseObjec extends ZWDatabaseBo> List<ParseObjec> queryObjs(String sql,
 			Class<ParseObjec> objClass) {
 		Cursor cursor = getDatabase(true).rawQuery(sql, null);
 		List<ParseObjec> list = new ArrayList<ParseObjec>();
 		while (cursor.moveToNext()) {
-			ParseObjec obj = getObjByCursor(cursor, objClass);
+			ParseObjec obj = DBUtil.parseCurser(cursor, objClass);
 			if (obj != null) {
 				list.add(obj);
 			}
@@ -226,7 +226,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 			int columnCount = cursor.getColumnCount();
 			for (int i = 0; i < columnCount; i++) {
 				String columnName = cursor.getColumnName(i);
-				Object obj = getObjectValueByCursor(cursor, i);
+				Object obj = DBUtil.getColumnValueFromCoursor(cursor, columnName, null);
 				map.put(columnName, obj);
 			}
 		}
@@ -242,7 +242,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 			Map<String, Object> map = new HashMap<String, Object>();
 			for (int i = 0; i < columnCount; i++) {
 				String columnName = cursor.getColumnName(i);
-				Object obj = getObjectValueByCursor(cursor, i);
+				Object obj = DBUtil.getColumnValueFromCoursor(cursor, columnName, null);
 				map.put(columnName, obj);
 			}
 			lists.add(map);

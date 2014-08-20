@@ -14,4 +14,10 @@ public class ZWConstants {
 	
 	
 	public static final String DATABASE_NAME = "sqlite_master";
+	
+	
+	/**
+	 * 线程执行 名称
+	 */
+	public static final String THREAD_ENFORCER = "ZWEnforcer";
 }

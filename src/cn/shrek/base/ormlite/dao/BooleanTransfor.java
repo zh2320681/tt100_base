@@ -23,7 +23,7 @@ public class BooleanTransfor implements DBTransforDao<Boolean, Integer> {
 	@Override
 	public Object getFeildValueNull() {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 	@Override

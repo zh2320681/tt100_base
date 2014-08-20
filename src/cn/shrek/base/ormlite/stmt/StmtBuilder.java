@@ -19,7 +19,7 @@ public abstract class StmtBuilder{
 	public static final Short NULL_SHORT = Short.MIN_VALUE;
 	
 	public static final String SPEPARANT_STR = " ";
-	private static final String WHERE_KEYWORD = " WHERE ";
+	public static final String WHERE_KEYWORD = " WHERE ";
 	public TableInfo tableInfo ;
 	public StringBuffer whereBuffer;
 	public StringBuffer sqlBuffer;

@@ -169,6 +169,35 @@ public class ReflectUtil {
 		return getAllClassField(clazz, null);
 	}
 	
+	/**
+	 * 通过无参的构造方法 得到实例
+	 * @param clazz
+	 * @return
+	 */
+	public static <F> F getInstance(Class<F> clazz){
+		try {
+			F obj = clazz.getConstructor().newInstance();
+			return obj;
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	public static interface FieldCondition {
 
 		boolean isFieldValid(Field field);

@@ -67,7 +67,7 @@ public class EventFragment2 extends ZWFragment {
 	}
 	
 	
-	@Subscribe(tag=EventFragment1.EVENT5,threadMode=ThreadMode.MainThread)
+	@Subscribe(tag=EventFragment1.EVENT5,threadMode=ThreadMode.PostThread)
 	public void onEventMain(){
 		infoView.setText("非主线程发给我,我主线程处理!");
 	}

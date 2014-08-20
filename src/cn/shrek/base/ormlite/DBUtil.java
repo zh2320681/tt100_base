@@ -16,9 +16,12 @@ import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
 import cn.shrek.base.annotation.Foreign;
+import cn.shrek.base.ormlite.dao.DBTransforFactory;
 import cn.shrek.base.ormlite.foreign.CascadeType;
+import cn.shrek.base.util.AndroidVersionCheckUtils;
 import cn.shrek.base.util.BaseUtil;
 import cn.shrek.base.util.LogLevel;
+import cn.shrek.base.util.ReflectUtil;
 import cn.shrek.base.util.ZWLogger;
 
 public class DBUtil {
@@ -150,8 +153,8 @@ public class DBUtil {
 						+ getObjMapping(fInfo.getOriginalField()) + ",");
 				middleCreateSqlSB.append(fInfo.getForeignColumnName() + " "
 						+ getObjMapping(fInfo.getForeignField())
-						+ ",primary key(" + fInfo.getOriginalColumnName()
-						+ "," + fInfo.getForeignColumnName() + "));");
+						+ ",primary key(" + fInfo.getOriginalColumnName() + ","
+						+ fInfo.getForeignColumnName() + "));");
 				ZWLogger.printLog(TAG,
 						"创建中建表的语句：" + middleCreateSqlSB.toString());
 
@@ -294,7 +297,7 @@ public class DBUtil {
 		if (isRefresh) {
 			// 创建更新触发器
 			String triggerTableName = middleFieldName + "_Update";
-			
+
 			StringBuffer updateSB = new StringBuffer("CREATE TRIGGER "
 					+ triggerTableName);
 			updateSB.append(" BEFORE Update ON " + middleTableName);
@@ -307,14 +310,14 @@ public class DBUtil {
 			updateSB.append(" END ");
 			print("创建更新触发器 ：" + updateSB.toString());
 			trigeerArr.add(updateSB.toString());
-			
+
 			info.addTiggerName(triggerTableName);
 		}
 
 		if (isRemove) {
 			// 创建Delete触发器
 			String triggerTableName = middleFieldName + "_Delete";
-			
+
 			StringBuffer deleteSB = new StringBuffer("CREATE TRIGGER "
 					+ triggerTableName);
 			deleteSB.append(" BEFORE DELETE ON " + objTableName);
@@ -324,7 +327,7 @@ public class DBUtil {
 			deleteSB.append(" END ");
 			print("创建Delete触发器 ：" + deleteSB.toString());
 			trigeerArr.add(deleteSB.toString());
-			
+
 			info.addTiggerName(triggerTableName);
 		}
 
@@ -341,7 +344,7 @@ public class DBUtil {
 			caceadeUpdateSB.append(" END ");
 			print("创建级联操作 更新触发器 ：" + caceadeUpdateSB.toString());
 			trigeerArr.add(caceadeUpdateSB.toString());
-			
+
 			info.addTiggerName(triggerTableName);
 		}
 		return trigeerArr;
@@ -349,6 +352,7 @@ public class DBUtil {
 
 	/**
 	 * 得到属性 在数据库中的字段名
+	 * 
 	 * @param field
 	 * @return
 	 */
@@ -363,6 +367,7 @@ public class DBUtil {
 
 	/**
 	 * 返回外键名称 FK_TEACHER_ID
+	 * 
 	 * @param paramString
 	 * @param clazz
 	 * @return
@@ -505,7 +510,7 @@ public class DBUtil {
 			if (cursor.moveToNext()) {
 				int count = cursor.getInt(0);
 				if (count > 0) {
-					ZWLogger.i(TAG, "表名叫:"+tableName+"已经存在!!!!!");
+					ZWLogger.i(TAG, "表名叫:" + tableName + "已经存在!!!!!");
 					result = true;
 				}
 			}
@@ -517,6 +522,88 @@ public class DBUtil {
 			}
 		}
 		return result;
+	}
+
+	public static <F extends ZWDatabaseBo> F parseCurser(Cursor cursor,
+			Class<F> giveClazz) {
+		TableInfo info = TableInfo.newInstance(giveClazz);
+
+		F obj = ReflectUtil.getInstance(giveClazz);
+		for (int i = 0; i < info.allColumnNames.size(); i++) {
+			String columnName = info.allColumnNames.get(i);
+			Field field = info.allField.get(i);
+
+			// 属性类型
+			Class<?> fieldType = info.getFieldType(i);
+
+			Object columnValue = getColumnValueFromCoursor(cursor, columnName,
+					fieldType);
+			if (columnName == null) {
+				continue;
+			}
+			// 从字段的值 转换为 Java里面的值
+			Object fieldValues = DBTransforFactory.getFieldValue(columnValue,
+					fieldType);
+			ReflectUtil.setFieldValue(obj, field, fieldValues);
+		}
+		return obj;
+	}
+
+	/**
+	 * 得到字段值
+	 * 
+	 * @param cursor
+	 * @param columnName
+	 * @param fieldType
+	 * @return
+	 */
+	public static Object getColumnValueFromCoursor(Cursor cursor,
+			String columnName, Class<?> fieldType) {
+		Object columnValue = null;
+		int index = cursor.getColumnIndex(columnName);
+		if (index == -1) {
+			return columnValue;
+		}
+		// 兼容性 2.3
+		if (AndroidVersionCheckUtils.hasHoneycomb()) {
+			switch (cursor.getType(index)) {
+			case Cursor.FIELD_TYPE_STRING:
+				columnValue = cursor.getString(index);
+				break;
+			case Cursor.FIELD_TYPE_FLOAT:
+				columnValue = cursor.getFloat(index);
+				break;
+			case Cursor.FIELD_TYPE_INTEGER:
+				columnValue = cursor.getInt(index);
+				break;
+			case Cursor.FIELD_TYPE_NULL:
+				columnValue = null;
+				break;
+			case Cursor.FIELD_TYPE_BLOB:
+				columnValue = cursor.getBlob(index);
+				break;
+			}
+		} else {
+			
+			if (Integer.class.isAssignableFrom(fieldType)
+					|| int.class.isAssignableFrom(fieldType)
+					|| Boolean.class.isAssignableFrom(fieldType)
+					|| boolean.class.isAssignableFrom(fieldType)
+					|| Date.class.isAssignableFrom(fieldType)) {
+				columnValue = cursor.getInt(index);
+			} else if (Long.class.isAssignableFrom(fieldType)
+					|| long.class.isAssignableFrom(fieldType)
+					|| Calendar.class.isAssignableFrom(fieldType)) {
+				columnValue = cursor.getLong(index);
+			} else if (Float.class.isAssignableFrom(fieldType)
+					|| float.class.isAssignableFrom(fieldType)) {
+				columnValue = cursor.getFloat(index);
+			} else {
+				columnValue = cursor.getString(index);
+			}
+
+		}
+		return columnValue;
 	}
 
 	private static void print(String paramString) {

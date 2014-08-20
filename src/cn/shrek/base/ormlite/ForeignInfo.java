@@ -6,6 +6,7 @@ import java.util.List;
 
 import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.Foreign;
+import cn.shrek.base.ormlite.foreign.MiddleOperator;
 import cn.shrek.base.util.BaseUtil;
 import cn.shrek.base.util.ReflectUtil;
 
@@ -32,6 +33,8 @@ public class ForeignInfo {
 	 * 触发器
 	 */
 	List<String> trigeerNameArr;
+	
+	MiddleOperator mMiddleOperator;
 	
 	public ForeignInfo(){
 		super();
@@ -94,6 +97,10 @@ public class ForeignInfo {
 		return valueField;
 	}
 
+	public MiddleOperator getmMiddleOperator() {
+		return mMiddleOperator;
+	}
+
 	/**
 	 * 初始化值
 	 */
@@ -112,6 +119,8 @@ public class ForeignInfo {
 		
 		originalColumnName = DBUtil.FK_CONSTRAINT+ tableName1 +"_"+originalField.getName();
 		foreignColumnName = DBUtil.FK_CONSTRAINT+ tableName2 +"_"+foreignField.getName();
+		
+		mMiddleOperator = new MiddleOperator(this);
 	}
 	
 	/**
@@ -149,5 +158,22 @@ public class ForeignInfo {
 	 */
 	public Object getForeignFieldValue(Object host){
 		return ReflectUtil.getFieldValue(host, foreignField);
+	}
+	
+	
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return middleTableName.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		if(o instanceof ForeignInfo){
+			ForeignInfo info = (ForeignInfo)o;
+			return middleTableName.equals(info.middleTableName);
+		}
+		return super.equals(o);
 	}
 }

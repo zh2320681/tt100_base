@@ -33,13 +33,17 @@ import android.os.Looper;
 import cn.shrek.base.ZWConstants;
 import cn.shrek.base.ui.inject.Identity;
 import cn.shrek.base.util.ZWLogger;
+import cn.shrek.base.util.thread.HandlerEnforcer;
+import cn.shrek.base.util.thread.ZWThreadEnforcer;
 
 public class ZWEventBus implements Identity {
 	public static final String DEFAULT_IDENTIFIER = "ZWEventBus";
 
 	/** thread event*/
-	private Handler mainThreadHandler;
-	private ExecutorService backgroudHandler;
+//	private Handler mainThreadHandler;
+//	private ExecutorService backgroudHandler;
+	
+	private ZWThreadEnforcer enforcer;
 	
 	/** All registered event handlers, indexed by event type. */
 	private ConcurrentMap<ZWEvent, Set<EventHandler>> handlersByType = new ConcurrentHashMap<ZWEvent, Set<EventHandler>>();
@@ -88,7 +92,7 @@ public class ZWEventBus implements Identity {
 	 *            valid Java identifier.
 	 */
 	public ZWEventBus(String identifier) {
-		this(ThreadEnforcer.MAIN, identifier);
+		this(null, identifier);
 	}
 
 	/**
@@ -98,7 +102,7 @@ public class ZWEventBus implements Identity {
 	 * @param enforcer
 	 *            Thread enforcer for register, unregister, and post actions.
 	 */
-	public ZWEventBus(ThreadEnforcer enforcer) {
+	public ZWEventBus(ZWThreadEnforcer enforcer) {
 		this(enforcer, DEFAULT_IDENTIFIER);
 	}
 
@@ -112,7 +116,7 @@ public class ZWEventBus implements Identity {
 	 *            A brief name for this bus, for debugging purposes. Should be a
 	 *            valid Java identifier.
 	 */
-	public ZWEventBus(ThreadEnforcer enforcer, String identifier) {
+	public ZWEventBus(ZWThreadEnforcer enforcer, String identifier) {
 		this(enforcer, identifier, HandlerFinder.ANNOTATED);
 	}
 
@@ -129,11 +133,13 @@ public class ZWEventBus implements Identity {
 	 *            Used to discover event handlers and producers when
 	 *            registering/unregistering an object.
 	 */
-	ZWEventBus(ThreadEnforcer enforcer, String identifier,
+	ZWEventBus(ZWThreadEnforcer enforcer, String identifier,
 			HandlerFinder handlerFinder) {
 //		this.enforcer = enforcer;
 		this.identifier = identifier;
 		this.handlerFinder = handlerFinder;
+		
+		this.enforcer = HandlerEnforcer.newInstance();
 	}
 
 	@Override
@@ -409,10 +415,7 @@ public class ZWEventBus implements Identity {
 				if(Looper.myLooper() == Looper.getMainLooper()){
 					obj = wrapper.handleEvent(event);
 				}else{
-					if(mainThreadHandler == null){
-						mainThreadHandler = new Handler(Looper.getMainLooper());
-					}
-					mainThreadHandler.post(new Runnable() {
+					enforcer.enforceMainThread(new Runnable() {
 						
 						@Override
 						public void run() {
@@ -428,10 +431,7 @@ public class ZWEventBus implements Identity {
 				}
 				break;
 			case BackgroundThread:
-				if(backgroudHandler == null){
-					backgroudHandler = Executors.newSingleThreadExecutor();
-				}
-				backgroudHandler.execute(new Runnable() {
+				enforcer.enforceBackgroud(new Runnable() {
 					
 					@Override
 					public void run() {

@@ -29,7 +29,7 @@ public class Employee extends ZWDatabaseBo implements Identity, ZWEventPara {
 	@DatabaseField(columnName = "__new")
 	public boolean isNew;
 
-	@DatabaseField(unique = true)
+	@DatabaseField //(unique = true)
 	public String name;
 
 	@DatabaseField(columnName = "__index1", index = true)

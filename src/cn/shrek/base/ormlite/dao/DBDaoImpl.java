@@ -2,26 +2,25 @@ package cn.shrek.base.ormlite.dao;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import android.content.ContentValues;
 import android.database.Cursor;
-import cn.shrek.base.ZWBo;
+import android.database.sqlite.SQLiteDatabase;
 import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.ormlite.DBUtil;
+import cn.shrek.base.ormlite.ForeignInfo;
 import cn.shrek.base.ormlite.TableInfo;
 import cn.shrek.base.ormlite.ZWDBHelper;
 import cn.shrek.base.ormlite.stmt.DeleteBuider;
 import cn.shrek.base.ormlite.stmt.InsertBuider;
 import cn.shrek.base.ormlite.stmt.QueryBuilder;
 import cn.shrek.base.ormlite.stmt.UpdateBuider;
-import cn.shrek.base.util.AndroidVersionCheckUtils;
-import cn.shrek.base.util.ZWLogger;
+import cn.shrek.base.util.ReflectUtil;
 
 public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	private Class<T> clazz;
@@ -49,34 +48,32 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	public long insertObjs(Collection<T> t) {
 		// TODO Auto-generated method stub
 		// T[] ts = (T[]) t.toArray();
-		return insertObjs(false, false, t);
+		return insertObjs(false, t);
 	}
 
-	public long insertObjs(boolean isAddFKObject, boolean isUpdateWhenExist,
-			T... t) {
+	public long insertObjs(boolean isAddFKObject, T... t) {
 		List<T> list = new ArrayList<T>();
 		for (T obj : t) {
 			list.add(obj);
 		}
-		return insertObjs(isAddFKObject, isUpdateWhenExist, list);
+		return insertObjs(isAddFKObject, list);
 	}
 
 	@Override
 	public long insertOrUpdateObjs(Collection<T> t) {
-		return insertObjs(false, true, t);
+		return insertObjs(false, t);
 	}
 
 	@Override
 	public long insertOrUpdateObjs(T... t) {
-		return insertObjs(false, true, t);
+		return insertObjs(false, t);
 	}
 
 	@Override
-	public long insertObjs(boolean isAddFKObject, boolean isUpdateWhenExist,
-			Collection<T> t) {
+	public long insertObjs(boolean isAddFKObject, Collection<T> collectT) {
 		Set<Object> allFKs = new HashSet<Object>();
 		InsertBuider<T> buider = insertBuider();
-		for (T obj : t) {
+		for (T obj : collectT) {
 			// 先插入外键值
 			Set<Object> objs = buider.getForeignKeyObjs(obj);
 			allFKs.addAll(objs);
@@ -85,14 +82,14 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		int optNum = 0;
 
 		if (isAddFKObject) {
+			// 插入 对应外表值
 			for (Object fkObject : allFKs) {
 				if (fkObject instanceof ZWDatabaseBo) {
 					ZWDatabaseBo bo = (ZWDatabaseBo) fkObject;
-					Class<? extends ZWDatabaseBo> fkClazz = (Class<? extends ZWDatabaseBo>) fkObject
-							.getClass();
+					Class<? extends ZWDatabaseBo> fkClazz = bo.getClass();
 					DBDao dao = helper.getDao(fkClazz);
 					try {
-						optNum += dao.insertObj(bo);
+						optNum += dao.replaceObj(bo);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -101,19 +98,33 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 			}
 		}
 
-		for (T obj : t) {
-			buider.addValue(obj);
+		SQLiteDatabase sd = helper.getDatabase(false);
+
+		for (T obj : collectT) {
 			try {
-				helper.getDatabase(false).insert(
-						buider.tableInfo.getTableName(), null, buider.cvs);
+				sd.replace(buider.tableInfo.getTableName(), null,
+						buider.getContentValue(obj));
+				optNum++;
+
+				if (isAddFKObject) {
+					// 插入 中建表
+					Map<ForeignInfo, List<ContentValues>> map = buider
+							.getForgienValue(obj);
+					for (Map.Entry<ForeignInfo, List<ContentValues>> entry : map
+							.entrySet()) {
+						ForeignInfo info = entry.getKey();
+						List<ContentValues> cvses = entry.getValue();
+						for (ContentValues cvs : cvses) {
+							optNum += info.getmMiddleOperator()
+									.replace(sd, cvs);
+						}
+					}
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				if (isUpdateWhenExist) {
-					updateObj(obj);
-				}
 			}
-			optNum++;
 		}
+
 		return optNum;
 	}
 
@@ -180,16 +191,8 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		for (int j = 0; j < info.allField.size(); j++) {
 			Field field = info.allField.get(j);
 			Class<?> typeClazz = info.getFieldType(j);
-			field.setAccessible(true);
-			try {
-				field.set(t, DBTransforFactory.getFieldNullValue(typeClazz));
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Object objValue = DBTransforFactory.getFieldNullValue(typeClazz);
+			ReflectUtil.setFieldValue(t, field, objValue);
 		}
 	}
 
@@ -236,9 +239,10 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 
 	@Override
 	public long replaceObj(UpdateBuider<T> mUpdateBuider) {
-		return helper.getDatabase(false)
+		helper.getDatabase(false)
 				.replace(mUpdateBuider.tableInfo.getTableName(), null,
 						mUpdateBuider.cvs);
+		return 1;
 	}
 
 	@Override
@@ -281,24 +285,70 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	}
 
 	@Override
+	public List<T> queryJoinAllObjs() {
+		QueryBuilder mQueryBuilder = queryBuilder();
+		mQueryBuilder.addSelectColumn("*");
+		return queryJoinObjs(mQueryBuilder);
+	}
+
+	@Override
 	public List<T> queryObjs(QueryBuilder mQueryBuilder) {
 		// TODO Auto-generated method stub
 		String sql = mQueryBuilder.getSql();
 		mQueryBuilder.cycle();
-		return queryObjs(sql);
+		return queryObjs(false, sql);
+	}
+
+	/**
+	 * 连接主要是左连接查询 例如Employee查询的时候 顺便把所属公司Company 查出来 1.得到所有的外键
+	 */
+	@Override
+	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder) {
+		String sql = mQueryBuilder.getSql();
+		mQueryBuilder.cycle();
+		return queryObjs(true, sql);
 	}
 
 	@Override
 	public List<T> queryObjs(String sql) {
 		// TODO Auto-generated method stub
+		return queryObjs(false, sql);
+	}
+
+	@Override
+	public List<T> queryJoinObjs(String sql){
+		return queryObjs(true, sql);
+	}
+	
+	/**
+	 * 查询
+	 * 
+	 * @param isJoin
+	 *            是否连接查询
+	 * @param sql
+	 * @return
+	 */
+	private List<T> queryObjs(boolean isJoin, String sql) {
 		List<T> list = new ArrayList<T>();
 		Cursor cursor = helper.getDatabase(true).rawQuery(sql, null);
+
+		TableInfo info = TableInfo.newInstance(clazz);
+		List<ForeignInfo> fInfos = info.allforeignInfos;
 		while (cursor.moveToNext()) {
 			T t = parseCurser(cursor);
-			if (t != null) {
-				list.add(t);
+			if (t == null) {
+				continue;
+			}
+			list.add(t);
+		}
+
+		// 连接查询
+		if(isJoin){
+			for (ForeignInfo fInfo : fInfos) {
+				fInfo.getmMiddleOperator().joinSelect(helper, list);
 			}
 		}
+		
 		cursor.close();
 		return list;
 	}
@@ -333,126 +383,8 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		return countNum;
 	}
 
-	public <F extends ZWDatabaseBo> F parseCurser(Cursor cursor,
-			Class<F> giveClazz) {
-		TableInfo info = TableInfo.newInstance(giveClazz);
-
-		String logColumnName = null;
-		Object logObj = null;
-		try {
-			F obj = giveClazz.getConstructor().newInstance();
-			for (int i = 0; i < info.allColumnNames.size(); i++) {
-				String columnName = info.allColumnNames.get(i);
-				logColumnName = columnName;
-				Field field = info.allField.get(i);
-
-				// 属性类型
-				Class<?> fieldType = info.getFieldType(i);
-
-				int index = cursor.getColumnIndex(columnName);
-				if (index == -1) {
-					continue;
-				}
-				Object columnValue = new Object();
-				// 兼容性 2.3
-				if (AndroidVersionCheckUtils.hasHoneycomb()) {
-					switch (cursor.getType(index)) {
-					case Cursor.FIELD_TYPE_STRING:
-						columnValue = cursor.getString(index);
-						break;
-					case Cursor.FIELD_TYPE_FLOAT:
-						columnValue = cursor.getFloat(index);
-						break;
-					case Cursor.FIELD_TYPE_INTEGER:
-						columnValue = cursor.getInt(index);
-						break;
-					case Cursor.FIELD_TYPE_NULL:
-						columnValue = null;
-						break;
-					case Cursor.FIELD_TYPE_BLOB:
-						columnValue = cursor.getBlob(index);
-						break;
-					}
-				} else {
-
-					if (Integer.class.isAssignableFrom(fieldType)
-							|| int.class.isAssignableFrom(fieldType)
-							|| Boolean.class.isAssignableFrom(fieldType)
-							|| boolean.class.isAssignableFrom(fieldType)
-							|| Date.class.isAssignableFrom(fieldType)) {
-						columnValue = cursor.getInt(index);
-					} else if (Long.class.isAssignableFrom(fieldType)
-							|| long.class.isAssignableFrom(fieldType)
-							|| Calendar.class.isAssignableFrom(fieldType)) {
-						columnValue = cursor.getLong(index);
-					} else if (Float.class.isAssignableFrom(fieldType)
-							|| float.class.isAssignableFrom(fieldType)) {
-						columnValue = cursor.getFloat(index);
-					} else {
-						columnValue = cursor.getString(index);
-					}
-
-				}
-
-				// 从字段的值 转换为 Java里面的值
-				Object fieldValues = DBTransforFactory.getFieldValue(
-						columnValue, fieldType);
-				// 方便log输出
-				logObj = fieldValues;
-				field.setAccessible(true);
-				field.set(obj, fieldValues);
-
-			}
-			return obj;
-		} catch (Exception e) {
-			ZWLogger.printLog(DBDaoImpl.this, "给字段名:" + logColumnName + "赋值，值:"
-					+ logObj + ",失败!");
-			e.printStackTrace();
-		}
-		// catch (IllegalAccessException e) {
-		// e.printStackTrace();
-		// } catch (IllegalArgumentException e) {
-		// e.printStackTrace();
-		// } catch (InvocationTargetException e) {
-		// e.printStackTrace();
-		// } catch (NoSuchMethodException e) {
-		// e.printStackTrace();
-		// }
-		return null;
-	}
-
 	public T parseCurser(Cursor cursor) {
-		return parseCurser(cursor, clazz);
+		return DBUtil.parseCurser(cursor, clazz);
 	}
 
-	/**
-	 * 连接主要是左连接查询 例如Employee查询的时候 顺便把所属公司Company 查出来 1.得到所有的外键
-	 */
-	@Override
-	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder) {
-//		char aliases = 'A';
-//		mQueryBuilder.setTableAliases(aliases + "");
-//		// TODO Auto-generated method stub
-//		for (Map.Entry<String, Field> entry : mQueryBuilder.tableInfo.allforeignMaps
-//				.entrySet()) {
-//			aliases++;
-//
-//			String fkName = entry.getKey();
-//			Field fkField = entry.getValue();
-//			Class<?> fkClazz = mQueryBuilder.tableInfo.allforeignClassMaps
-//					.get(fkName);
-//
-//			// TableInfo fkInfo = TableInfo.newInstance((Class<ZWBo>)fkClazz);
-//			mQueryBuilder.joinSB.append("LEFT JOIN "
-//					+ DBUtil.getTableName(fkClazz) + " " + aliases + " ON ");
-//			mQueryBuilder.joinSB.append(mQueryBuilder
-//					.getColumnNameWithAliases(fkName)
-//					+ " = "
-//					+ aliases
-//					+ "."
-//					+ DBUtil.getColumnName(fkField));
-//			mQueryBuilder.joinSelect.append("," + aliases + ".*");
-//		}
-		return queryObjs(mQueryBuilder);
-	}
 }

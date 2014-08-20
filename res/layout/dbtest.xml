@@ -19,13 +19,26 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="创建表测试" />
-
+			<Button
+                android:id="@+id/dt_dropBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="删除表测试" />
             <Button
                 android:id="@+id/dt_insertBtn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="插入表测试" />
-
+                android:text="普通插入表测试" />
+			<Button
+                android:id="@+id/dt_mergeInsertBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="(多对一)关联插入表测试" />
+			<Button
+                android:id="@+id/dt_mergeInsertBtn1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="(一对多)关联插入表测试" />
             <Button
                 android:id="@+id/dt_delConBtn"
                 android:layout_width="fill_parent"
@@ -66,6 +79,17 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="查询所有(不包括外键对象)" />
+            
+            <Button
+                android:id="@+id/dt_conQueryManyAllBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="条件查询(包括多对一外键对象)" />
+            <Button
+                android:id="@+id/dt_conQueryOneAllBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="条件查询(包括一对多外键对象)" />
             <Button
                 android:id="@+id/dt_queryAllBtn1"
                 android:layout_width="fill_parent"

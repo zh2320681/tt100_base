@@ -53,9 +53,9 @@ public interface DBDao<T extends ZWDatabaseBo> {
 	 * @param t
 	 * @return
 	 */
-	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist,T... t);
+	public long insertObjs(boolean isAddFKObject,T... t);
 	
-	public long insertObjs(boolean isAddFKObject,boolean isUpdateWhenExist ,Collection<T> t);
+	public long insertObjs(boolean isAddFKObject,Collection<T> t);
 	
 	public long insertOrUpdateObjs(Collection<T> t);
 	
@@ -103,18 +103,19 @@ public interface DBDao<T extends ZWDatabaseBo> {
 	 */
 	public List<T> queryAllObjs();
 	
+	public List<T> queryJoinAllObjs();
+	
 	public List<T> queryObjs(QueryBuilder mQueryBuilder);
 	
+	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder);
+	
 	public List<T> queryObjs(String sql);
+	
+	public List<T> queryJoinObjs(String sql);
 	
 	public T queryFirstObj(QueryBuilder mQueryBuilder);
 	
 	public int queryCount(QueryBuilder mQueryBuilder);
 	
-	/**
-	 * 连接查询 查询Worker时候 把 Company也查出来
-	 * @return
-	 */
-	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder);
 	
 }

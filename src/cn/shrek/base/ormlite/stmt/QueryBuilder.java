@@ -16,7 +16,7 @@ import cn.shrek.base.util.ZWLogger;
  *
  */
 public class QueryBuilder extends StmtBuilder {
-	private static final String SELECT_KEYWORD = "SELECT ";
+	public static final String SELECT_KEYWORD = "SELECT ";
 	private static final String ORDER_KEYWORD = " ORDER BY ";
 	private static final String GROUP_KEYWORD = " GROUP BY ";
 	private static final String HAVING_KEYWORD = " HAVING ";
