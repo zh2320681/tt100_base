@@ -4,7 +4,7 @@ import cn.shrek.base.ui.inject.Identity;
 import cn.shrek.base.util.ZWLogger;
 
 public class ZWEvent implements Identity {
-	private static final int MAX_POOL_SIZE = 20;
+	private static final int MAX_POOL_SIZE = 10;
 
 	private static final int FLAG_IN_USE = 1 << 0;
 

@@ -27,14 +27,23 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 
 	protected LayoutInflater inflater;
 
-	public ZWBaseAdapter(Context ctx, Class<HOLDER> holderClazz) {
+	public ZWBaseAdapter(Context ctx, Class<HOLDER> holderClazz){
+		this(ctx, holderClazz, null);
+	}
+	
+	public ZWBaseAdapter(Context ctx, Class<HOLDER> holderClazz,Collection<SOURCE> outDataSource) {
 		super();
 		this.ctx = ctx;
 
 		// 注入器
 		Injector.instance().injectValue(ctx, this);
 
-		dataSource = initData();
+		if(outDataSource == null){
+			dataSource = initData();
+		}else{
+			dataSource = outDataSource;
+		}
+		
 		this.holderClazz = holderClazz;
 
 		Class<?> clazz = getClass();
@@ -62,7 +71,9 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 	 * 
 	 * @return
 	 */
-	public abstract Collection<SOURCE> initData();
+	public Collection<SOURCE> initData(){
+		return null;
+	};
 
 	@Override
 	public int getCount() {

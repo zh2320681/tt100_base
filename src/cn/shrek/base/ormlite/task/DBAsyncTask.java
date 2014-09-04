@@ -12,7 +12,7 @@ import cn.shrek.base.util.ZWLogger;
  * @author shrek
  *
  */
-public abstract class DBAsyncTask extends AsyncTask<Object, Void, Integer> {
+public abstract class DBAsyncTask extends AsyncTask<Void, Void, Integer> {
 	private ZWDBHelper mHelper;
 	//是否开启事务
 	private boolean isTransaction;
@@ -30,7 +30,7 @@ public abstract class DBAsyncTask extends AsyncTask<Object, Void, Integer> {
 	}
 	
 	@Override
-	protected final Integer doInBackground(Object... arg0) {
+	protected final Integer doInBackground(Void... arg0) {
 		// TODO Auto-generated method stub
 		int optNum = 0;
 		synchronized (ZWDBHelper.LOCK_OBJ) {
@@ -40,7 +40,7 @@ public abstract class DBAsyncTask extends AsyncTask<Object, Void, Integer> {
 				db.beginTransaction();  //手动设置开始事务
 			}
 			try {
-				optNum = doInBackground(mHelper);
+				optNum = enforcerBackground(mHelper);
 				if(isTransaction){
 					db.setTransactionSuccessful(); //处理完成
 				}
@@ -62,5 +62,5 @@ public abstract class DBAsyncTask extends AsyncTask<Object, Void, Integer> {
 	}
 	
 	
-	protected abstract Integer doInBackground(ZWDBHelper mHelper,Object... arg0);
+	protected abstract Integer enforcerBackground(ZWDBHelper mHelper);
 }

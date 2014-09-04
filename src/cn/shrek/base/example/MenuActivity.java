@@ -26,7 +26,7 @@ import cn.shrek.base.ui.inject.Injector;
 public class MenuActivity extends ZWActivity {
 	@AutoInject(clickSelector = "mClick")
 	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn
-		,fragmentTestBtn,listTestBtn,appDataBtn,injectBtn,eventBtn;
+		,fragmentTestBtn,listTestBtn,appDataBtn,injectBtn,eventBtn,threadBtn;
 
 	@AutoInject
 	private LayoutInflater mInflater;
@@ -82,6 +82,10 @@ public class MenuActivity extends ZWActivity {
 			}else if(arg0 == eventBtn){
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), EventActivity.class);
+			    startActivity(intent);
+			}else if(arg0 == threadBtn){
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), ThreadActivity.class);
 			    startActivity(intent);
 			}
 		}

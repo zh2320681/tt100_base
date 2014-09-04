@@ -117,7 +117,7 @@ public class ForeignInfo {
 		
 		middleTableName = sb.toString();
 		
-		originalColumnName = DBUtil.FK_CONSTRAINT+ tableName1 +"_"+originalField.getName();
+		originalColumnName = "O"+DBUtil.FK_CONSTRAINT+ tableName1 +"_"+originalField.getName();
 		foreignColumnName = DBUtil.FK_CONSTRAINT+ tableName2 +"_"+foreignField.getName();
 		
 		mMiddleOperator = new MiddleOperator(this);

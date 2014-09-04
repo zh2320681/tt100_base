@@ -275,8 +275,7 @@ public class DBTestActivity extends ZWActivity {
 				DBAsyncTask task = new DBAsyncTask(mZWDBHelper, true) {
 
 					@Override
-					protected Integer doInBackground(ZWDBHelper mHelper,
-							Object... arg0) {
+					protected Integer enforcerBackground(ZWDBHelper mHelper) {
 						// TODO Auto-generated method stub
 						DBDao<Employee> comDao = mZWDBHelper
 								.getDao(Employee.class);

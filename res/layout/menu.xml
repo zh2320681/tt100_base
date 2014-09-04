@@ -83,6 +83,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="事件测试" />
+            
+            <Button
+                android:id="@+id/menu_threadBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="多线程处理" />
         </LinearLayout>
     </ScrollView>
 

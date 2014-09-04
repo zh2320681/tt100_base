@@ -41,7 +41,7 @@ public abstract class DBDialogAsyncTask extends DBAsyncTask {
 	}
 	
 	@Override
-	protected abstract Integer doInBackground(ZWDBHelper mHelper, Object... arg0);
+	protected abstract Integer enforcerBackground(ZWDBHelper mHelper);
 
 	
 	protected void onPostDoing(Integer result){
