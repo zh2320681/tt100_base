@@ -78,6 +78,9 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
+		if(dataSource == null){
+			return 0;
+		}
 		return dataSource.size();
 	}
 

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.util.ReflectionUtils;
 
@@ -19,6 +20,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.util.AtomicFile;
 import cn.shrek.base.ZWApplication;
 import cn.shrek.base.ZWBo;
 import cn.shrek.base.ZWDatabaseBo;
@@ -43,6 +45,8 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	public static final Object LOCK_OBJ = new Object();
 	private static Handler mHandler;
 	
+	private static AtomicBoolean isLockOperator = new AtomicBoolean(false); //是否锁 数据库操作 不让释放
+	
 	private Class<? extends ZWDatabaseBo>[] loadDbBos;
 
 	public ZWDBHelper(Context context) {
@@ -57,8 +61,13 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 					switch (msg.what) {
 					case CLOSE_DBOPERATOR:
 						if (currentDBOperator != null) {
-							currentDBOperator.close();
-							currentDBOperator = null;
+							if(!isLockOperator.get()){
+								currentDBOperator.close();
+								currentDBOperator = null;
+								ZWLogger.i(ZWDBHelper.this, ">>数据库操作有效时间已过,关闭操作对象<<");
+							}else{
+								sendCloseMsg();
+							}
 						}
 						break;
 					default:
@@ -98,9 +107,10 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 //					mHandler.removeMessages(CLOSE_DBOPERATOR);
 //					currentDBOperator.close();
 //				}
-				mHandler.removeMessages(CLOSE_DBOPERATOR);
-				mHandler.sendEmptyMessageDelayed(CLOSE_DBOPERATOR,
-						ZWApplication.dbOPeratorAvailTime);
+				removeCloseMsg();
+//				mHandler.sendEmptyMessageDelayed(CLOSE_DBOPERATOR,
+//						ZWApplication.dbOPeratorAvailTime);
+				sendCloseMsg();
 				return currentDBOperator;
 			}
 //			if (isReadOnly) {
@@ -119,13 +129,31 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 					e.printStackTrace();
 				}
 			}
-			mHandler.sendEmptyMessageDelayed(CLOSE_DBOPERATOR,
-					ZWApplication.dbOPeratorAvailTime);
+			sendCloseMsg();
 			return currentDBOperator;
 		}
 
 	}
+	
+	
+	private void removeCloseMsg(){
+		mHandler.removeMessages(CLOSE_DBOPERATOR);
+	}
 
+	
+	private void sendCloseMsg(){
+		mHandler.sendEmptyMessageDelayed(CLOSE_DBOPERATOR,
+				ZWApplication.dbOPeratorAvailTime);
+	}
+	
+	public void lockOperator(){
+		isLockOperator.set(true);
+	}
+	
+	public void unLockOperator(){
+		isLockOperator.set(false);
+	}
+	
 	/**
 	 * 得到操作类
 	 * 

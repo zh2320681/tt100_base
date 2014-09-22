@@ -11,8 +11,8 @@ import cn.shrek.base.ModelObservable;
 import cn.shrek.base.ObserverContainer;
 import cn.shrek.base.ZWConstants;
 import cn.shrek.base.annotation.AutoInject;
-import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.annotation.OberverLoad;
+import cn.shrek.base.ui.ZWCustomView;
 import cn.shrek.base.ui.ZWFragment;
 
 public class ViewInjectTransfor implements InjectTransfor {
@@ -42,6 +42,9 @@ public class ViewInjectTransfor implements InjectTransfor {
 			} else if (objInstance instanceof ZWFragment) {
 				field.set(objInstance,
 						((ZWFragment) objInstance).rootView.findViewById(value));
+			} else if (objInstance instanceof ZWCustomView){
+				field.set(objInstance,
+						((ZWCustomView) objInstance).getRootView().findViewById(value));
 			}
 
 			// 自动设置OnClcikListener

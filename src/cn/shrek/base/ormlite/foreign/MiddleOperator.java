@@ -98,22 +98,23 @@ public class MiddleOperator {
 
 		TableInfo targetInfo = TableInfo.newInstance(fInfo.getForeignClazz());
 
-		StringBuffer sqlBuffer = new StringBuffer(QueryBuilder.SELECT_KEYWORD + "* FROM "
+		String sql = QueryBuilder.SELECT_KEYWORD + "* FROM "
 				+ targetInfo.getTableName() + " A LEFT JOIN "
 				+ fInfo.getMiddleTableName() + " B on A."
 				+ DBUtil.getColumnName(fInfo.getForeignField())+" = B."+ fInfo.getForeignColumnName()
-				+ StmtBuilder.WHERE_KEYWORD + fInfo.getOriginalColumnName()
-				+ " = ");
-		ZWLogger.i(TAG, "执行中建表SQL 表名:" + fInfo.getMiddleTableName()
-				+ "，执行的SQL:" + sqlBuffer.toString());
+				+ StmtBuilder.WHERE_KEYWORD + "B."+fInfo.getOriginalColumnName()
+				+ " = ";
 		
 		DBDao dao = helper.getDao(fInfo.getForeignClazz());
 		
 		for (Object selectObj : allObject) {
+			StringBuffer sqlBuffer = new StringBuffer(sql);
 			Object orgFieldValue = ReflectUtil.getFieldValue(selectObj,
 					fInfo.getOriginalField());
 			sqlBuffer.append(DBTransforFactory.getColumnValue(orgFieldValue)+";");
 			
+			ZWLogger.i(TAG, "执行中建表SQL 表名:" + fInfo.getMiddleTableName()
+					+ "，执行的SQL:" + sqlBuffer.toString());
 			
 			List result = dao.queryObjs(sqlBuffer.toString());
 

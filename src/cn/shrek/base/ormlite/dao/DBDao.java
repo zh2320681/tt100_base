@@ -57,9 +57,11 @@ public interface DBDao<T extends ZWDatabaseBo> {
 	
 	public long insertObjs(boolean isAddFKObject,Collection<T> t);
 	
-	public long insertOrUpdateObjs(Collection<T> t);
+//	public long insertOrUpdateObjs(Collection<T> t);
+//	
+//	public long insertOrUpdateObjs(T... t);
+	public long insertObj(boolean isAddFKObject , T t);
 	
-	public long insertOrUpdateObjs(T... t);
 	/**
 	 * 删除对象
 	 */
@@ -114,6 +116,8 @@ public interface DBDao<T extends ZWDatabaseBo> {
 	public List<T> queryJoinObjs(String sql);
 	
 	public T queryFirstObj(QueryBuilder mQueryBuilder);
+	
+	public T queryJoinFirstObj(QueryBuilder mQueryBuilder);
 	
 	public int queryCount(QueryBuilder mQueryBuilder);
 	

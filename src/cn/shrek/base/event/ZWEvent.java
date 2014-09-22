@@ -143,5 +143,11 @@ public class ZWEvent implements Identity {
 		return "ZWEvent [eventTag=" + eventTag + ", eventFlag=" + eventFlag
 				+ ", objClazz=" + objClazz + "]";
 	}
+	
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return toString().hashCode();
+	}
 
 }

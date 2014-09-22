@@ -21,6 +21,7 @@ import cn.shrek.base.ormlite.stmt.InsertBuider;
 import cn.shrek.base.ormlite.stmt.QueryBuilder;
 import cn.shrek.base.ormlite.stmt.UpdateBuider;
 import cn.shrek.base.util.ReflectUtil;
+import cn.shrek.base.util.ZWLogger;
 
 public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	private Class<T> clazz;
@@ -41,7 +42,13 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	@Override
 	public long insertObj(T t) {
 		// TODO Auto-generated method stub
-		return insertObjs(t);
+		return insertObj(false,t);
+	}
+	
+	@Override
+	public long insertObj(boolean isAddFKObject , T t) {
+		// TODO Auto-generated method stub
+		return insertObjs(isAddFKObject,t);
 	}
 
 	@Override
@@ -59,29 +66,32 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		return insertObjs(isAddFKObject, list);
 	}
 
-	@Override
-	public long insertOrUpdateObjs(Collection<T> t) {
-		return insertObjs(false, t);
-	}
-
-	@Override
-	public long insertOrUpdateObjs(T... t) {
-		return insertObjs(false, t);
-	}
+//	@Override
+//	public long insertOrUpdateObjs(Collection<T> t) {
+//		return insertObjs(false, t);
+//	}
+//
+//	@Override
+//	public long insertOrUpdateObjs(T... t) {
+//		return insertObjs(false, t);
+//	}
 
 	@Override
 	public long insertObjs(boolean isAddFKObject, Collection<T> collectT) {
-		Set<Object> allFKs = new HashSet<Object>();
 		InsertBuider<T> buider = insertBuider();
-		for (T obj : collectT) {
-			// 先插入外键值
-			Set<Object> objs = buider.getForeignKeyObjs(obj);
-			allFKs.addAll(objs);
-		}
-
 		int optNum = 0;
 
 		if (isAddFKObject) {
+			Set<Object> allFKs = new HashSet<Object>();
+			
+			for (T obj : collectT) {
+				// 先插入外键值
+				Set<Object> objs = buider.getForeignKeyObjs(obj);
+				allFKs.addAll(objs);
+			}
+			
+//			ZWLogger.i(this,"获取外键的对象数量："+ allFKs.size());
+			
 			// 插入 对应外表值
 			for (Object fkObject : allFKs) {
 				if (fkObject instanceof ZWDatabaseBo) {
@@ -89,7 +99,7 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 					Class<? extends ZWDatabaseBo> fkClazz = bo.getClass();
 					DBDao dao = helper.getDao(fkClazz);
 					try {
-						optNum += dao.replaceObj(bo);
+						optNum += dao.insertObj(true,bo);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -122,6 +132,7 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
@@ -359,6 +370,19 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		mQueryBuilder.limitIndex = 1;
 		mQueryBuilder.offsetIndex = 0;
 		List<T> list = queryObjs(mQueryBuilder);
+		if (list.size() > 0) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	
+	@Override
+	public T queryJoinFirstObj(QueryBuilder mQueryBuilder) {
+		// TODO Auto-generated method stub
+		mQueryBuilder.limitIndex = 1;
+		mQueryBuilder.offsetIndex = 0;
+		List<T> list = queryJoinObjs(mQueryBuilder);
 		if (list.size() > 0) {
 			return list.get(0);
 		}

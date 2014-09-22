@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.AutoInject;
+import cn.shrek.base.example.bean.CEO;
 import cn.shrek.base.example.bean.Company;
 import cn.shrek.base.example.bean.Employee;
 import cn.shrek.base.ormlite.DBUtil;
@@ -53,6 +54,8 @@ public class DBTestActivity extends ZWActivity {
 			} else if (v == dropBtn) {
 				SQLiteDatabase mDatabase = mZWDBHelper.getDatabase(false);
 				DBUtil.dropTable(mDatabase,
+						TableInfo.newInstance(CEO.class));
+				DBUtil.dropTable(mDatabase,
 						TableInfo.newInstance(Company.class));
 				DBUtil.dropTable(mDatabase,
 						TableInfo.newInstance(Employee.class));
@@ -89,13 +92,15 @@ public class DBTestActivity extends ZWActivity {
 					e.isNew = (i % 2 == 1);
 					coms.add(e);
 				}
+				
 				long optNum = comDao.insertObjs(true, coms);
 				showToast(optNum);
 			} else if (v == mergeInsertBtn1) {
 				// 多表 一对多 插入
 				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
 				List<Employee> coms = new ArrayList<Employee>();
-
+				List<CEO> otherEmps = new ArrayList<CEO>();
+				
 				Company company = new Company();
 				company.comId = 100;
 				company.companyName = "天天一百网络科技";
@@ -110,8 +115,16 @@ public class DBTestActivity extends ZWActivity {
 					coms.add(e);
 				}
 
+				for (int i = 40; i < 50; i++) {
+					CEO c = new CEO();
+					c.ceoId = i;
+					c.name = "张帅哥" + i + "号";
+					otherEmps.add(c);
+				}
+				
 				company.allWorks = coms;
-
+				company.otherWorks = otherEmps;
+				
 				long optNum = comDao.insertObjs(true, company);
 				showToast(optNum);
 			} else if (v == delConBtn) {
@@ -339,7 +352,7 @@ public class DBTestActivity extends ZWActivity {
 			@Override
 			public Class<? extends ZWDatabaseBo>[] loadDatabaseClazz() {
 				// TODO Auto-generated method stub
-				return new Class[] { Company.class, Employee.class };
+				return new Class[] {CEO.class,Employee.class ,Company.class};
 			}
 
 		};

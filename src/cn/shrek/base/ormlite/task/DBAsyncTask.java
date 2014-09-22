@@ -32,10 +32,12 @@ public abstract class DBAsyncTask extends AsyncTask<Void, Void, Integer> {
 	@Override
 	protected final Integer doInBackground(Void... arg0) {
 		// TODO Auto-generated method stub
+		mHelper.lockOperator();
 		int optNum = 0;
 		synchronized (ZWDBHelper.LOCK_OBJ) {
 			long before = System.currentTimeMillis();
 			SQLiteDatabase db = mHelper.getDatabase(false);
+			
 			if(isTransaction){
 				db.beginTransaction();  //手动设置开始事务
 			}
@@ -58,9 +60,24 @@ public abstract class DBAsyncTask extends AsyncTask<Void, Void, Integer> {
 			long after = System.currentTimeMillis();
 			DBUtil.timeCompute(before, after);
 		}
+		
+		mHelper.unLockOperator();
 		return optNum;
 	}
 	
+	@Override
+	protected void onPreExecute() {
+		// TODO Auto-generated method stub
+		super.onPreExecute();
+	
+	}
+	
+	@Override
+	protected void onPostExecute(Integer result) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
+		
+	}
 	
 	protected abstract Integer enforcerBackground(ZWDBHelper mHelper);
 }

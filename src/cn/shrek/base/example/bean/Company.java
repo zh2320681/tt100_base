@@ -31,14 +31,14 @@ public class Company extends ZWDatabaseBo implements Identity {
 	@Foreign(foreignColumnName = "id", originalColumnName = "comId", mappingType = MappingType.MANY_TO_ONE, cascade = { CascadeType.ALL })
 	public List<Employee> allWorks;
 
+	@Foreign(foreignColumnName = "ceoId", originalColumnName = "comId", mappingType = MappingType.MANY_TO_ONE, cascade = {})
+	public List<CEO> otherWorks;
+	
 	public Company() {
 		// TODO Auto-generated constructor stub
 		super();
 	}
 
-	/**
-	 * �������ݿ�� �ظ����ݹ���
-	 */
 	@Override
 	public boolean equals(Object o) {
 		// TODO Auto-generated method stub

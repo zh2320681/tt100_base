@@ -117,8 +117,8 @@ public class ForeignInfo {
 		
 		middleTableName = sb.toString();
 		
-		originalColumnName = "O"+DBUtil.FK_CONSTRAINT+ tableName1 +"_"+originalField.getName();
-		foreignColumnName = DBUtil.FK_CONSTRAINT+ tableName2 +"_"+foreignField.getName();
+		originalColumnName = (tableName1.compareTo(tableName2) > 0?"O":"")+DBUtil.FK_CONSTRAINT+ tableName1 +"_"+originalField.getName();
+		foreignColumnName = (tableName1.compareTo(tableName2) <= 0?"O":"")+DBUtil.FK_CONSTRAINT+ tableName2 +"_"+foreignField.getName();
 		
 		mMiddleOperator = new MiddleOperator(this);
 	}
