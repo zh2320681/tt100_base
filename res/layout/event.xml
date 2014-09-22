@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     <fragment 
-        android:id="@+id/fragment1"
+        android:id="@+id/ft_fragment1"
         class="cn.shrek.base.example.fragment.EventFragment1"
         android:layout_width="match_parent"
     	android:layout_height="match_parent"
@@ -12,8 +12,16 @@
         />
 
     <fragment 
-        android:id="@+id/fragment2"
+        android:id="@+id/ft_fragment2"
         class="cn.shrek.base.example.fragment.EventFragment2"
+        android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_weight="1"
+        />
+    
+     <fragment 
+        android:id="@+id/ft_fragment3"
+        class="cn.shrek.base.example.fragment.EventFragment3"
         android:layout_width="match_parent"
     	android:layout_height="match_parent"
     	android:layout_weight="1"
