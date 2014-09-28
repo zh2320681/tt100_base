@@ -2,6 +2,7 @@ package cn.shrek.base.ui;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.List;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -75,6 +76,15 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 		return null;
 	};
 
+	public Collection<SOURCE> getDataSource(){
+		return dataSource;
+	}
+	
+	public void setDateSource(List<SOURCE> data){
+		dataSource = data;
+		notifyDataSetChanged();
+	}
+	
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
