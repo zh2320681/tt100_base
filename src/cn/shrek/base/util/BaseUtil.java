@@ -235,6 +235,62 @@ public class BaseUtil {
 		return i;
 	}
 
+	public static int parseInt(String str) {
+		return parseInt(str, 0);
+	}
+	
+	
+	public static long parseLong(String str, long defaultValue) {
+		long i = defaultValue;
+		if (str != null && !str.equals("")) {
+			try {
+				i = Long.parseLong(str);
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				i = defaultValue;
+			}
+		}
+		return i;
+	}
+	
+	public static long parseLong(String str) {
+		return parseLong(str,0);
+	}
+
+	public static double parseDouble(String str,double defaultValue) {
+		double i = defaultValue;
+		if (str != null && !str.equals("")) {
+			try {
+				i = Double.parseDouble(str);
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				i = defaultValue;
+			}
+		}
+		return i;
+	}
+
+	public static double parseDouble(String str){
+		return parseDouble(str, 0);
+	}
+	
+	public static Float parseFloat(String str,float defaultValue) {
+		float i = defaultValue;
+		if (str != null && !str.equals("")) {
+			try {
+				i = Float.parseFloat(str);
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				i = defaultValue;
+			}
+		}
+		return i;
+	}
+	
+	public static Float parseFloat(String str){
+		return parseFloat(str, 0);
+	}
+	
 	/**
 	 * 判断 字符串 是否有效
 	 * @param string

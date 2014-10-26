@@ -204,7 +204,7 @@ public class DBTestActivity extends ZWActivity {
 				//条件查询(包括多对一外键对象)
 				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);
 				QueryBuilder qBuilder = comDao.queryBuilder();
-				qBuilder.in("id", 10, 15, 18);
+				qBuilder.in("id", 10, 15, 18).and().compare(">", "createTime", new Date(0));
 				
 				List<Employee> emps = comDao.queryJoinObjs(qBuilder);
 				

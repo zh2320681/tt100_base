@@ -2,18 +2,19 @@ package cn.shrek.base.ormlite.dao;
 
 import java.util.Date;
 
-public class DateTransfor implements DBTransforDao<Date, Integer> {
+import cn.shrek.base.ormlite.DBUtil;
 
+public class DateTransfor implements DBTransforDao<Date, String> {
+	
 	@Override
-	public Integer parseFieldToColumn(Date fieldObj) {
-		// TODO Auto-generated method stub
-		return (int) fieldObj.getTime();
+	public String parseFieldToColumn(Date fieldObj) {
+		return String.format("%tF %tT",fieldObj,fieldObj);
 	}
 
 	@Override
-	public Date parseColumnToField(Integer columnObj) {
+	public Date parseColumnToField(String columnObj) {
 		// TODO Auto-generated method stub
-		return new Date(columnObj);
+		return DBUtil.getFormatDate(columnObj);
 	}
 
 	@Override

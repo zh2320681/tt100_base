@@ -73,7 +73,7 @@ public class ImageTestActivity extends ZWActivity {
 						// TODO Auto-generated method stub
 						if(view instanceof MyImageView){
 							MyImageView mMyImageView = (MyImageView)view;
-							mMyImageView.setText(String.format("%.2f%%", current*1.0f/total));
+							mMyImageView.setText(String.format("%.2f%%", current*100.0f/total));
 							if(total == current){
 								mMyImageView.hideText();
 							}

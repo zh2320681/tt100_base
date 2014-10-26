@@ -1,20 +1,24 @@
 package cn.shrek.base.ormlite.dao;
 
 import java.util.Calendar;
+import java.util.Date;
 
-public class CalendarTransfor implements DBTransforDao<Calendar, Long> {
+import cn.shrek.base.ormlite.DBUtil;
+
+public class CalendarTransfor implements DBTransforDao<Calendar, String> {
 
 	@Override
-	public Long parseFieldToColumn(Calendar fieldObj) {
+	public String parseFieldToColumn(Calendar fieldObj) {
 		// TODO Auto-generated method stub
-		return fieldObj.getTimeInMillis();
+		Date date = fieldObj.getTime();
+		return String.format("%tF %tT",date,date);
 	}
 
 	@Override
-	public Calendar parseColumnToField(Long columnObj) {
+	public Calendar parseColumnToField(String columnObj) {
 		// TODO Auto-generated method stub
 		Calendar cal=Calendar.getInstance();
-		cal.setTimeInMillis(columnObj);
+		cal.setTime(DBUtil.getFormatDate(columnObj));
 		return cal;
 	}
 

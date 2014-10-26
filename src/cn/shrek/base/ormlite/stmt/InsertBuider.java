@@ -136,6 +136,9 @@ public class InsertBuider<T extends ZWDatabaseBo> extends StmtBuilder {
 		for (ForeignInfo info : infos) {
 			Object fieldValue = ReflectUtil.getFieldValue(t,
 					info.getValueField());
+			if(fieldValue == null){
+				continue;
+			}
 			if (fieldValue instanceof Collection) {
 				objs.addAll((Collection) fieldValue);
 			} else {

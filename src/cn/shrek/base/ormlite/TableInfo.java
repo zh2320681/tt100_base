@@ -190,9 +190,23 @@ public class TableInfo {
 				return i;
 			}
 		}
-		ZWLogger.printLog(this, "类：" + clazz.toString() + " 属性名叫:" + fieldName
+		ZWLogger.e(this, "类：" + clazz.toString() + " 属性名叫:" + fieldName
 				+ " 找不到~~");
 		return -1;
+	}
+	
+	/**
+	 * 通过名字 得到外键信息
+	 * @param fieldName
+	 * @return
+	 */
+	public ForeignInfo getForeign(String fieldName){ 
+		for(ForeignInfo fInfo : allforeignInfos){
+			if(fInfo.getValueField().getName().equals(fieldName)){
+				return fInfo;
+			}
+		}
+		return null;
 	}
 
 	/**

@@ -1,6 +1,8 @@
 package cn.shrek.base.ormlite;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -33,20 +35,14 @@ public class DBUtil {
 	private static final String INDEX_CONSTRAINT = "INDEX_";
 
 	static final String INTERMEDIATE_CONSTRAINT = "INTERMEDIATE_";
-	/**
-	 * 数据库 类型
-	 */
-	public static final String BLOB_COLUMN_NAME = "BLOB";
-	public static final String INT_COLUMN_NAME = "INTEGER";
-	public static final String NULL_COLUMN_NAM = "NULL";
-	public static final String REAL_COLUMN_NAME = "REAL";
-	public static final String STRING_COLUMN_NAME = "TEXT";
 
 	public static final String SPEPARANT_STR = " ";
 
 	public static final String YINHAO_STR = "'";
 
 	public static final Object LOCK_OBJ = new Object();
+	
+	private static final SimpleDateFormat DB_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private static final String TAG = "DBUtil";
 
@@ -78,8 +74,8 @@ public class DBUtil {
 				isFirstAddField = false;
 			}
 
-			String columnTypeStr = getObjMapping(columnField);
-			createSqlSB.append(columnName + " " + columnTypeStr);
+			SqliteColumnType columnType = getObjMapping(columnField);
+			createSqlSB.append(columnName + " " + columnType.name());
 
 			/** ---------------- 约束 ---------------------- */
 			if (!mDatabaseField.canBeNull()) {
@@ -91,7 +87,10 @@ public class DBUtil {
 
 			String defaultStr = mDatabaseField.defaultValue();
 			if (defaultStr != null && !"".equals(defaultStr)) {
-				if (columnTypeStr.equals(STRING_COLUMN_NAME)) {
+				if (columnType == SqliteColumnType.TEXT 
+						|| columnType == SqliteColumnType.TIMESTAMP 
+						|| columnType == SqliteColumnType.TIME
+						|| columnType == SqliteColumnType.DATE) {
 					createSqlSB.append("DEFAULT '" + defaultStr + "' ");
 				} else {
 					createSqlSB.append("DEFAULT " + defaultStr + " ");
@@ -404,32 +403,32 @@ public class DBUtil {
 	 * @param field
 	 * @return
 	 */
-	public static final String getObjMapping(Field field) {
+	public static final SqliteColumnType getObjMapping(Field field) {
 		Class<?> fieldClazz = field.getType();
-		String columnTypeName = STRING_COLUMN_NAME;
+		SqliteColumnType cType = SqliteColumnType.TEXT;
 		if (fieldClazz.isAssignableFrom(String.class)) {
-			columnTypeName = STRING_COLUMN_NAME;
+			cType = SqliteColumnType.TEXT;
 		} else if (fieldClazz.isAssignableFrom(Date.class)
 				|| fieldClazz.isAssignableFrom(Calendar.class)) {
-			columnTypeName = INT_COLUMN_NAME;
+			cType = SqliteColumnType.TIMESTAMP;
 		} else if (fieldClazz.isPrimitive()) {
 			if (fieldClazz.isAssignableFrom(Integer.class)
 					|| fieldClazz.isAssignableFrom(int.class)
 					|| fieldClazz.isAssignableFrom(Boolean.class)
 					|| fieldClazz.isAssignableFrom(boolean.class)) {
-				columnTypeName = INT_COLUMN_NAME;
+				cType = SqliteColumnType.INTEGER;
 			} else if (fieldClazz.isAssignableFrom(Double.class)
 					|| fieldClazz.isAssignableFrom(double.class)
 					|| fieldClazz.isAssignableFrom(Float.class)
 					|| fieldClazz.isAssignableFrom(float.class)) {
-				columnTypeName = REAL_COLUMN_NAME;
+				cType = SqliteColumnType.REAL;
 			}
 		} else if (fieldClazz.isAssignableFrom(ZWBo.class)) {
 			print("可能是外键");
 		} else if (fieldClazz.isAssignableFrom(Collection.class)) {
 			print("可能是List");
 		}
-		return columnTypeName;
+		return cType;
 	}
 
 	/**
@@ -610,29 +609,43 @@ public class DBUtil {
 		ZWLogger.printLog(LogLevel.INFO, "DBUtil", paramString);
 	}
 
+	public static String getFormatDateStr(Date formatDate){
+		return DB_DATE_FORMAT.format(formatDate);
+	}
+	
+	public static Date getFormatDate(String formatStr){
+		try {
+			return DB_DATE_FORMAT.parse(formatStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new Date();
+	}
+	
 	/**
 	 * 时间 和 long之间转换
 	 * 
 	 * @param obj
 	 * @return
 	 */
-	public static long parseDateToLong(Date obj) {
-		return obj.getTime();
-	}
-
-	public static long parseCalendarToLong(Calendar obj) {
-		return parseDateToLong(obj.getTime());
-	}
-
-	public static Date parseLongToDate(long value) {
-		return new Date(value);
-	}
-
-	public static Calendar parseLongToCalendar(long value) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(parseLongToDate(value));
-		return cal;
-	}
+//	public static long parseDateToLong(Date obj) {
+//		return obj.getTime();
+//	}
+//
+//	public static long parseCalendarToLong(Calendar obj) {
+//		return parseDateToLong(obj.getTime());
+//	}
+//
+//	public static Date parseLongToDate(long value) {
+//		return new Date(value);
+//	}
+//
+//	public static Calendar parseLongToCalendar(long value) {
+//		Calendar cal = Calendar.getInstance();
+//		cal.setTime(parseLongToDate(value));
+//		return cal;
+//	}
 
 	public static void timeCompute(long before, long after) {
 		ZWLogger.printLog("数据库操作:", "数据库操作耗时:" + (after - before) + "毫秒!");

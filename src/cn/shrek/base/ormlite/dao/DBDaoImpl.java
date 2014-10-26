@@ -112,8 +112,8 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 
 		for (T obj : collectT) {
 			try {
-				sd.replace(buider.tableInfo.getTableName(), null,
-						buider.getContentValue(obj));
+				sd.insertWithOnConflict(buider.tableInfo.getTableName(), null,
+						buider.getContentValue(obj),SQLiteDatabase.CONFLICT_NONE);
 				optNum++;
 
 				if (isAddFKObject) {
