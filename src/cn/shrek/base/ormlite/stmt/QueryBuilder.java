@@ -3,10 +3,13 @@ package cn.shrek.base.ormlite.stmt;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.util.CollectionUtils;
 
 import cn.shrek.base.ZWBo;
 import cn.shrek.base.ZWDatabaseBo;
@@ -95,13 +98,35 @@ public class QueryBuilder extends StmtBuilder {
 			if (addStr == null || addStr.equals("")) {
 				continue;
 			}
-			for (String hasAddStr : queryColumns) {
-				if (addStr == null || addStr.equals(hasAddStr)) {
-					break;
-				}
+			// for (String hasAddStr : queryColumns) {
+			// if (addStr == null || addStr.equals(hasAddStr)) {
+			// break;
+			// }
+			// }
+			if (!CollectionUtils.contains(queryColumns.iterator(), addStr)) {
+				queryColumns.add(addStr);
 			}
-			queryColumns.add(addStr);
 		}
+	}
+
+	/**
+	 * 得到查询的 外键字段 没有就会null
+	 * 
+	 * @return
+	 */
+	public List<ForeignInfo> getQueryFkColumns() {
+		List<ForeignInfo> fks = new ArrayList<ForeignInfo>();
+		for (String columnName : queryColumns) {
+			if (columnName.equals("*")) {
+				return null;
+			}
+
+			ForeignInfo info = tableInfo.getForeign(columnName);
+			if (info != null) {
+				fks.add(info);
+			}
+		}
+		return fks;
 	}
 
 	/**
@@ -126,19 +151,24 @@ public class QueryBuilder extends StmtBuilder {
 
 		if (initContinue(fieldName, mField, columnName, fieldType, true, obj)) {
 			joinSB = new StringBuffer();
-			joinSB.append(" LEFT JOIN " + fInfo.getMiddleTableName()
-					+ " fk ON fk." + fInfo.getOriginalColumnName() + " = " +getColumnNameWithAliases(DBUtil.getColumnName(fInfo.getOriginalField())));
+			joinSB.append(" LEFT JOIN "
+					+ fInfo.getMiddleTableName()
+					+ " fk ON fk."
+					+ fInfo.getOriginalColumnName()
+					+ " = "
+					+ getColumnNameWithAliases(DBUtil.getColumnName(fInfo
+							.getOriginalField())));
 			appendWhereStr("fk." + columnName + compareStr
 					+ DBTransforFactory.getColumnValue(obj));
 		}
 		return this;
 	}
-	
-	public StmtBuilder fkEq(String fieldName,Object obj){
+
+	public StmtBuilder fkEq(String fieldName, Object obj) {
 		return fkCompare("=", fieldName, obj);
 	}
-	
-	public StmtBuilder fkNotEq(String fieldName,Object obj){
+
+	public StmtBuilder fkNotEq(String fieldName, Object obj) {
 		return fkCompare("<>", fieldName, obj);
 	}
 
@@ -178,7 +208,7 @@ public class QueryBuilder extends StmtBuilder {
 						getColumnNameWithAliases(columnName));
 			} else if (xIndex != -1) {
 				// * 查询所有
-				columnName = getColumnNameWithAliases(hasAddStr);
+				columnName = hasAddStr;
 			} else {
 				columnName = getColumnNameWithAliases(tableInfo
 						.getColumnByFieldStr(hasAddStr));
@@ -259,6 +289,14 @@ public class QueryBuilder extends StmtBuilder {
 	}
 
 	public String getColumnNameWithAliases(String columnName) {
+//		if(columnName != null && columnName.indexOf("*") != -1){
+//			return " * ";
+//		}
+		
+//		if (!tableInfo.isExistFieldByName(columnName)) {
+//			ZWLogger.e(this, " 查询的表中 没有叫" + columnName + "的字段名 或者 属性名!");
+//			return null;
+//		}
 		if (tableAliases != null) {
 			return tableAliases + "." + columnName;
 		}

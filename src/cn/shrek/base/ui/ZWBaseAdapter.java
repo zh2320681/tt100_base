@@ -1,6 +1,8 @@
 package cn.shrek.base.ui;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,27 +26,28 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 	private int layoutId;
 	private String regex;
 
-	ViewGroup parent;
+	protected ViewGroup parent;
 
 	protected LayoutInflater inflater;
 
-	public ZWBaseAdapter(Context ctx, Class<HOLDER> holderClazz){
+	public ZWBaseAdapter(Context ctx, Class<HOLDER> holderClazz) {
 		this(ctx, holderClazz, null);
 	}
-	
-	public ZWBaseAdapter(Context ctx, Class<HOLDER> holderClazz,Collection<SOURCE> outDataSource) {
+
+	public ZWBaseAdapter(Context ctx, Class<HOLDER> holderClazz,
+			Collection<SOURCE> outDataSource) {
 		super();
 		this.ctx = ctx;
 
 		// 注入器
 		Injector.instance().injectValue(ctx, this);
 
-		if(outDataSource == null){
+		if (outDataSource == null) {
 			dataSource = initData();
-		}else{
+		} else {
 			dataSource = outDataSource;
 		}
-		
+
 		this.holderClazz = holderClazz;
 
 		Class<?> clazz = getClass();
@@ -72,23 +75,23 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 	 * 
 	 * @return
 	 */
-	public Collection<SOURCE> initData(){
+	public Collection<SOURCE> initData() {
 		return null;
 	};
 
-	public Collection<SOURCE> getDataSource(){
+	public Collection<SOURCE> getDataSource() {
 		return dataSource;
 	}
-	
-	public void setDateSource(List<SOURCE> data){
+
+	public void setDateSource(List<SOURCE> data) {
 		dataSource = data;
 		notifyDataSetChanged();
 	}
-	
+
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		if(dataSource == null){
+		if (dataSource == null) {
 			return 0;
 		}
 		return dataSource.size();
@@ -164,10 +167,22 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 		} else {
 			mHolder = (HOLDER) convertView.getTag();
 		}
-		SOURCE source = getItem(position);
 
-		mHolder.position = position;
-		optView(mHolder, source, position);
+		if(parent instanceof MyGridView){
+			MyGridView mGridView = ((MyGridView)parent);
+			if(!mGridView.isMeasure()){
+				SOURCE source = getItem(position);
+
+				mHolder.position = position;
+				optView(mHolder, source, position);
+			}
+		}else{
+			SOURCE source = getItem(position);
+
+			mHolder.position = position;
+			optView(mHolder, source, position);
+		}
+
 		return convertView;
 	}
 
@@ -185,42 +200,87 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 	 * 
 	 * @param position
 	 */
-	public void notifyDataSetChanged(int position) {
+	public void notifyDataSetChanged(int... positionArray) {
 		// TODO Auto-generated method stub
-		if (position < 0) {
-			throw new IllegalArgumentException("更新的数据源位置不合法!");
+		if (positionArray == null || positionArray.length == 0) {
+//			throw new IllegalArgumentException("更新的数据源位置不合法!");
+			ZWLogger.e(this, "更新的数据源位置为空!");
+			return;
+		}
+
+		for (int position : positionArray) {
+			if (position < 0) {
+//				throw new IllegalArgumentException("更新的数据源位置不合法!");
+				ZWLogger.e(this, "更新的数据源位置不合法!");
+				continue;
+			}
+		}
+
+		Arrays.sort(positionArray);
+
+		List<Integer> ints = new ArrayList<Integer>();
+		for (int value : positionArray) {
+			ints.add(value);
 		}
 
 		int childNum = parent.getChildCount();
 		for (int i = 0; i < childNum; i++) {
+			if (ints.size() == 0) {
+				return;
+			}
 			View child = parent.getChildAt(i);
 			Object obj = child.getTag();
 			if (obj != null && obj instanceof ZWHolderBo) {
 				ZWHolderBo holder = (ZWHolderBo) obj;
-				if (holder.position == position) {
-					getView(position, child, parent);
-					return;
+				if (ints.contains(holder.position)) {
+					ints.remove(Integer.valueOf(holder.position));
+					getView(holder.position, child, parent);
 				}
 			}
 		}
 	}
 
-	public void notifyDataSetChanged(SOURCE source) {
-		if (source == null) {
-			throw new IllegalArgumentException("更新的数据源不能为空!");
+	public void notifyDataSetChanged(SOURCE... sourceArray) {
+		if (sourceArray == null || sourceArray.length == 0) {
+			throw new IllegalArgumentException("更新的数据源位置不合法!");
 		}
+
+		for (SOURCE s : sourceArray) {
+			if (s == null) {
+				throw new IllegalArgumentException("更新的数据源位置不合法!");
+			}
+		}
+
+		List<SOURCE> sourceList = Arrays.asList(sourceArray);
+		List<Integer> ints = new ArrayList<Integer>();
 		int i = 0;
 		for (SOURCE s : dataSource) {
-			if (source.equals(s)) {
-				s = source;
-				notifyDataSetChanged(i);
-				return;
+			if (sourceList.contains(s)) {
+				ints.add(new Integer(i));
 			}
+			// if (source.equals(s)) {
+			// s = source;
+			// notifyDataSetChanged(i);
+			// return;
+			// }
 			i++;
 		}
+
+		int[] notifyData = new int[ints.size()];
+		for (int j = 0; j < ints.size(); j++) {
+			notifyData[j] = ints.get(j);
+		}
+		notifyDataSetChanged(notifyData);
 	}
 
 	public void notifyDataSetChanged(CustomRule<SOURCE> customRule) {
+		if(parent == null){
+			for(SOURCE source : dataSource){
+				customRule.ruleJudge(source);
+			}
+			notifyDataSetChanged();
+			return;
+		}
 		int childNum = parent.getChildCount();
 		for (int i = 0; i < childNum; i++) {
 			View child = parent.getChildAt(i);

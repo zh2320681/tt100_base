@@ -6,6 +6,19 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration.Builder;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.decode.BaseImageDecoder;
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
+import com.nostra13.universalimageloader.utils.StorageUtils;
 
 import android.app.Activity;
 import android.app.Application;
@@ -15,17 +28,6 @@ import android.content.res.AssetManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import cn.shrek.base.exception.ZWAppException;
-import cn.shrek.base.imageLoader.cache.disc.impl.UnlimitedDiscCache;
-import cn.shrek.base.imageLoader.cache.disc.naming.Md5FileNameGenerator;
-import cn.shrek.base.imageLoader.cache.memory.impl.LruMemoryCache;
-import cn.shrek.base.imageLoader.core.DisplayImageOptions;
-import cn.shrek.base.imageLoader.core.ImageLoader;
-import cn.shrek.base.imageLoader.core.ImageLoaderConfiguration;
-import cn.shrek.base.imageLoader.core.ImageLoaderConfiguration.Builder;
-import cn.shrek.base.imageLoader.core.assist.QueueProcessingType;
-import cn.shrek.base.imageLoader.core.decode.BaseImageDecoder;
-import cn.shrek.base.imageLoader.core.download.BaseImageDownloader;
-import cn.shrek.base.imageLoader.utils.StorageUtils;
 import cn.shrek.base.ui.inject.CustomInstanceFactory;
 import cn.shrek.base.ui.inject.Injector;
 import cn.shrek.base.util.AndroidVersionCheckUtils;
@@ -102,14 +104,14 @@ public class ZWApplication extends Application {
 	public final void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
-		if(isCaptureError){
-			// 注册App异常崩溃处理器
-//			Thread.setDefaultUncaughtExceptionHandler(getUncaughtExceptionHandler());
-		}
-		
 		onPreCreateApplication();
 		initParameterWithProperties();
 
+		if(isCaptureError){
+			// 注册App异常崩溃处理器
+			Thread.setDefaultUncaughtExceptionHandler(getUncaughtExceptionHandler());
+		}
+		
 		/** ------------------ debug mode ----------------------- */
 		if (isDebugMode) {
 			ApplicationInfo info = getApplicationInfo();
@@ -117,21 +119,21 @@ public class ZWApplication extends Application {
 		}
 
 		/** ------------------ isOpenStrictMode 2.3以上支持----------------------- */
-//		if (isDebugMode && isOpenStrictMode
-//				&& AndroidVersionCheckUtils.hasGingerbread()) {
-//			android.os.StrictMode.setThreadPolicy(new android.os.StrictMode.ThreadPolicy.Builder() // 构造StrictMode
-//					.detectDiskReads() // 当发生磁盘读操作时输出
-//					.detectDiskWrites()// 当发生磁盘写操作时输出
-//					.detectNetwork() // 访问网络时输出，这里可以替换为detectAll()
-//										// 就包括了磁盘读写和网络I/O
-//					.penaltyLog() // 以日志的方式输出
-//					.build());
-//			android.os.StrictMode.setVmPolicy(new android.os.StrictMode.VmPolicy.Builder()
-//					.detectLeakedSqlLiteObjects() // 探测SQLite数据库操作
-//					.penaltyLog() // 以日志的方式输出
-//					.penaltyDeath().build());
-//
-//		}
+		if (isDebugMode && isOpenStrictMode
+				&& AndroidVersionCheckUtils.hasGingerbread()) {
+			android.os.StrictMode.setThreadPolicy(new android.os.StrictMode.ThreadPolicy.Builder() // 构造StrictMode
+					.detectDiskReads() // 当发生磁盘读操作时输出
+					.detectDiskWrites()// 当发生磁盘写操作时输出
+					.detectNetwork() // 访问网络时输出，这里可以替换为detectAll()
+										// 就包括了磁盘读写和网络I/O
+					.penaltyLog() // 以日志的方式输出
+					.build());
+			android.os.StrictMode.setVmPolicy(new android.os.StrictMode.VmPolicy.Builder()
+					.detectLeakedSqlLiteObjects() // 探测SQLite数据库操作
+					.penaltyLog() // 以日志的方式输出
+					.penaltyDeath().build());
+
+		}
 
 		mActivityManager = ZWActivityManager.getInstance();
 		// 修改System.out输出流
@@ -213,7 +215,7 @@ public class ZWApplication extends Application {
 	        .threadPoolSize(imageThreadPoolSize) // default
 	        .threadPriority(Thread.NORM_PRIORITY - 1) // default
 	        .tasksProcessingOrder(QueueProcessingType.FIFO) // default
-	        .denyCacheImageMultipleSizesInMemory()
+	        .taskExecutor(Executors.newFixedThreadPool(imageThreadPoolSize))
 	        .memoryCache(new LruMemoryCache(memoryCacheSize * 1024 * 1024))
 	        .memoryCacheSize(memoryCacheSize * 1024 * 1024)
 	        .memoryCacheSizePercentage(13) // default

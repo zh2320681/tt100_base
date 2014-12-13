@@ -11,6 +11,9 @@ public class BooleanTransfor implements DBTransforDao<Boolean, Integer> {
 	@Override
 	public Boolean parseColumnToField(Integer columnObj) {
 		// TODO Auto-generated method stub
+		if(columnObj == null){
+			return false;
+		}
 		return columnObj == 1;
 	}
 

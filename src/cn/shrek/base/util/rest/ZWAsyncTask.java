@@ -20,7 +20,9 @@ import org.springframework.web.client.RestTemplate;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import cn.shrek.base.exception.NetworkAvailableException;
 import cn.shrek.base.ui.ZWActivity;
+import cn.shrek.base.util.BaseUtil;
 import cn.shrek.base.util.ZWCache;
 import cn.shrek.base.util.ZWLogger;
 
@@ -265,8 +267,14 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		}
 
 		ZWResult<PARSEOBJ> r = new ZWResult<PARSEOBJ>();
-
 		Context context = ctx.get();
+		
+		//检测网络是否连接
+		if(!BaseUtil.isNetworkAvailable(context)){
+			r.errorException = new NetworkAvailableException("网络未连接!");
+			return r;
+		}
+		
 		// 判断是否开启缓存
 		if (isOpenCache()) {
 			ZWCache cache = getRestCache(context);

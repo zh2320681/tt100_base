@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Looper;
 import cn.shrek.base.ZWApplication;
+import cn.shrek.base.util.ZWLogger;
 
 public class ZWAppException implements UncaughtExceptionHandler {
 	public static final String TAG = "CrashHandler";
@@ -109,6 +110,8 @@ public class ZWAppException implements UncaughtExceptionHandler {
 						sb.append(ste.toString() + "\n");
 					}
 					mBuilder.setMessage(sb.toString());
+					
+					ZWLogger.e(this, sb.toString());
 				}
 				try {
 					mBuilder.create().show();

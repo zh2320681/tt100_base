@@ -14,6 +14,9 @@ public class DateTransfor implements DBTransforDao<Date, String> {
 	@Override
 	public Date parseColumnToField(String columnObj) {
 		// TODO Auto-generated method stub
+		if(columnObj == null){
+			return new Date();
+		}
 		return DBUtil.getFormatDate(columnObj);
 	}
 

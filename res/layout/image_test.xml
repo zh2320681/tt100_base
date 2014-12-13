@@ -54,10 +54,10 @@
                 android:text="进度加载测试" />
 
             <Button
-                android:id="@+id/rest_mine1TestBtn"
+                android:id="@+id/it_listTestBtn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="队列任务测试1" />
+                android:text="图片列表测试" />
 
             <Button
                 android:id="@+id/rest_cacheTestBtn"

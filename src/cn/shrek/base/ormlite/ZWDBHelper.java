@@ -218,6 +218,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 		if (cursor.moveToNext()) {
 			obj = DBUtil.parseCurser(cursor, objClass);
 		}
+		cursor.close();
 		return obj;
 	}
 
@@ -238,6 +239,8 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 				list.add(obj);
 			}
 		}
+		
+		cursor.close();
 		return list;
 	}
 
@@ -258,6 +261,7 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 				map.put(columnName, obj);
 			}
 		}
+		cursor.close();
 		return map;
 	}
 
@@ -275,6 +279,8 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 			}
 			lists.add(map);
 		}
+		
+		cursor.close();
 		return lists;
 	}
 

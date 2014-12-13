@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.springframework.util.CollectionUtils;
+
 import cn.shrek.base.ZWBo;
 import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.DatabaseField;
@@ -228,6 +230,43 @@ public class TableInfo {
 		return fieldType;
 	}
 
+	/**
+	 * 是否存在名字叫fieldName 属性
+	 * @param fieldName
+	 * @return
+	 */
+	public boolean isExistFieldByName(String fieldName){
+		for(Field field : allField){
+			if(field.getName().equals(fieldName)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 是否存在这个字段名
+	 * @param columnName
+	 * @return
+	 */
+	public boolean isExistColumnByName(String columnName){
+		return CollectionUtils.contains(allColumnNames.iterator(), columnName);
+	}
+	
+	/**
+	 * 是否纯在名字叫fkFieldName 的外键属性
+	 * @param fkFieldName
+	 * @return
+	 */
+	public boolean isExistFKFieldByName(String fkFieldName){
+		for(ForeignInfo fInfo : allforeignInfos){
+			if(fInfo.valueField.getName().equals(fkFieldName)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public String getTableName() {
 		return tableName;
 	}

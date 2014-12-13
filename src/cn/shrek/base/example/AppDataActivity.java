@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.example.appData.MyAppData;
+import cn.shrek.base.ormlite.foreign.MappingType;
 import cn.shrek.base.ui.ZWActivity;
 
 public class AppDataActivity extends ZWActivity {
@@ -32,6 +33,7 @@ public class AppDataActivity extends ZWActivity {
 				appData.acount = "张三李思王五";
 				appData.password = "password1";
 				appData.parInt = 12580;
+				appData.eumnType = MappingType.ONE_TO_MANY;
 				appData.saveData();
 			} else if(arg0 == btn5){
 				initialize();

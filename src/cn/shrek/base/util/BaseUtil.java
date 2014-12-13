@@ -253,6 +253,23 @@ public class BaseUtil {
 		return i;
 	}
 	
+	public static boolean parseBoolean(String str) {
+		return parseBoolean(str,false);
+	}
+
+	public static boolean parseBoolean(String str,boolean defaultValue) {
+		boolean i = defaultValue;
+		if (str != null && !str.equals("")) {
+			try {
+				i = Boolean.parseBoolean(str);
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				i = defaultValue;
+			}
+		}
+		return i;
+	}
+	
 	public static long parseLong(String str) {
 		return parseLong(str,0);
 	}

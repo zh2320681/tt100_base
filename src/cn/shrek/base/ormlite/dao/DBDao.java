@@ -113,7 +113,7 @@ public interface DBDao<T extends ZWDatabaseBo> {
 	
 	public List<T> queryObjs(String sql);
 	
-	public List<T> queryJoinObjs(String sql);
+	public List<T> queryJoinObjs(String sql,String... fkParas);
 	
 	public T queryFirstObj(QueryBuilder mQueryBuilder);
 	

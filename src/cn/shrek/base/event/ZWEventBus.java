@@ -247,9 +247,10 @@ public class ZWEventBus implements Identity {
 
 			if (currentHandlers == null
 					|| !currentHandlers.containsAll(eventMethodsInListener)) {
-				throw new IllegalArgumentException(
-						"Missing event handler for an annotated method. Is "
-								+ object.getClass() + " registered?");
+//				throw new IllegalArgumentException(
+//						"Missing event handler for an annotated method. Is "
+//								+ object.getClass() + " registered?");
+				return;
 			}
 
 			for (EventHandler handler : currentHandlers) {

@@ -70,20 +70,20 @@ public class ListTestActivity extends ZWActivity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 //				adapter.getItem(position).name = "1111111111";
-//				long before = System.currentTimeMillis();
-//				adapter.notifyDataSetChanged(position);
-//				long after = System.currentTimeMillis();
-//				System.out.println("单刷新消耗时间==========>"+(after - before));
+				long before = System.currentTimeMillis();
+				adapter.notifyDataSetChanged(position,position>0?position-1:position+1);
+				long after = System.currentTimeMillis();
+				System.out.println("单刷新消耗时间==========>"+(after - before));
 				
 //				long before = System.currentTimeMillis();
 //				adapter.notifyDataSetChanged();
 //				long after = System.currentTimeMillis();
 //				System.out.println("全刷新消耗时间==========>"+(after - before));
 				
-				long before = System.currentTimeMillis();
-				adapter.notifyDataSetChanged(new TagData());
-				long after = System.currentTimeMillis();
-				System.out.println("单刷数据消耗时间==========>"+(after - before));
+//				long before = System.currentTimeMillis();
+//				adapter.notifyDataSetChanged(new TagData());
+//				long after = System.currentTimeMillis();
+//				System.out.println("单刷数据消耗时间==========>"+(after - before));
 			}
 		});
 	}

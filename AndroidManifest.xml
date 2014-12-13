@@ -70,6 +70,10 @@
             android:name="cn.shrek.base.example.ThreadActivity"
             android:screenOrientation="portrait" />
         
+        <activity
+            android:name="cn.shrek.base.example.ListImgActivity"
+            android:screenOrientation="portrait" />
+        
         <!-- 一定要加  -->
         <activity
             android:name="cn.shrek.base.ErrorActivity"

@@ -101,6 +101,7 @@ public abstract class ZWAppData {
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private String tranforValue2String(Field field) {
 		Class<?> clazz = field.getType();
 		try {
@@ -109,6 +110,11 @@ public abstract class ZWAppData {
 			if (transfor != null) {
 				return transfor.toString(value);
 			} else {
+				if(Enum.class.isAssignableFrom(clazz)){
+					@SuppressWarnings("rawtypes")
+					Enum enumInstatnc = (Enum)value;
+					return enumInstatnc.name();
+				}
 				return value.toString();
 			}
 		} catch (IllegalArgumentException e) {
@@ -134,6 +140,11 @@ public abstract class ZWAppData {
 		if (transfor != null) {
 			return transfor.parse2Obj(string);
 		} else {
+			if(Enum.class.isAssignableFrom(clazz)){
+				@SuppressWarnings({ "rawtypes", "unchecked" })
+				Class<? extends Enum> enumClazz = (Class<? extends Enum>)clazz;
+				return Enum.valueOf(enumClazz, string);
+			}
 			return string;
 		}
 	}
@@ -238,6 +249,11 @@ public abstract class ZWAppData {
 			} else if (String.class.isAssignableFrom(clazz)) {
 				obj = sharedPreferences.getString(fieldName,
 						mDataSave.defaultString());
+			}  else if (Enum.class.isAssignableFrom(clazz)) {
+				String enumStr = sharedPreferences.getString(fieldName,
+						mDataSave.defaultString());
+				Class<? extends Enum> enumClazz = (Class<? extends Enum>)clazz;
+				obj = Enum.valueOf(enumClazz, enumStr);
 			}
 		}
 
@@ -258,6 +274,10 @@ public abstract class ZWAppData {
 				obj = mDataSave.defaultLong();
 			} else if (String.class.isAssignableFrom(clazz)) {
 				obj = mDataSave.defaultString();
+			} else if(Enum.class.isAssignableFrom(clazz)){
+				String enumStr = mDataSave.defaultString();
+				Class<? extends Enum> enumClazz = (Class<? extends Enum>)clazz;
+				obj = Enum.valueOf(enumClazz, enumStr);
 			}
 		}
 		
@@ -300,6 +320,9 @@ public abstract class ZWAppData {
 					editor.putLong(fieldName, (Long) value);
 				} else if (String.class.isAssignableFrom(clazz)) {
 					editor.putString(fieldName, value.toString());
+				} else if (Enum.class.isAssignableFrom(clazz)){
+					Enum enumInstatnc = (Enum)value;
+					editor.putString(fieldName, enumInstatnc.name());
 				}
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
@@ -311,7 +334,7 @@ public abstract class ZWAppData {
 		}
 	}
 
-	private static final String SERCET_KEY = "SERCET_KEY";
+	private static final String SERCET_KEY = "SERCETKEY";
 
 	private String encode(String value) {
 		byte[] sercetChars = SERCET_KEY.getBytes();

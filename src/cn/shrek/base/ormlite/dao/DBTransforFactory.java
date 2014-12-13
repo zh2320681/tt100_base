@@ -35,19 +35,19 @@ public class DBTransforFactory {
 			if(dao == null){
 				if(int.class.isAssignableFrom(clazzType)
 						|| Integer.class.isAssignableFrom(clazzType)){
-					return Integer.valueOf(column.toString());
+					return column ==null?0:Integer.valueOf(column.toString());
 				}else if(short.class.isAssignableFrom(clazzType)
 						|| Short.class.isAssignableFrom(clazzType)){
-					return Short.valueOf(column.toString());
+					return column ==null?0:Short.valueOf(column.toString());
 				}else if(Float.class.isAssignableFrom(clazzType)
 						|| float.class.isAssignableFrom(clazzType)){
-					return Float.valueOf(column.toString());
+					return column ==null?0:Float.valueOf(column.toString());
 				}else if(Double.class.isAssignableFrom(clazzType)
 						|| double.class.isAssignableFrom(clazzType)){
-					return Double.valueOf(column.toString());
+					return column ==null?0:Double.valueOf(column.toString());
 				}else if(Long.class.isAssignableFrom(clazzType)
 						|| long.class.isAssignableFrom(clazzType)){
-					return Long.valueOf(column.toString());
+					return column ==null?0:Long.valueOf(column.toString());
 				}
 				return column;
 			}

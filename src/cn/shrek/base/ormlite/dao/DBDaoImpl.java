@@ -2,6 +2,7 @@ package cn.shrek.base.ormlite.dao;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,6 @@ import cn.shrek.base.ormlite.stmt.InsertBuider;
 import cn.shrek.base.ormlite.stmt.QueryBuilder;
 import cn.shrek.base.ormlite.stmt.UpdateBuider;
 import cn.shrek.base.util.ReflectUtil;
-import cn.shrek.base.util.ZWLogger;
 
 public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	private Class<T> clazz;
@@ -307,7 +307,7 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		// TODO Auto-generated method stub
 		String sql = mQueryBuilder.getSql();
 		mQueryBuilder.cycle();
-		return queryObjs(false, sql);
+		return queryObjs(false, sql,null);
 	}
 
 	/**
@@ -316,19 +316,30 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	@Override
 	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder) {
 		String sql = mQueryBuilder.getSql();
+		//得到所有外键
+		List<ForeignInfo> queryColumns = mQueryBuilder.getQueryFkColumns();
 		mQueryBuilder.cycle();
-		return queryObjs(true, sql);
+		return queryObjs(true, sql,queryColumns);
 	}
 
 	@Override
 	public List<T> queryObjs(String sql) {
 		// TODO Auto-generated method stub
-		return queryObjs(false, sql);
+		return queryObjs(false, sql,null);
 	}
 
 	@Override
-	public List<T> queryJoinObjs(String sql){
-		return queryObjs(true, sql);
+	public List<T> queryJoinObjs(String sql,String... fkParas){
+		//通过fk 找foreign
+		TableInfo info = TableInfo.newInstance(clazz);
+		List<ForeignInfo> fkInfos = new ArrayList<ForeignInfo>();
+		for(String fkName : fkParas){
+			ForeignInfo fi = info.getForeign(fkName);
+			if(fi != null){
+				fkInfos.add(fi);
+			}
+		}
+		return queryObjs(true, sql,fkInfos);
 	}
 	
 	/**
@@ -337,14 +348,12 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	 * @param isJoin
 	 *            是否连接查询
 	 * @param sql
+	 * @param fkParas  查哪些关联的信息  如果为null & isJoin = true  查全部
 	 * @return
 	 */
-	private List<T> queryObjs(boolean isJoin, String sql) {
+	private List<T> queryObjs(boolean isJoin, String sql,List<ForeignInfo> fkParas) {
 		List<T> list = new ArrayList<T>();
 		Cursor cursor = helper.getDatabase(true).rawQuery(sql, null);
-
-		TableInfo info = TableInfo.newInstance(clazz);
-		List<ForeignInfo> fInfos = info.allforeignInfos;
 		while (cursor.moveToNext()) {
 			T t = parseCurser(cursor);
 			if (t == null) {
@@ -355,6 +364,22 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 
 		// 连接查询
 		if(isJoin){
+			TableInfo info = TableInfo.newInstance(clazz);
+			List<ForeignInfo> fInfos = null;
+			
+			if(fkParas != null && fkParas.size() > 0){
+				fInfos = new ArrayList<ForeignInfo>();
+//				for(String fkName : fkParas){
+//					ForeignInfo fInfo = info.getForeign(fkName);
+//					if(fInfo != null){
+//						fInfos.add(fInfo);	
+//					}
+//				}
+				fInfos = fkParas;
+			}else{
+				fInfos = info.allforeignInfos;
+			}
+			
 			for (ForeignInfo fInfo : fInfos) {
 				fInfo.getmMiddleOperator().joinSelect(helper, list);
 			}

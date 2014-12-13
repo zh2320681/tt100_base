@@ -2,6 +2,7 @@ package cn.shrek.base.example.appData;
 
 import android.content.Context;
 import cn.shrek.base.annotation.DataSave;
+import cn.shrek.base.ormlite.foreign.MappingType;
 import cn.shrek.base.util.data.ZWAppData;
 
 public class MyAppData extends ZWAppData {
@@ -23,6 +24,9 @@ public class MyAppData extends ZWAppData {
 	
 	@DataSave(defaultBoolean = false)
 	public boolean isSave;
+	
+	@DataSave(isSecret = true,defaultString = "MANY_TO_MANY")
+	public MappingType eumnType;
 
 	public MyAppData(Context ctx) {
 		super(ctx);
@@ -32,7 +36,7 @@ public class MyAppData extends ZWAppData {
 	@Override
 	public String toString() {
 		return "MyAppData [parInt=" + parInt + ", acount=" + acount
-				+ ", password=" + password + ", isSave=" + isSave + "]";
+				+ ", password=" + password + ", isSave=" + isSave + ", eumnType=" + eumnType.name()+ "]";
 	}
 
 	

@@ -205,7 +205,7 @@ public class DBTestActivity extends ZWActivity {
 				DBDao<Employee> comDao = mZWDBHelper.getDao(Employee.class);
 				QueryBuilder qBuilder = comDao.queryBuilder();
 				qBuilder.in("id", 10, 15, 18).and().compare(">", "createTime", new Date(0));
-				
+				qBuilder.addSelectColumn("name","company");
 				List<Employee> emps = comDao.queryJoinObjs(qBuilder);
 				
 				StringBuffer sb = new StringBuffer();
@@ -217,7 +217,10 @@ public class DBTestActivity extends ZWActivity {
 			}else if(v == conQueryOneAllBtn){
 				//条件查询(包括一对多外键对象)
 				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
-				List<Company> emps = comDao.queryJoinAllObjs();
+				
+				QueryBuilder qBuilder = comDao.queryBuilder();
+				qBuilder.addSelectColumn("info","allWorks");
+				List<Company> emps = comDao.queryJoinObjs(qBuilder);
 				
 				StringBuffer sb = new StringBuffer();
 				for (int j = 0; j < emps.size(); j++) {

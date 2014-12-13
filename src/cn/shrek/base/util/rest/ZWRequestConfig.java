@@ -1,13 +1,6 @@
 package cn.shrek.base.util.rest;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OptionalDataException;
 import java.io.Serializable;
-import java.io.StreamCorruptedException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -142,6 +135,12 @@ public class ZWRequestConfig implements Serializable{
 		defaultConfig = config;
 	}
 	
+	public static void putDefaultHeaderValue(String key,String value){
+		if(defaultConfig != null){
+			defaultConfig.putHeaderValue(key, value);
+		}
+	}
+	
 	public void putValue(String key,Object value){
 		if(isUrlEnCode() && value instanceof String){
 			try {
@@ -153,6 +152,10 @@ public class ZWRequestConfig implements Serializable{
 		}else{
 			maps.put(key, value);
 		}
+	}
+	
+	public void putValueWithOutEncode(String key,Object value){
+		maps.put(key, value);
 	}
 	
 	public void putHeaderValue(String key,String value){

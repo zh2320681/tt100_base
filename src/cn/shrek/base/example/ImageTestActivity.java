@@ -1,5 +1,6 @@
 package cn.shrek.base.example;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -7,19 +8,20 @@ import android.widget.Button;
 import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.example.custom.MyImageView;
-import cn.shrek.base.imageLoader.core.DisplayImageOptions;
-import cn.shrek.base.imageLoader.core.ImageLoader;
-import cn.shrek.base.imageLoader.core.assist.ImageSize;
-import cn.shrek.base.imageLoader.core.listener.ImageLoadingProgressListener;
-import cn.shrek.base.imageLoader.core.listener.SimpleImageLoadingListener;
 import cn.shrek.base.ui.ZWActivity;
 import cn.tt100.base.R;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 @Controller(layoutId=R.layout.image_test)
 public class ImageTestActivity extends ZWActivity {
 
 	@AutoInject(idFormat = "it_?",clickSelector = "myClick")
-	private Button configSetBtn,normalLoadBtn,sizeLoadBtn,clearMCacheBtn,clearDiscCacheBtn,proLoadBtn;
+	private Button configSetBtn,normalLoadBtn,sizeLoadBtn,clearMCacheBtn,clearDiscCacheBtn,proLoadBtn,listTestBtn;
 	
 	@AutoInject(idFormat = "it_?")
 	private MyImageView imageView;
@@ -80,6 +82,10 @@ public class ImageTestActivity extends ZWActivity {
 						}
 					}
 				});
+			}else if (v == listTestBtn){
+				Intent i = new Intent();
+				i.setClass(ImageTestActivity.this, ListImgActivity.class);
+				startActivity(i);
 			}
 		}
 	};
@@ -90,7 +96,6 @@ public class ImageTestActivity extends ZWActivity {
 //		ZWApplication app = (ZWApplication)getApplication();
 //		app.
 		loader = ImageLoader.getInstance();
-	
 		
 //		ImageBo mImageBo = new ImageBo(
 //				this,
