@@ -69,6 +69,13 @@ public interface DBDao<T extends ZWDatabaseBo> {
 	
 	public long deleteAll();
 	
+	/**
+	 * 是否删除中建表
+	 * @param isDelMiddle
+	 * @return
+	 */
+	public long deleteAll(boolean isDelMiddle);
+	
 	public long deleteObj(String whereSql);
 	
 	/**

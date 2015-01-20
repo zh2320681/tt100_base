@@ -1,5 +1,7 @@
 package cn.shrek.base.util.logger;
 
+import java.util.List;
+
 import cn.shrek.base.util.LogLevel;
 
 public interface ILogger {
@@ -12,6 +14,8 @@ public interface ILogger {
 
 	void e(String tag, String message);
 	
+	void p(String tag, String message);
+	
 	void d(Object obj, String message);
 
 	void i(Object obj, String message);
@@ -20,9 +24,13 @@ public interface ILogger {
 
 	void e(Object obj, String message);
 
+	void p(Object obj, String message);
+	
 	void open();
 
 	void close();
 
 	void println(LogLevel mLogLevel, String tag, String message);
+	
+	List<LoggerBo> getHistoryLogs();
 }

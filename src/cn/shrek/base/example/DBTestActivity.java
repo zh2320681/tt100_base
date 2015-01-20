@@ -33,7 +33,7 @@ public class DBTestActivity extends ZWActivity {
 
 	@AutoInject(idFormat = "dt_?", clickSelector = "mClick")
 	private Button createBtn, dropBtn, insertBtn, mergeInsertBtn,
-			mergeInsertBtn1, delConBtn, delAllBtn, updateAllBtn, updateConBtn,
+			mergeInsertBtn1, delConBtn, delAllBtn,delAllWithMiddleBtn, updateAllBtn, updateConBtn,
 			updateMapBtn, queryAllBtn, queryAllBtn1, conQueryManyAllBtn,conQueryOneAllBtn,queryConBtn,
 			queryCountBtn, delConAliBtn, queryConAliBtn, queryJoinBtn,
 			updateCaceadeBtn, deleteCaceadeBtn, asyncBtn, sqlToMapBtn,
@@ -158,6 +158,13 @@ public class DBTestActivity extends ZWActivity {
 
 				DBDao<Employee> empDao = mZWDBHelper.getDao(Employee.class);
 				optNum += empDao.deleteAll();
+				showToast(optNum);
+			} else if (v == delAllWithMiddleBtn){
+				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);
+				long optNum = comDao.deleteAll(true);
+
+				DBDao<Employee> empDao = mZWDBHelper.getDao(Employee.class);
+				optNum += empDao.deleteAll(true);
 				showToast(optNum);
 			} else if (v == updateAllBtn) {
 				DBDao<Company> comDao = mZWDBHelper.getDao(Company.class);

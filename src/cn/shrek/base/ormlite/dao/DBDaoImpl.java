@@ -42,13 +42,13 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	@Override
 	public long insertObj(T t) {
 		// TODO Auto-generated method stub
-		return insertObj(false,t);
+		return insertObj(false, t);
 	}
-	
+
 	@Override
-	public long insertObj(boolean isAddFKObject , T t) {
+	public long insertObj(boolean isAddFKObject, T t) {
 		// TODO Auto-generated method stub
-		return insertObjs(isAddFKObject,t);
+		return insertObjs(isAddFKObject, t);
 	}
 
 	@Override
@@ -66,15 +66,15 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		return insertObjs(isAddFKObject, list);
 	}
 
-//	@Override
-//	public long insertOrUpdateObjs(Collection<T> t) {
-//		return insertObjs(false, t);
-//	}
-//
-//	@Override
-//	public long insertOrUpdateObjs(T... t) {
-//		return insertObjs(false, t);
-//	}
+	// @Override
+	// public long insertOrUpdateObjs(Collection<T> t) {
+	// return insertObjs(false, t);
+	// }
+	//
+	// @Override
+	// public long insertOrUpdateObjs(T... t) {
+	// return insertObjs(false, t);
+	// }
 
 	@Override
 	public long insertObjs(boolean isAddFKObject, Collection<T> collectT) {
@@ -83,15 +83,15 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 
 		if (isAddFKObject) {
 			Set<Object> allFKs = new HashSet<Object>();
-			
+
 			for (T obj : collectT) {
 				// 先插入外键值
 				Set<Object> objs = buider.getForeignKeyObjs(obj);
 				allFKs.addAll(objs);
 			}
-			
-//			ZWLogger.i(this,"获取外键的对象数量："+ allFKs.size());
-			
+
+			// ZWLogger.i(this,"获取外键的对象数量："+ allFKs.size());
+
 			// 插入 对应外表值
 			for (Object fkObject : allFKs) {
 				if (fkObject instanceof ZWDatabaseBo) {
@@ -99,7 +99,7 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 					Class<? extends ZWDatabaseBo> fkClazz = bo.getClass();
 					DBDao dao = helper.getDao(fkClazz);
 					try {
-						optNum += dao.insertObj(true,bo);
+						optNum += dao.insertObj(true, bo);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -113,7 +113,8 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		for (T obj : collectT) {
 			try {
 				sd.insertWithOnConflict(buider.tableInfo.getTableName(), null,
-						buider.getContentValue(obj),SQLiteDatabase.CONFLICT_NONE);
+						buider.getContentValue(obj),
+						SQLiteDatabase.CONFLICT_NONE);
 				optNum++;
 
 				if (isAddFKObject) {
@@ -176,7 +177,25 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	@Override
 	public long deleteAll() {
 		// TODO Auto-generated method stub
+		// DeleteBuider builder = deleteBuider();
+		return deleteAll(false);
+	}
+
+	/**
+	 * 是否删除中建表
+	 * 
+	 * @param isDelMiddle
+	 * @return
+	 */
+	public long deleteAll(boolean isDelMiddle) {
 		DeleteBuider builder = deleteBuider();
+		if (isDelMiddle) {
+			List<ForeignInfo> fInfos = builder.tableInfo.allforeignInfos;
+			for (ForeignInfo info : fInfos) {
+				helper.getDatabase(false).delete(info.getMiddleTableName(),
+						null, null);
+			}
+		}
 		return deleteObjs(builder);
 	}
 
@@ -307,7 +326,7 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		// TODO Auto-generated method stub
 		String sql = mQueryBuilder.getSql();
 		mQueryBuilder.cycle();
-		return queryObjs(false, sql,null);
+		return queryObjs(false, sql, null);
 	}
 
 	/**
@@ -316,42 +335,44 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 	@Override
 	public List<T> queryJoinObjs(QueryBuilder mQueryBuilder) {
 		String sql = mQueryBuilder.getSql();
-		//得到所有外键
+		// 得到所有外键
 		List<ForeignInfo> queryColumns = mQueryBuilder.getQueryFkColumns();
 		mQueryBuilder.cycle();
-		return queryObjs(true, sql,queryColumns);
+		return queryObjs(true, sql, queryColumns);
 	}
 
 	@Override
 	public List<T> queryObjs(String sql) {
 		// TODO Auto-generated method stub
-		return queryObjs(false, sql,null);
+		return queryObjs(false, sql, null);
 	}
 
 	@Override
-	public List<T> queryJoinObjs(String sql,String... fkParas){
-		//通过fk 找foreign
+	public List<T> queryJoinObjs(String sql, String... fkParas) {
+		// 通过fk 找foreign
 		TableInfo info = TableInfo.newInstance(clazz);
 		List<ForeignInfo> fkInfos = new ArrayList<ForeignInfo>();
-		for(String fkName : fkParas){
+		for (String fkName : fkParas) {
 			ForeignInfo fi = info.getForeign(fkName);
-			if(fi != null){
+			if (fi != null) {
 				fkInfos.add(fi);
 			}
 		}
-		return queryObjs(true, sql,fkInfos);
+		return queryObjs(true, sql, fkInfos);
 	}
-	
+
 	/**
 	 * 查询
 	 * 
 	 * @param isJoin
 	 *            是否连接查询
 	 * @param sql
-	 * @param fkParas  查哪些关联的信息  如果为null & isJoin = true  查全部
+	 * @param fkParas
+	 *            查哪些关联的信息 如果为null & isJoin = true 查全部
 	 * @return
 	 */
-	private List<T> queryObjs(boolean isJoin, String sql,List<ForeignInfo> fkParas) {
+	private List<T> queryObjs(boolean isJoin, String sql,
+			List<ForeignInfo> fkParas) {
 		List<T> list = new ArrayList<T>();
 		Cursor cursor = helper.getDatabase(true).rawQuery(sql, null);
 		while (cursor.moveToNext()) {
@@ -361,31 +382,31 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 			}
 			list.add(t);
 		}
+		cursor.close();
 
 		// 连接查询
-		if(isJoin){
+		if (isJoin) {
 			TableInfo info = TableInfo.newInstance(clazz);
 			List<ForeignInfo> fInfos = null;
-			
-			if(fkParas != null && fkParas.size() > 0){
+
+			if (fkParas != null && fkParas.size() > 0) {
 				fInfos = new ArrayList<ForeignInfo>();
-//				for(String fkName : fkParas){
-//					ForeignInfo fInfo = info.getForeign(fkName);
-//					if(fInfo != null){
-//						fInfos.add(fInfo);	
-//					}
-//				}
+				// for(String fkName : fkParas){
+				// ForeignInfo fInfo = info.getForeign(fkName);
+				// if(fInfo != null){
+				// fInfos.add(fInfo);
+				// }
+				// }
 				fInfos = fkParas;
-			}else{
+			} else {
 				fInfos = info.allforeignInfos;
 			}
-			
+
 			for (ForeignInfo fInfo : fInfos) {
 				fInfo.getmMiddleOperator().joinSelect(helper, list);
 			}
 		}
-		
-		cursor.close();
+
 		return list;
 	}
 
@@ -400,8 +421,7 @@ public class DBDaoImpl<T extends ZWDatabaseBo> implements DBDao<T> {
 		}
 		return null;
 	}
-	
-	
+
 	@Override
 	public T queryJoinFirstObj(QueryBuilder mQueryBuilder) {
 		// TODO Auto-generated method stub

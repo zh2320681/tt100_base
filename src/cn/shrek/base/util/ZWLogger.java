@@ -28,13 +28,15 @@ public class ZWLogger{
 				Log.e(tag, "#"+msg);
 				break;
 			case INFO:
-			default:
 				Log.i(tag, "#"+msg);
+				break;
+			default:
+				
 				break;
 			}
 			
 			/** -------------- 日志打印 ------------------- */
-			if(ZWApplication.isLoggerPrint){
+			if(ZWApplication.isLoggerPrint && mLogLevel == LogLevel.PRINT){
 				ZWApplication.mPrintLogger.println(mLogLevel, tag, msg);
 			}
 			
@@ -60,6 +62,11 @@ public class ZWLogger{
 		// TODO Auto-generated method stub
 		printLog(LogLevel.ERROR, tag, message);
 	}
+	
+	public static void p(String tag, String message) {
+		// TODO Auto-generated method stub
+		printLog(LogLevel.PRINT, tag, message);
+	}
 
 	public static void d(Object obj, String message) {
 		// TODO Auto-generated method stub
@@ -79,5 +86,11 @@ public class ZWLogger{
 	public static void e(Object obj, String message) {
 		// TODO Auto-generated method stub
 		e(obj.getClass().getSimpleName(), message);
+	}
+	
+	
+	public static void p(Object obj, String message) {
+		// TODO Auto-generated method stub
+		p(obj.getClass().getSimpleName(), message);
 	}
 }

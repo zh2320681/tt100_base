@@ -83,7 +83,7 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 		return dataSource;
 	}
 
-	public void setDateSource(List<SOURCE> data) {
+	public void setDateSource(Collection<SOURCE> data) {
 		dataSource = data;
 		notifyDataSetChanged();
 	}

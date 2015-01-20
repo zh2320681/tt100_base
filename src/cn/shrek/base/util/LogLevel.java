@@ -4,7 +4,8 @@ public enum LogLevel {
 	DEBUG("调试"),
 	INFO("信息"),
 	WARNING("警告"),
-	ERROR("错误");
+	ERROR("错误"),
+	PRINT("打印");
 	
 	public String descript;//描述
 	

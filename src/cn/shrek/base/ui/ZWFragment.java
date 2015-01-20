@@ -1,19 +1,22 @@
 package cn.shrek.base.ui;
 
+import android.app.Activity;
+import android.app.Application;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import cn.shrek.base.ZWApplication;
 import cn.shrek.base.annotation.Controller;
 import cn.shrek.base.ui.inject.Injector;
 import cn.shrek.base.util.ZWLogger;
 
 public abstract class ZWFragment extends Fragment {
 //	private int layoutId;
-	
 	public View rootView;
 	
+	ZWApplication application;
 //	public ZWFragment(int layoutId){
 //		super();
 //		this.layoutId = layoutId;
@@ -22,13 +25,16 @@ public abstract class ZWFragment extends Fragment {
 	protected void onPreCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-
 	}
 	
 	@Override
 	public final View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		Application app = getActivity().getApplication();
+		if(app instanceof ZWApplication){
+			application = (ZWApplication)app;
+		}
 		onPreCreateView(inflater,container,savedInstanceState);
 		int layoutId = 0;
 		Class<?> clazz = getClass();
@@ -69,4 +75,19 @@ public abstract class ZWFragment extends Fragment {
 		return getClass().getSimpleName();
 	}
 	
+	
+	/**
+	 * 解决 getActivity() == null 问题
+	 * @return
+	 */
+	protected final Activity getHostActivity(){
+		Activity act = getActivity();
+		if(act == null){
+			ZWLogger.i(this, "orgin activity has recyle!");
+			if(application != null){
+				act = application.mActivityManager.currentActivity();
+			}
+		}
+		return act;
+	}
 }

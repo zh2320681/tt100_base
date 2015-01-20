@@ -24,6 +24,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="删除表测试" />
+			
             <Button
                 android:id="@+id/dt_insertBtn"
                 android:layout_width="fill_parent"
@@ -55,7 +56,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="删除所有测试" />
-
+			<Button
+                android:id="@+id/dt_delAllWithMiddleBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="删除所有测试(带中建表)" />
             <Button
                 android:id="@+id/dt_updateAllBtn"
                 android:layout_width="fill_parent"

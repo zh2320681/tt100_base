@@ -1,12 +1,19 @@
 package cn.shrek.base.util.logger;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.content.Context;
 import cn.shrek.base.ZWApplication;
@@ -27,12 +34,13 @@ public class ZWPrintToFileLogger implements ILogger {
 
 	private static final SimpleDateFormat TIMESTAMP_FMT = new SimpleDateFormat(
 			"[yyyy-MM-dd HH:mm:ss] ");
-//	private String basePath = "";
+	private static final String GAP = "###";
+	// private String basePath = "";
 	private static String LOG_DIR = "log";
 	// private static String BASE_FILENAME = "ta.log";
 	private File logDir;
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd");
-	
+
 	private Context context;
 
 	public ZWPrintToFileLogger(Context context) {
@@ -56,44 +64,47 @@ public class ZWPrintToFileLogger implements ILogger {
 				e.printStackTrace();
 			}
 		}
-//		basePath = logDir.getAbsolutePath() + "/"
-//				+ ;
-		//检测当前文件是否超过时间
+		// basePath = logDir.getAbsolutePath() + "/"
+		// + ;
+		// 检测当前文件是否超过时间
 		File[] timeoutFiles = logDir.listFiles();
 		Date nowDate = new Date();
-		for(File file : timeoutFiles){
+		for (File file : timeoutFiles) {
 			String fileName = file.getName();
-			if(fileName.indexOf(".") == 0){
+			if (fileName.indexOf(".") == 0) {
 				continue;
 			}
-			
+
 			boolean isDel = false;
-			if(fileName.length() <= 14 ){
+			if (fileName.length() <= 14) {
 				isDel = true;
-			}else{
-				fileName = fileName.substring(fileName.length()-13, fileName.length()-4);
-				try { 
+			} else {
+				fileName = fileName.substring(fileName.length() - 14,
+						fileName.length() - 4);
+				try {
 					Date laseDate = simpleDateFormat.parse(fileName);
-					if(nowDate.getTime() - laseDate.getTime() >= ZWApplication.loggerPrintAvaidTime*1000*60*60*24){
+					if (nowDate.getTime() - laseDate.getTime() >= ZWApplication.loggerPrintAvaidTime
+							* 1000 * 60 * 60 * 24) {
 						isDel = true;
 					}
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				if(isDel){
-					ZWLogger.printLog(this, "日志文件"+ file.getName() +"有效期超时，已删除!");
+
+				if (isDel) {
+					ZWLogger.printLog(this, "日志文件" + file.getName()
+							+ "有效期超时，已删除!");
 					file.delete();
 				}
 			}
-			
+
 		}
-		
-		
+
 		try {
-			File file = new File(logDir,ZWApplication.loggerPrintName+"_"+getCurrentTimeString()+".log");
-			if(!file.exists()){
+			File file = new File(logDir, ZWApplication.loggerPrintName + "_"
+					+ getCurrentTimeString() + ".log");
+			if (!file.exists()) {
 				file.createNewFile();
 			}
 			mPath = file.getAbsolutePath();
@@ -126,6 +137,11 @@ public class ZWPrintToFileLogger implements ILogger {
 	}
 
 	@Override
+	public void p(String tag, String message) {
+		println(LogLevel.PRINT, tag, message);
+	}
+
+	@Override
 	public void i(String tag, String message) {
 		println(LogLevel.INFO, tag, message);
 	}
@@ -135,36 +151,56 @@ public class ZWPrintToFileLogger implements ILogger {
 		println(LogLevel.WARNING, tag, message);
 	}
 
+	private String getFormatMessage(String level, String tag, String message) {
+		 String formatMessage = "%s %s %s %s %s %s %s %s";
+		 return String.format(formatMessage, GAP, level, GAP, tag, GAP,
+		 context.getPackageName(), GAP, message);
+//		return GAP + " " + level + " " + GAP + " " + tag + " " + GAP + " "
+//				+ context.getPackageName() + " " + GAP + " " + message;
+	}
+
 	@Override
 	public void println(LogLevel mLogLevel, String tag, String message) {
 		String printMessage = "";
 		switch (mLogLevel) {
 		case DEBUG:
-			printMessage = "[D]|" + tag + "|" + context.getPackageName() + "|"
-					+ message;
+			// printMessage = "[D]" + tag + " " + context.getPackageName() + " "
+			// + message;
+			printMessage = getFormatMessage("[D]", tag, message);
 			break;
 		case INFO:
-			printMessage = "[I]|" + tag + "|" + context.getPackageName() + "|"
-					+ message;
+			// printMessage = "[I] " + tag + " " + context.getPackageName() +
+			// " "
+			// + message;
+			printMessage = getFormatMessage("[I]", tag, message);
 			break;
 		case WARNING:
-			printMessage = "[W]|" + tag + "|" + context.getPackageName() + "|"
-					+ message;
+			// printMessage = "[W] " + tag + " " + context.getPackageName() +
+			// " "
+			// + message;
+			printMessage = getFormatMessage("[W]", tag, message);
 			break;
 		case ERROR:
-			printMessage = "[E]|" + tag + "|" + context.getPackageName() + "|"
-					+ message;
+			// printMessage = "[E] " + tag + " " + context.getPackageName() +
+			// " "
+			// + message;
+			printMessage = getFormatMessage("[E]", tag, message);
 			break;
+		case PRINT:
+			// printMessage = "[P] " + tag + " " + context.getPackageName() +
+			// " "
+			// + message;
+			printMessage = getFormatMessage("[P]", tag, message);
+			println(printMessage);
 		default:
 
 			break;
 		}
-		println(printMessage);
 
 	}
 
 	public void println(String message) {
-		if(mWriter == null){
+		if (mWriter == null) {
 			return;
 		}
 		try {
@@ -176,7 +212,48 @@ public class ZWPrintToFileLogger implements ILogger {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
 
+	@Override
+	public List<LoggerBo> getHistoryLogs() {
+		List<LoggerBo> bos = new ArrayList<LoggerBo>();
+
+		FileReader fr = null;
+		BufferedReader buffReader = null;
+		try {
+			fr = new FileReader(mPath);
+			buffReader = new BufferedReader(fr, 2048);
+			String line = null;
+			while ((line = buffReader.readLine()) != null) {
+				String[] array = line.split(GAP);
+				Date logTime = TIMESTAMP_FMT.parse(array[0]);
+				LoggerBo bo = new LoggerBo(logTime, array[2], array[3],
+						array[4]);
+				bos.add(0,bo);
+			}
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (buffReader != null) {
+				try {
+					buffReader.close();
+				} catch (Exception e) {
+				}
+			}
+			if (fr != null) {
+				try {
+					fr.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+		return bos;
 	}
 
 	public void close() {
@@ -211,4 +288,10 @@ public class ZWPrintToFileLogger implements ILogger {
 		// TODO Auto-generated method stub
 		e(obj.getClass().getSimpleName(), message);
 	}
+
+	@Override
+	public void p(Object obj, String message) {
+		p(obj.getClass().getSimpleName(), message);
+	}
+
 }

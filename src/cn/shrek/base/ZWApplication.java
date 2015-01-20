@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 
@@ -33,6 +34,7 @@ import cn.shrek.base.ui.inject.Injector;
 import cn.shrek.base.util.AndroidVersionCheckUtils;
 import cn.shrek.base.util.LogLevel;
 import cn.shrek.base.util.ZWLogger;
+import cn.shrek.base.util.logger.LoggerBo;
 import cn.shrek.base.util.logger.ZWPrintToFileLogger;
 import cn.shrek.base.util.net.ZWNetChangeObserver;
 import cn.shrek.base.util.net.ZWNetWorkUtil.NetType;
@@ -365,6 +367,13 @@ public class ZWApplication extends Application {
 		mPrintLogger = null;
 	}
 	
+	/**
+	 * 获取历史的日志
+	 * @return
+	 */
+	public List<LoggerBo> getHistoryLogs(){
+		return mPrintLogger.getHistoryLogs();
+	}
 	
 	/**
 	 * 设置自定义的示例模式

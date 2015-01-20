@@ -56,8 +56,12 @@ public class MenuActivity extends ZWActivity {
 			}else if(arg0 == errorTestBtn){
 				throw new NullPointerException();
 			}else if(arg0 == logPrintTestBtn){
-				((ZWApplication)getApplication()).closeLoggerPrint();
-				Toast.makeText(getApplicationContext(), "日志打印已关闭!", Toast.LENGTH_LONG).show();
+//				((ZWApplication)getApplication()).closeLoggerPrint();
+//				Toast.makeText(getApplicationContext(), "日志打印已关闭!", Toast.LENGTH_LONG).show();
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), LogTestActivity.class);
+			    startActivity(intent);
+				
 			}else if(arg0 == netTestBtn){
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), NetTestActivity.class);

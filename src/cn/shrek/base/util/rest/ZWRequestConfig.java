@@ -191,16 +191,16 @@ public class ZWRequestConfig implements Serializable{
 		Object[] objs = new Object[paras.length];
 		for (int i = 0; i < paras.length; i++) {
 			Object obj = paras[i];
-			if(obj instanceof String){
-				try {
-					objs[i] = URLEncoder.encode(obj.toString(), urlCharset);
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
+//			if(obj instanceof String){
+//				try {
+//					objs[i] = URLEncoder.encode(obj.toString(), urlCharset);
+//				} catch (UnsupportedEncodingException e) {
 //					e.printStackTrace();
-				}
-			}else{
-				objs[i] = obj;
-			}
+//				}
+//			}else{
+//				objs[i] = obj;
+//			}
+			objs[i] = obj;
 		}
 		this.paras = objs;
 	}

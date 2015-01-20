@@ -320,10 +320,12 @@ public class ZWAsyncTask<PARSEOBJ> extends
 				((SimpleClientHttpRequestFactory) requestFactory)
 						.setReadTimeout(config.readTimeOut);
 			}
-
+			
 			// requestFactory.
 			restTemplate.getMessageConverters().add(config.converter);
-
+			
+			System.gc();
+			
 			ResponseEntity<String> responseEntity = null;
 			if (config.getParas() != null) {
 				responseEntity = restTemplate.exchange(config.url,
