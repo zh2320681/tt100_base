@@ -126,6 +126,13 @@ public class ReflectUtil {
 	}
 
 	/**
+	 * 得到方法的 所有参数
+	 * @return
+	 */
+//	public static List<Method> getMethodParas(Method method){
+//	}
+	
+	/**
 	 * 通过 名字和参数类型 返回方法
 	 * @param hostClazz
 	 * @param methodName

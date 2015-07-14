@@ -83,6 +83,9 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase arg0){
+		if(loadDbBos == null){
+			loadDbBos = loadDatabaseClazz(); 
+		}
 		createTables(arg0, loadDbBos);
 	}
 

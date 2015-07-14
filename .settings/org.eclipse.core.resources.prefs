@@ -1,3 +1,11 @@
 eclipse.preferences.version=1
-encoding//src/cn/shrek/base/download/ui/BaseDownLoadActivity.java=UTF-8
+encoding//src/cn/shrek/base/download=GBK
+encoding//src/cn/shrek/base/download/DLHandler.java=GBK
+encoding//src/cn/shrek/base/download/DownloadCallable.java=UTF-8
+encoding//src/cn/shrek/base/download/Downloader.java=GBK
+encoding//src/cn/shrek/base/download/bo/DLTask.java=UTF-8
+encoding//src/cn/shrek/base/download/bo/DLThreadTask.java=UTF-8
+encoding//src/cn/shrek/base/download/db/DLDatabaseHelper.java=UTF-8
+encoding//src/cn/shrek/base/download/ui/BaseDownLoadActivity.java=GBK
+encoding//src/cn/shrek/base/download/ui/BaseDownLoadInfo.java=GBK
 encoding/README.md=UTF-8

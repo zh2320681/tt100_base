@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import android.content.Context;
 import android.view.LayoutInflater;
 import cn.shrek.base.annotation.AutoInject;
-import cn.shrek.base.util.ZWLogger;
 
 public class LayoutInflaterIT implements InjectTransfor {
 

@@ -24,9 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import android.R.menu;
 import cn.shrek.base.ZWConstants;
-import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.annotation.Produce;
 import cn.shrek.base.annotation.Subscribe;
 
@@ -43,9 +41,11 @@ final class AnnotatedHandlerFinder {
 		Map<ZWEvent, Set<Method>> subscriberMethods = new HashMap<ZWEvent, Set<Method>>();
 
 		for (Method method : listenerClass.getDeclaredMethods()) {
+			
 			if (method.isBridge()) {
 				continue;
 			}
+			
 			if (method.isAnnotationPresent(Subscribe.class)) {
 				Class<?>[] parameterTypes = method.getParameterTypes();
 				Subscribe sub = method.getAnnotation(Subscribe.class);

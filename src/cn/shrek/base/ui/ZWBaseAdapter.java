@@ -10,6 +10,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import cn.shrek.base.ZWConstants;
 import cn.shrek.base.annotation.Controller;
@@ -43,7 +44,7 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 		Injector.instance().injectValue(ctx, this);
 
 		if (outDataSource == null) {
-			dataSource = initData();
+			setDataSource();
 		} else {
 			dataSource = outDataSource;
 		}
@@ -75,9 +76,13 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 	 * 
 	 * @return
 	 */
-	public Collection<SOURCE> initData() {
+	protected Collection<SOURCE> initData() {
 		return null;
 	};
+	
+	public final void setDataSource(){
+		dataSource = initData();
+	}
 
 	public Collection<SOURCE> getDataSource() {
 		return dataSource;
@@ -293,6 +298,20 @@ public abstract class ZWBaseAdapter<SOURCE, HOLDER extends ZWHolderBo> extends
 				}
 			}
 		}
+	}
+	
+	
+	protected void setLayoutParams(View view, int width, int height) {
+		if(width == -1){
+			width = AbsListView.LayoutParams.WRAP_CONTENT;
+		}
+		
+		if(height == -1){
+			height = AbsListView.LayoutParams.WRAP_CONTENT;
+		}
+		AbsListView.LayoutParams alp = new AbsListView.LayoutParams(width,
+				height);
+		view.setLayoutParams(alp);
 	}
 
 }

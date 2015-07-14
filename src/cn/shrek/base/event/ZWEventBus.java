@@ -39,6 +39,7 @@ import cn.shrek.base.util.thread.ZWThreadEnforcer;
 public class ZWEventBus implements Identity {
 	public static final String DEFAULT_IDENTIFIER = "ZWEventBus";
 
+	private static ZWEventBus instance;
 	/** thread event*/
 //	private Handler mainThreadHandler;
 //	private ExecutorService backgroudHandler;
@@ -74,12 +75,16 @@ public class ZWEventBus implements Identity {
 			return false;
 		}
 	};
-
-	/**
-	 * Creates a new Bus named "default" that enforces actions on the main
-	 * thread.
-	 */
-	public ZWEventBus() {
+	
+	public static ZWEventBus newInstance(){
+		if(instance == null){
+			instance = new ZWEventBus();
+		}
+		return instance;
+	}
+	
+	
+	private ZWEventBus() {
 		this(DEFAULT_IDENTIFIER);
 	}
 
@@ -91,7 +96,7 @@ public class ZWEventBus implements Identity {
 	 *            a brief name for this bus, for debugging purposes. Should be a
 	 *            valid Java identifier.
 	 */
-	public ZWEventBus(String identifier) {
+	private ZWEventBus(String identifier) {
 		this(null, identifier);
 	}
 
@@ -102,7 +107,7 @@ public class ZWEventBus implements Identity {
 	 * @param enforcer
 	 *            Thread enforcer for register, unregister, and post actions.
 	 */
-	public ZWEventBus(ZWThreadEnforcer enforcer) {
+	private ZWEventBus(ZWThreadEnforcer enforcer) {
 		this(enforcer, DEFAULT_IDENTIFIER);
 	}
 
@@ -116,7 +121,7 @@ public class ZWEventBus implements Identity {
 	 *            A brief name for this bus, for debugging purposes. Should be a
 	 *            valid Java identifier.
 	 */
-	public ZWEventBus(ZWThreadEnforcer enforcer, String identifier) {
+	private ZWEventBus(ZWThreadEnforcer enforcer, String identifier) {
 		this(enforcer, identifier, HandlerFinder.ANNOTATED);
 	}
 
@@ -516,8 +521,10 @@ public class ZWEventBus implements Identity {
 	@Override
 	public void recycle() {
 		// TODO Auto-generated method stub
-		handlersByType.clear();
-		handlersByType = null;
+		if(handlersByType != null){
+			handlersByType.clear();
+			handlersByType = null;
+		}
 
 		identifier = null;
 
@@ -525,9 +532,11 @@ public class ZWEventBus implements Identity {
 
 		handlerFinder = null;
 
-		eventsToDispatch.remove();
-		eventsToDispatch = null;
-
+		if(eventsToDispatch != null){
+			eventsToDispatch.remove();
+			eventsToDispatch = null;
+		}
+	
 		isDispatching.remove();
 	}
 }

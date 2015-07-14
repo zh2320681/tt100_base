@@ -197,6 +197,10 @@ public abstract class ZWFragmentActivity extends FragmentActivity implements Obs
 	}
 
 	public void clearTaskList() {
+		if(taskList == null){
+			return;
+		}
+		
 		for (ZWAsyncTask<?> task : taskList) {
 			if (task != null) {
 				task.cancel(true);

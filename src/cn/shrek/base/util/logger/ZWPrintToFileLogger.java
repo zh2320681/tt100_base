@@ -108,7 +108,7 @@ public class ZWPrintToFileLogger implements ILogger {
 				file.createNewFile();
 			}
 			mPath = file.getAbsolutePath();
-			mWriter = new BufferedWriter(new FileWriter(mPath), 2048);
+			mWriter = new BufferedWriter(new FileWriter(mPath,true), 2048);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

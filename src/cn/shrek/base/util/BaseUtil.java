@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
-import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
 import android.content.Intent;
@@ -516,6 +516,32 @@ public class BaseUtil {
 		return isExist;
 	}
 
+	
+	/**
+	 * 判断坐标 是不是在这个区域内
+	 * @param pointX
+	 * @param pointY
+	 * @param keyboardFocusViews
+	 * @return
+	 */
+	public static boolean isViewInArea(float pointX,float pointY, View... keyboardFocusViews){
+//		boolean isInArea = false;
+		for(View view : keyboardFocusViews){
+			int[] location = { 0, 0 };
+			view.getLocationInWindow(location);
+			
+			int left = location[0], top = location[1], bottom = top + view.getHeight(), right = left
+					+ view.getWidth();
+			if (pointX > left && pointX < right
+					&& pointY > top && pointY < bottom) {
+				return true;
+			}
+			
+		}
+		return false;
+	}
+	
+	
 	/**
 	 * 返回打开文件的意图
 	 * 
@@ -632,10 +658,11 @@ public class BaseUtil {
 	public static void downloadFile(Context context, DLTask task,
 			DLHandler handler) {
 		if (handler != null) {
-			if (Downloader.allCallbacks == null)
-				Downloader.allCallbacks = new WeakHashMap<DLTask, DLHandler>();
+			if (Downloader.allCallbacks == null){
+				Downloader.allCallbacks = new ConcurrentHashMap<DLTask, DLHandler>();
+			}
 			Downloader.allCallbacks.put(task, handler);
-			handler.preDownloadDoing(task);
+			handler.preDownloadDoingOnUIThread(task);
 		}
 		Intent intent = new Intent(context, DownloadService.class);
 		intent.putExtra(DLConstant.DL_TASK_OBJ, task);

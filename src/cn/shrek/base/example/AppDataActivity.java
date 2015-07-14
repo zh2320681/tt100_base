@@ -31,7 +31,7 @@ public class AppDataActivity extends ZWActivity {
 				tvShow.setText("=======>" + appData.isSave);
 			} else if(arg0 == btn4){
 				appData.acount = "张三李思王五";
-				appData.password = "password1";
+				appData.password = "CDTDGYDTCCDCCDCC";
 				appData.parInt = 12580;
 				appData.eumnType = MappingType.ONE_TO_MANY;
 				appData.saveData();

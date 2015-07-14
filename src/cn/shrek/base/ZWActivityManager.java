@@ -2,7 +2,6 @@ package cn.shrek.base;
 
 import java.util.Stack;
 
-import cn.shrek.base.ui.ZWActivity;
 import android.app.Activity;
 
 public class ZWActivityManager<T extends Activity> {

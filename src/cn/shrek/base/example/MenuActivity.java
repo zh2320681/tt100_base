@@ -26,7 +26,7 @@ import cn.shrek.base.ui.inject.Injector;
 public class MenuActivity extends ZWActivity {
 	@AutoInject(clickSelector = "mClick")
 	private Button dbTestBtn,downTestBtn,imgBtn,restTestBtn,errorTestBtn,logPrintTestBtn,netTestBtn
-		,fragmentTestBtn,listTestBtn,appDataBtn,injectBtn,eventBtn,threadBtn;
+		,fragmentTestBtn,listTestBtn,appDataBtn,injectBtn,eventBtn,threadBtn,focusBtn;
 
 	@AutoInject
 	private LayoutInflater mInflater;
@@ -91,6 +91,10 @@ public class MenuActivity extends ZWActivity {
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), ThreadActivity.class);
 			    startActivity(intent);
+			}else if(arg0 == focusBtn){
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), FocusActivity.class);
+			    startActivity(intent);
 			}
 		}
 	};
@@ -126,7 +130,7 @@ public class MenuActivity extends ZWActivity {
 				com.comId = 250;
 				list.put(Company.class,com);
 				
-				ZWEventBus bus = new ZWEventBus();
+				ZWEventBus bus = ZWEventBus.newInstance();
 				//拦截器
 				bus.registerInterceptor(new MyInterceptor(MenuActivity.this));
 				list.put(ZWEventBus.class,bus);

@@ -10,6 +10,8 @@ import android.os.Handler;
 import cn.shrek.base.download.bo.DLTask;
 import cn.shrek.base.util.BaseUtil;
 import cn.shrek.base.util.ZWLogger;
+import cn.shrek.base.util.thread.HandlerEnforcer;
+import cn.shrek.base.util.thread.ZWThreadEnforcer;
 
 /**
  * 默认的 弹出框 处理器
@@ -21,24 +23,37 @@ public abstract class DialogDLHandler implements DLHandler {
 	private ProgressDialog progressDialog;
 	private Context ctx;
 	private Handler handler;
-	public DialogDLHandler(Context ctx){
+
+	ZWThreadEnforcer enforcer;
+
+	public DialogDLHandler(Context ctx) {
 		super();
 		this.ctx = ctx;
+
+		enforcer = HandlerEnforcer.newInstance();
 	}
-	
+
 	@Override
 	public int downLoadError(final DLTask task, Exception exception) {
 		// TODO Auto-generated method stub
-		showNormalError(false, "出错啦", "下载出现异常", new Runnable() {
+		enforcer.enforceMainThread(new Runnable() {
 
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				BaseUtil.downloadFile(ctx, task, DialogDLHandler.this);
-				ZWLogger.printLog(DialogDLHandler.this, "任务重试中,任务路径："
-						+ task.downLoadUrl);
+				showNormalError(false, "出错啦", "下载出现异常", new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						BaseUtil.downloadFile(ctx, task, DialogDLHandler.this);
+						ZWLogger.printLog(DialogDLHandler.this, "任务重试中,任务路径："
+								+ task.downLoadUrl);
+					}
+				});
 			}
 		});
+
 		return DLConstant.ERROR_DEFAULT;
 	}
 
@@ -46,7 +61,7 @@ public abstract class DialogDLHandler implements DLHandler {
 	public abstract boolean isDLFileExist(DLTask task);
 
 	@Override
-	public void postDownLoading(final DLTask task) {
+	public void postDownLoadingOnUIThread(final DLTask task) {
 		// TODO Auto-generated method stub
 		if (progressDialog != null && progressDialog.isShowing()) {
 			progressDialog.dismiss();
@@ -69,28 +84,23 @@ public abstract class DialogDLHandler implements DLHandler {
 	}
 
 	@Override
-	public void downLoadingProgress(final DLTask task, final int hasDownSize) {
+	public void downLoadingProgressOnOtherThread(final DLTask task, final int hasDownSize) {
 		// TODO Auto-generated method stub
-		
 		if (progressDialog != null) {
-			handler.post(new Runnable() {
-				
+			enforcer.enforceMainThread(new Runnable() {
+
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
-//					String totalStr = BaseUtil.getFileSize(task.totalSize);
-//					String downStr = BaseUtil.getFileSize(hasDownSize);
 					progressDialog.setMessage("正在下载" + task.fileName);
 					progressDialog.setMax((int) task.totalSize);
 					progressDialog.setProgress(hasDownSize);
 				}
 			});
-			
 		}
 	}
 
 	@Override
-	public void preDownloadDoing(DLTask task) {
+	public void preDownloadDoingOnUIThread(DLTask task) {
 		// TODO Auto-generated method stub
 		if (ctx != null) {
 			progressDialog = new ProgressDialog(ctx);
@@ -102,12 +112,12 @@ public abstract class DialogDLHandler implements DLHandler {
 					&& !progressDialog.isShowing())
 				progressDialog.show();
 		}
-		
+
 		handler = new Handler();
 	}
 
 	@Override
-	public boolean sdcardNoExist(DLTask task) {
+	public boolean sdcardNoExistOnUIThread(DLTask task) {
 		// TODO Auto-generated method stub
 		AlertDialog.Builder build = new AlertDialog.Builder(ctx);
 		build.setTitle("下载失败").setMessage("SD卡不存在,没法存储文件哦!")
@@ -123,13 +133,13 @@ public abstract class DialogDLHandler implements DLHandler {
 	}
 
 	@Override
-	public int threadNumConflict(DLTask task, int oldThreadNum) {
+	public int threadNumConflictOnOtherThread(DLTask task, int oldThreadNum) {
 		// TODO Auto-generated method stub
 		return DLConstant.CONFLICT_DEFAULT;
 	}
 
 	@Override
-	public void openFileError(final DLTask task, Exception e) {
+	public void openFileErrorOnOtherThread(final DLTask task, Exception e) {
 		// TODO Auto-generated method stub
 		showNormalError(false, "出错啦", "打开文件失败!", new Runnable() {
 
@@ -137,7 +147,7 @@ public abstract class DialogDLHandler implements DLHandler {
 			public void run() {
 				// TODO Auto-generated method stub
 				BaseUtil.downloadFile(ctx, task, DialogDLHandler.this);
-				ZWLogger.printLog(DialogDLHandler.this, "任务重试中,任务路径："
+				ZWLogger.i(DialogDLHandler.this, "任务重试中,任务路径："
 						+ task.downLoadUrl);
 			}
 		});
@@ -148,7 +158,7 @@ public abstract class DialogDLHandler implements DLHandler {
 		if (progressDialog != null && progressDialog.isShowing()) {
 			progressDialog.dismiss();
 		}
-		
+
 		if (ctx != null && errorTitle != null && errorContent != null) {
 			AlertDialog.Builder build = new AlertDialog.Builder(ctx);
 			build.setTitle(errorTitle)

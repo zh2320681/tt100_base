@@ -1,44 +1,61 @@
 package cn.shrek.base.download.bo;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import cn.shrek.base.ZWBo;
 import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
 import cn.shrek.base.download.DLConstant;
-@DatabaseTable
-public class DLTask extends ZWDatabaseBo implements Serializable {
-	//���ػ���ʱ��
+import cn.shrek.base.event.ZWEventPara;
+
+@DatabaseTable(tableName="DLTask")
+public class DLTask extends ZWDatabaseBo implements ZWEventPara {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5001572836597346037L;
+
+	//任务花费的时间
 	@DatabaseField
 	public long costTime;
-	//���񴴽�ʱ��
+	
+	//任务创建时间
 	@DatabaseField
 	public long createTime;
-	//���ص�����
+	
+	//下载的线程数 默认是一个
 	@DatabaseField
 	public int dlThreadNum;
-	//���ص�·��
+	
+	//下载的路径
 	@DatabaseField(id =true)
 	public String downLoadUrl;
-	//error��Ϣ
+	
+	//请求的异常信息
 	@DatabaseField
 	public String errorMessage;
-	//�ļ���
+	
+	//文件名
 	@DatabaseField
 	public String fileName;
-	//������� �Ƿ��Զ���
+	
+	//是否自动打开
 	public boolean isAutoOpen;
-	//�Ƿ��͹㲥
+	
+	//是否发送event<未实现>
+	public boolean isSendEvent;
+	
+	//是否发送广播
 	public boolean isSendBrocadcast;
-	//�Ƿ���ʾ״̬��
+	
 //	public boolean isShowNotify;
 
-	//���ֵ�·��
+	//下载路径
 	@DatabaseField
 	public String savePath;
+	
 	public AtomicInteger states;
 
 	@DatabaseField
@@ -49,11 +66,13 @@ public class DLTask extends ZWDatabaseBo implements Serializable {
 	}
 
 	public DLTask(String paramString) {
+		super();
 		this.downLoadUrl = paramString;
 		this.dlThreadNum = 1;
 		this.isAutoOpen = true;
 //		this.isShowNotify = true;
 		this.isSendBrocadcast = false;
+		this.isSendEvent = false;
 		AtomicInteger localAtomicInteger = new AtomicInteger();
 		this.states = localAtomicInteger;
 		this.states.set(1);

@@ -22,6 +22,12 @@ public @interface AutoInject
 	
 	boolean isSingleInstance() default false;
 	
+	/**
+	 * 键盘焦点(EditText设置无效)
+	 * @return
+	 */
+	boolean isKeyboardFocus() default false; 
+	
 	//对 fragment的 支持 布局ID R.layout.fragment11
 //	int fragmentLayoutId() default NULL_INT_VALUE;
 }

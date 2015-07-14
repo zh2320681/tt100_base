@@ -26,9 +26,9 @@ public class DownloadCallable implements Runnable {
 	private DLTask task;
 
 	public DownloadCallable(Context context, DLTask mDLTask,
-			DLThreadTask mDLThreadTask,
-			DLDatabaseHelper mDLDatabaseHelper) {
-		this.obj = new Object();;
+			DLThreadTask mDLThreadTask, DLDatabaseHelper mDLDatabaseHelper) {
+		this.obj = new Object();
+		;
 		this.task = mDLTask;
 		this.context = context;
 		this.dtTask = mDLThreadTask;
@@ -39,21 +39,22 @@ public class DownloadCallable implements Runnable {
 	private void sendBroadCast(String info) {
 		if (task.isSendBrocadcast) {
 			Intent intent = new Intent();
-			intent.setAction("BROADCAST_TASK");
-			intent.putExtra("d", task);
-			intent.putExtra("e", info);
+			intent.setAction(DLConstant.BROADCAST_TASK);
+			intent.putExtra(DLConstant.DL_TASK_OBJ, task);
+			intent.putExtra(DLConstant.DL_TASK_MSG, info);
 			context.sendBroadcast(intent);
 		}
-		ZWLogger.printLog(DownloadCallable.class, "ÏÂÔØµÄÎÄ¼şÃû: "+task.fileName+" ÏÂÔØÏß³Ìid£º"+dtTask.threadId
-				+" ÒÑ¾­ÏÂÔØ#####################===>"+dtTask.hasDownloadLength+"/"+dtTask.downloadBlock);
+		ZWLogger.i(DownloadCallable.class, "ä»»åŠ¡å: " + task.fileName + " çº¿ç¨‹ID:"
+				+ dtTask.threadId + " ä¸‹è½½çš„è¿›åº¦: "
+				+ dtTask.hasDownloadLength + "/" + dtTask.downloadBlock);
 		DLHandler handler = Downloader.allCallbacks.get(task);
-		if(handler != null){
+		if (handler != null) {
 			Set<DLThreadTask> set = Downloader.allTasks.get(task);
 			int sumSize = 0;
-			for(DLThreadTask dtTask : set){
+			for (DLThreadTask dtTask : set) {
 				sumSize += dtTask.hasDownloadLength;
 			}
-			handler.downLoadingProgress(task, sumSize);
+			handler.downLoadingProgressOnOtherThread(task, sumSize);
 		}
 	}
 
@@ -67,118 +68,139 @@ public class DownloadCallable implements Runnable {
 
 	@Override
 	public void run() {
-		if(!dtTask.isFinish()){//Î´ÏÂÔØÍê³É
+		if (!dtTask.isFinish()) {
 			task.states.set(DLConstant.TASK_RUN);
 			task.setErrorMessage("");
-			
-			beginTime = System.currentTimeMillis()/1000;
-			InputStream inStream =null;
+
+			beginTime = System.currentTimeMillis() / 1000;
+			InputStream inStream = null;
 			RandomAccessFile threadfile = null;
 			try {
 				URL dlUrl = new URL(task.downLoadUrl);
-				HttpURLConnection http = (HttpURLConnection) dlUrl.openConnection();
+				HttpURLConnection http = (HttpURLConnection) dlUrl
+						.openConnection();
 				http.setConnectTimeout(10000);
 				http.setReadTimeout(80000);
 				http.setRequestMethod("GET");
-				http.setRequestProperty("Accept", "image/gif, image/jpeg, image/pjpeg, image/pjpeg, application/x-shockwave-flash, application/xaml+xml, application/vnd.ms-xpsdocument, application/x-ms-xbap, application/x-ms-application, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*");
+				http.setRequestProperty(
+						"Accept",
+						"image/gif, image/jpeg, image/pjpeg, image/pjpeg, application/x-shockwave-flash, application/xaml+xml, application/vnd.ms-xpsdocument, application/x-ms-xbap, application/x-ms-application, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*");
 				http.setRequestProperty("Accept-Language", "zh-CN");
-				http.setRequestProperty("Referer", dlUrl.toString()); 
+				http.setRequestProperty("Referer", dlUrl.toString());
 				http.setRequestProperty("Charset", "UTF-8");
 				long startPos = dtTask.breakPointPosition;
-				long endPos = dtTask.breakPointPosition - dtTask.hasDownloadLength + dtTask.downloadBlock-1;
-//					startPos = ((downloader.getFileSize()/4)*3) + downLength;//¿ªÊ¼Î»ÖÃ
-//					endPos = downloader.getFileSize();//½áÊøÎ»ÖÃ
-//				}else{
-//					startPos = block * (threadId - 1) + downLength;//¿ªÊ¼Î»ÖÃ
-//					endPos = block * threadId -1;//½áÊøÎ»ÖÃ
-//				}
-				
-				ZWLogger.printLog(DownloadCallable.this, "Ïß³Ì"+dtTask.threadId+"¿ªÊ¼ÏÂÔØµÄÎ»ÖÃ ===>"+startPos+"   ÏÂÔØ½áÊøµÄÎ»ÖÃ===>"+
-						endPos);
-				http.setRequestProperty("Range", "bytes=" + startPos + "-"+ endPos);//ÉèÖÃ»ñÈ¡ÊµÌåÊı¾İµÄ·¶Î§
-				http.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)");
+				long endPos = dtTask.breakPointPosition
+						- dtTask.hasDownloadLength + dtTask.downloadBlock - 1;
+				// startPos = ((downloader.getFileSize()/4)*3) + downLength;
+				// endPos = downloader.getFileSize();
+				// }else{
+				// startPos = block * (threadId - 1) + downLength;
+				// endPos = block * threadId -1;
+				// }
+
+				ZWLogger.i(DownloadCallable.this, "ä¸‹è½½ID:" + dtTask.threadId
+						+ "èµ·å§‹ä¸‹è½½ç‚¹: " + startPos + "   ç»“æŸçš„ä¸‹è½½ç‚¹: " + endPos);
+				http.setRequestProperty("Range", "bytes=" + startPos + "-"
+						+ endPos);
+				http.setRequestProperty(
+						"User-Agent",
+						"Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)");
 				http.setRequestProperty("Connection", "Keep-Alive");
-				
+
 				inStream = http.getInputStream();
 				byte[] buffer = new byte[1024];
 				int offset = 0;
-//				System.out.println("task.getSavePath()==>"+task.getSavePath());
+				// System.out.println("task.getSavePath()==>"+task.getSavePath());
 				threadfile = new RandomAccessFile(task.getSavePath(), "rwd");
 				threadfile.seek(startPos);
 				while ((offset = inStream.read(buffer, 0, 1024)) != -1) {
-//					if(task.getStates() == DownloadThreadTask.TASK_PAUSE){
-//						Log.i(TAG,task.getFileName()+"ÓÃ»§ÊÖ¶¯¹Ø±ÕÏß³Ì " + task.getThreadId());
-//						this.wait();
-//						Log.i(TAG,task.getFileName()+"ÓÃ»§ÊÖ¶¯¹Ø±ÕÏß³ÌÔËĞĞ " + task.getThreadId());
-//					}
-//					else if(task.getStates() == DownloadThreadTask.TASK_RUN){
-//						this.notify();
-//					}
-					if(DownloadService.isServiceShutDown.get()){
-						task.setErrorMessage("ÏÂÔØÆ÷¹Ø±Õ!");
-						sendBroadCast("ÏÂÔØÆ÷¹Ø±Õ!");
+					// if(task.getStates() == DownloadThreadTask.TASK_PAUSE){
+					// Log.i(TAG,task.getFileName()+"é”ŸçŸ«ä¼™æ‹·é”Ÿè¡—è®¹æ‹·é”Ÿæˆªæ†‹æ‹·é”Ÿç«­ç­¹æ‹· " +
+					// task.getThreadId());
+					// this.wait();
+					// Log.i(TAG,task.getFileName()+"é”ŸçŸ«ä¼™æ‹·é”Ÿè¡—è®¹æ‹·é”Ÿæˆªæ†‹æ‹·é”Ÿç«­ç­¹æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹· " +
+					// task.getThreadId());
+					// }
+					// else if(task.getStates() == DownloadThreadTask.TASK_RUN){
+					// this.notify();
+					// }
+					if (DownloadService.isServiceShutDown.get()) {
+						task.setErrorMessage("ä¸‹è½½æœåŠ¡å…³é—­!");
+						sendBroadCast("ä¸‹è½½æœåŠ¡å…³é—­!");
 						threadfile.close();
 						inStream.close();
 						return;
 					}
-					
-					if(task.states.get() == DLConstant.TASK_PAUSE){
-						task.setErrorMessage("ÓÃ»§ÔİÍ£ÏÂÔØÈÎÎñ!");
-						sendBroadCast("ÓÃ»§ÔİÍ£ÏÂÔØÈÎÎñ!");
+
+					if (task.states.get() == DLConstant.TASK_PAUSE) {
+						task.setErrorMessage("ä¸‹è½½æš‚åœ!");
+						sendBroadCast("ä¸‹è½½æš‚åœ!");
 						threadfile.close();
 						inStream.close();
 						return;
 					}
-					
-					if(task.states.get() == DLConstant.TASK_ERROR){
-						task.setErrorMessage("ÆäËûÏÂÔØÏß³Ì³öÏÖ´íÎó!");
-						sendBroadCast("ÆäËûÏÂÔØÏß³Ì³öÏÖ´íÎó!");
+
+					if (task.states.get() == DLConstant.TASK_ERROR) {
+						task.setErrorMessage("ä¸‹è½½å‡ºç°é”™è¯¯!");
+						sendBroadCast("ä¸‹è½½å‡ºç°é”™è¯¯!");
 						threadfile.close();
 						inStream.close();
 						return;
 					}
-					
+
 					threadfile.write(buffer, 0, offset);
 					dtTask.hasDownloadLength += offset;
-//					downLength += offset;
+					// downLength += offset;
 					controlUpdateCache++;
-					if(controlUpdateCache >= 200){
-//						downloader.update(this.threadId, dataBuffer.get(dataBuffer.size()-1));
-//						dataBuffer.clear();
-						dtTask.costTime += (System.currentTimeMillis()/1000-beginTime);
+					if (controlUpdateCache >= 200) {
+						// downloader.update(this.threadId,
+						// dataBuffer.get(dataBuffer.size()-1));
+						// dataBuffer.clear();
+						dtTask.costTime += (System.currentTimeMillis() / 1000 - beginTime);
 						task.setErrorMessage("");
 						mDBOperator.updateThreadTask(dtTask);
 						controlUpdateCache = 0;
-						beginTime = System.currentTimeMillis()/1000;
+						beginTime = System.currentTimeMillis() / 1000;
 						sendBroadCast("");
 					}
 				}
-				
-				dtTask.costTime += (System.currentTimeMillis()/1000-beginTime);
+
+				dtTask.costTime += (System.currentTimeMillis() / 1000 - beginTime);
 				task.setErrorMessage("");
 				mDBOperator.updateThreadTask(dtTask);
 				controlUpdateCache = 0;
-				beginTime = System.currentTimeMillis()/1000;
-				
+				beginTime = System.currentTimeMillis() / 1000;
+
 				threadfile.close();
 				inStream.close();
-				//ÈÎÎñÍê³É¼ì²â
-				if(dtTask.isFinish()){
-//					this.isShutDownThread = true;
-					sendBroadCast("ÏÂÔØµÄÎÄ¼şÃû: " + task.fileName + " ÏÂÔØÏß³Ìid£º"+dtTask.threadId+" ÏÂÔØÍê³É!");
+
+				if (dtTask.isFinish()) {
+					// this.isShutDownThread = true;
+					sendBroadCast("ä»»åŠ¡å: " + task.fileName + " çº¿ç¨‹ID:"
+							+ dtTask.threadId + " ä¸‹è½½å®Œæˆ!");
 					task.states.set(DLConstant.TASK_SUCESS);
 				}
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				dtTask.hasDownloadLength = -1;
-				sendBroadCast("ÏÂÔØµÄÎÄ¼şÃû: " + task.fileName + " ÏÂÔØÏß³Ìid£º"+dtTask.threadId+" ÏÂÔØ³öÏÖÒì³£!");
-				task.setErrorMessage("ÏÂÔØÊ±ÍøÂç³öÏÖÒì³£!");
-//				sendBroadCast("ÏÂÔØÊ±ÍøÂç³öÏÖÒì³£!");
+				sendBroadCast("ä»»åŠ¡å: " + task.fileName + " çº¿ç¨‹ID:"
+						+ dtTask.threadId + " ä¸‹è½½å‡ºç°é”™è¯¯!");
+				task.setErrorMessage("ä¸‹è½½å‡ºç°é”™è¯¯!");
 				mDBOperator.updateTask(task);
-			}finally{
-				if(inStream!=null){try {inStream.close();} catch (IOException e) {}} 
-				if(threadfile!=null){try {threadfile.close();} catch (IOException e) {}}
+			} finally {
+				if (inStream != null) {
+					try {
+						inStream.close();
+					} catch (IOException e) {
+					}
+				}
+				if (threadfile != null) {
+					try {
+						threadfile.close();
+					} catch (IOException e) {
+					}
+				}
 			}
 		}
 	}

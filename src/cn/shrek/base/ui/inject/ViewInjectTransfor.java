@@ -6,6 +6,7 @@ import java.util.Observer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.View;
 import android.view.View.OnClickListener;
 import cn.shrek.base.ModelObservable;
 import cn.shrek.base.ObserverContainer;
@@ -14,14 +15,15 @@ import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.annotation.OberverLoad;
 import cn.shrek.base.ui.ZWCustomView;
 import cn.shrek.base.ui.ZWFragment;
+import cn.shrek.base.ui.inject.rule.KeyboardFocus;
 
 public class ViewInjectTransfor implements InjectTransfor {
 
 	private Context act;
 
 	@Override
-	public void setValue(Context act, Field field, Object objInstance,String defaultStr)
-			throws Exception {
+	public void setValue(Context act, Field field, Object objInstance,
+			String defaultStr) throws Exception {
 		// TODO Auto-generated method stub
 		this.act = act;
 
@@ -42,9 +44,9 @@ public class ViewInjectTransfor implements InjectTransfor {
 			} else if (objInstance instanceof ZWFragment) {
 				field.set(objInstance,
 						((ZWFragment) objInstance).rootView.findViewById(value));
-			} else if (objInstance instanceof ZWCustomView){
-				field.set(objInstance,
-						((ZWCustomView) objInstance).getRootView().findViewById(value));
+			} else if (objInstance instanceof ZWCustomView) {
+				field.set(objInstance, ((ZWCustomView) objInstance)
+						.getRootView().findViewById(value));
 			}
 
 			// 自动设置OnClcikListener
@@ -68,19 +70,31 @@ public class ViewInjectTransfor implements InjectTransfor {
 				}
 			}
 
-			// 自动设置观察绑定
-			OberverLoad oberverLoad = field.getAnnotation(OberverLoad.class);
-			if (oberverLoad != null) {
-				field.setAccessible(true);
-				Object obj;
-
-				obj = field.get(this);
-				ModelObservable mModelObservable = new ModelObservable(obj);
-				if (act instanceof Observer) {
-					mModelObservable.addObserver((Observer) act);
+			if (autoInject != null && autoInject.isKeyboardFocus()) {
+				Object obj = field.get(objInstance);
+				if (objInstance instanceof KeyboardFocus && obj != null
+						&& obj instanceof View) {
+					((KeyboardFocus) objInstance).addKeyboardFocus((View) obj);
 				}
-				ObserverContainer.addObservable(field.getName(),
-						mModelObservable);
+			}
+
+			if (autoInject != null
+					&& autoInject.clickSelector() != ZWConstants.NULL_STR_VALUE) {
+				// 自动设置观察绑定
+				OberverLoad oberverLoad = field
+						.getAnnotation(OberverLoad.class);
+				if (oberverLoad != null) {
+					field.setAccessible(true);
+					Object obj;
+
+					obj = field.get(this);
+					ModelObservable mModelObservable = new ModelObservable(obj);
+					if (act instanceof Observer) {
+						mModelObservable.addObserver((Observer) act);
+					}
+					ObserverContainer.addObservable(field.getName(),
+							mModelObservable);
+				}
 			}
 		}
 	}

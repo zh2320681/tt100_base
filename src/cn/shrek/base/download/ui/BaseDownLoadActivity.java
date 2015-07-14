@@ -174,7 +174,7 @@ public class BaseDownLoadActivity extends Activity {
 			downloaded_content.setVisibility(View.GONE);
 			downloaded_no.setVisibility(View.VISIBLE);
 		}
-		downloaded_text.setText("宸蹭??杞?("+loadedAdapter.getAllTasks().size()+")");
+		downloaded_text.setText("下载完成("+loadedAdapter.getAllTasks().size()+")");
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class BaseDownLoadActivity extends Activity {
 			downloading_content.setVisibility(View.GONE);
 			downloading_no.setVisibility(View.VISIBLE);
 		}
-		downloading_text.setText("姝ｅ?ㄤ??杞?(" + Downloader.allTasks.size() + ")");
+		downloading_text.setText("正在下载(" + Downloader.allTasks.size() + ")");
 	}
 
 	private void registerDownloadReceiver() {

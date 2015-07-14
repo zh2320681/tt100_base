@@ -12,7 +12,7 @@ public abstract class DialogTaskHandler<T> implements AsyncTaskHandler<T> {
 	public boolean isTaskSuccess = true;
 	protected String title;
 	protected String content;
-	public ZWAsyncTask<T> task;
+	private ZWAsyncTask<T> task;
 	
 	public DialogTaskHandler(String title, String content) {
 		// TODO Auto-generated constructor stub

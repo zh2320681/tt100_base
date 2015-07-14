@@ -52,6 +52,14 @@ public class Injector {
 		return instance;
 	}
 	
+	/**
+	 * 注入(不包括布局)
+	 * @param objIntance
+	 */
+	public void injectValue(Object objIntance){
+		injectValue(null, objIntance);
+	}
+	
 	public void injectValue(Context atc, Object objIntance){
 //		Class<?> clazz = field.getClass();
 		

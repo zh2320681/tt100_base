@@ -24,20 +24,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 import cn.shrek.base.download.bo.DLTask;
 import cn.shrek.base.download.bo.DLThreadTask;
 import cn.shrek.base.download.db.DLDatabaseHelper;
 import cn.shrek.base.util.BaseUtil;
 import cn.shrek.base.util.ZWLogger;
-import cn.tt100.base.R;
 
 public class Downloader {
 	public static final int NOTIFICATION_ID = 0x22;
@@ -55,22 +51,20 @@ public class Downloader {
 	private Context context;
 	// 错误的任务 用于任务失败后 重试
 	private Map<DLTask, Integer> errorTasks;
-//	private Notification infoNotification;
+	// private Notification infoNotification;
 
 	private DLDatabaseHelper mDBOperator;
 	// 执行任务线程池
 	private ExecutorService mExecutorService;
 
-	private NotificationManager mNotificationManager;
 	private Random mRandom;
 	private SimpleDateFormat mSimpleDateFormat;
 	// 拆分任务线程池
 	private ExecutorService splitExecutor;
 
-	public Downloader(Context mContext, NotificationManager manager) {
+	public Downloader(Context mContext) {
 		this.mRandom = new Random();
 		this.context = mContext;
-		this.mNotificationManager = manager;
 		if (allTasks == null) {
 			allTasks = Collections
 					.synchronizedMap(new HashMap<DLTask, Set<DLThreadTask>>());
@@ -83,11 +77,11 @@ public class Downloader {
 		if (!defaultSavePath.exists()) {
 			boolean bool = defaultSavePath.mkdir();
 			if (!bool)
-				ZWLogger.printLog(Downloader.this, "baseDLLoader文件夹创建失败!");
+				ZWLogger.i(Downloader.this, "baseDLLoader文件夹创建失败!");
 		}
 
-//		this.infoNotification = new Notification(R.layout.update_notify,
-//				"下载完成", System.currentTimeMillis());
+		// this.infoNotification = new Notification(R.layout.update_notify,
+		// "下载完成", System.currentTimeMillis());
 
 		mExecutorService = new ThreadPoolExecutor(maxThreadPoolSize,
 				maxThreadPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
@@ -97,10 +91,9 @@ public class Downloader {
 			protected void afterExecute(Runnable r, Throwable t) {
 				if (r instanceof DownloadCallable) {
 					DownloadCallable callable = (DownloadCallable) r;
-					DLTask localDLTask = callable.getTask();
-					DLThreadTask dtTask = callable.getDtTask();
+					DLTask dlTask = callable.getTask();
 
-					final Set<DLThreadTask> sets = allTasks.get(localDLTask);
+					final Set<DLThreadTask> sets = allTasks.get(dlTask);
 					boolean isFinish = true;
 					for (DLThreadTask dtTask1 : sets) {
 						if (!dtTask1.isFinish()) {
@@ -110,7 +103,7 @@ public class Downloader {
 					}
 
 					if (isFinish) {
-						postTaskDoing(localDLTask);
+						postTaskDoing(dlTask);
 					}
 				}
 
@@ -118,35 +111,34 @@ public class Downloader {
 		};
 
 		this.splitExecutor = Executors.newFixedThreadPool(1);
-		;
 
 		mDBOperator = new DLDatabaseHelper(mContext);
 		this.mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 	}
 
-//	private void showNotify(Intent i, String fileName) {
-//		infoNotification.contentView = new RemoteViews(
-//				context.getPackageName(), R.layout.update_notify);
-//		infoNotification.contentView.setTextViewText(R.id.notifyUI_progress,
-//				"点击打开下载内容");
-//		infoNotification.flags = Notification.FLAG_AUTO_CANCEL;
-//		infoNotification.contentView.setTextViewText(R.id.notifyUI_info,
-//				fileName + "下载完成");
-//		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-//				| Intent.FLAG_ACTIVITY_NEW_TASK);
-//		PendingIntent contentIntent = PendingIntent.getActivity(context,
-//				R.string.app_name, i, PendingIntent.FLAG_UPDATE_CURRENT);
-//		infoNotification.contentIntent = contentIntent;
-//		if (mNotificationManager != null) {
-//			mNotificationManager.notify(
-//					NOTIFICATION_ID + mRandom.nextInt(1000), infoNotification);
-//		} else {
-//			mNotificationManager = (NotificationManager) context
-//					.getSystemService(Context.NOTIFICATION_SERVICE);
-//			mNotificationManager.notify(
-//					NOTIFICATION_ID + mRandom.nextInt(1000), infoNotification);
-//		}
-//	}
+	// private void showNotify(Intent i, String fileName) {
+	// infoNotification.contentView = new RemoteViews(
+	// context.getPackageName(), R.layout.update_notify);
+	// infoNotification.contentView.setTextViewText(R.id.notifyUI_progress,
+	// "点击打开下载内容");
+	// infoNotification.flags = Notification.FLAG_AUTO_CANCEL;
+	// infoNotification.contentView.setTextViewText(R.id.notifyUI_info,
+	// fileName + "下载完成");
+	// i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+	// | Intent.FLAG_ACTIVITY_NEW_TASK);
+	// PendingIntent contentIntent = PendingIntent.getActivity(context,
+	// R.string.app_name, i, PendingIntent.FLAG_UPDATE_CURRENT);
+	// infoNotification.contentIntent = contentIntent;
+	// if (mNotificationManager != null) {
+	// mNotificationManager.notify(
+	// NOTIFICATION_ID + mRandom.nextInt(1000), infoNotification);
+	// } else {
+	// mNotificationManager = (NotificationManager) context
+	// .getSystemService(Context.NOTIFICATION_SERVICE);
+	// mNotificationManager.notify(
+	// NOTIFICATION_ID + mRandom.nextInt(1000), infoNotification);
+	// }
+	// }
 
 	/**
 	 * 添加任务
@@ -156,8 +148,9 @@ public class Downloader {
 	public void addTask(final DLTask mDLTask) {
 		DLHandler mHandler = getTaskHandler(mDLTask);
 		if (!BaseUtil.isSdCardExist()) {
-			Toast.makeText(this.context, "SD卡不存在,无法下载.", Toast.LENGTH_SHORT).show();
-			if (mHandler != null && !mHandler.sdcardNoExist(mDLTask)) {
+			Toast.makeText(this.context, "SD卡不存在,无法下载.", Toast.LENGTH_SHORT)
+					.show();
+			if (mHandler != null && !mHandler.sdcardNoExistOnUIThread(mDLTask)) {
 				return;
 			}
 		}
@@ -201,26 +194,25 @@ public class Downloader {
 					&& sumSize == localFile.length()) { // 如果源文件和新文件大小不一样
 				if (handler != null && !handler.isDLFileExist(mDLTask)) {
 					localFile.delete();
-					System.out.println("检测到文件夹中,有相同的文件名存在,做了删除处理!");
-					//清空线程下载记录
-					for(DLThreadTask dtTask : dtTasks){
+					print("检测到文件夹中,有相同的文件名存在,做了删除处理!");
+					// 清空线程下载记录
+					for (DLThreadTask dtTask : dtTasks) {
 						dtTask.hasDownloadLength = 0;
 					}
 					mDBOperator.updateTasks(mDLTask, dtTasks);
 				} else if (handler != null && handler.isDLFileExist(mDLTask)) {
 					postTaskDoing(mDLTask);
-					ZWLogger.printLog(Downloader.this, "任务"
-							+ mDLTask.downLoadUrl + " 不用下载,上次已经存在!");
+					print("任务" + mDLTask.downLoadUrl + " 不用下载,上次已经存在!");
 					return;
 				}
 			} else {
-				System.out.println("检测到文件夹中,有相同的文件名存在,做了覆盖处理!");
+				print("检测到文件夹中,有相同的文件名存在,做了覆盖处理!");
 			}
 		}
 
 		try {
 			for (DLThreadTask dtTask : dtTasks) {// 开启线程进行下载
-			// long downLength = task.getHasDownloadLength();
+				// long downLength = task.getHasDownloadLength();
 
 				if (!dtTask.isFinish()) {
 					/*
@@ -289,44 +281,44 @@ public class Downloader {
 	 */
 	private void postTaskDoing(DLTask mDLTask) {
 		long deffTime = mDLTask.createTime - new Date().getTime();
-		ZWLogger.printLog(Downloader.class, "下载任务" + mDLTask.downLoadUrl
+		ZWLogger.i(Downloader.class, "下载任务" + mDLTask.downLoadUrl
 				+ "都完成了 \n 耗时:" + (deffTime / 1000L) + "s  实际记录耗时间："
 				+ mDLTask.costTime / 1000L);
 
 		mDLTask.states.set(DLConstant.TASK_SUCESS);
 		sendTaskProgressBroadCast(null, mDLTask);
-//		if(){
-//			mNotificationManager.cancel(NOTIFICATION_ID);
-//		}
+		// if(){
+		// mNotificationManager.cancel(NOTIFICATION_ID);
+		// }
 
 		Intent intent = BaseUtil.getOpenFileIntent(mDLTask.getSavePath(),
 				context);
-//		showNotify(intent, mDLTask.fileName);
+		// showNotify(intent, mDLTask.fileName);
 
-		DLHandler localDLHandler = getTaskHandler(mDLTask);
-		if (localDLHandler != null){
-			localDLHandler.postDownLoading(mDLTask);
+		DLHandler task = getTaskHandler(mDLTask);
+		if (task != null) {
+			task.postDownLoadingOnUIThread(mDLTask);
 		}
-			
+
 		if (mDLTask.isAutoOpen) {
 			try {
 				this.context.startActivity(intent);
 				return;
 			} catch (Exception exception) {
 				Toast.makeText(this.context, "该文件类型无法打开!", 1).show();
-				if (localDLHandler != null) {
-					localDLHandler.openFileError(mDLTask, exception);
+				if (task != null) {
+					task.openFileErrorOnOtherThread(mDLTask, exception);
 				}
 			}
 		}
-		
+
 		allTasks.remove(mDLTask);
 		allCallbacks.remove(mDLTask);
 		errorTasks.remove(mDLTask);
 	}
 
-	private void print(String paramString) {
-		ZWLogger.printLog(this, paramString);
+	private void print(String message) {
+		ZWLogger.i(this, message);
 	}
 
 	/**
@@ -342,16 +334,14 @@ public class Downloader {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				ZWLogger.printLog(Downloader.class, "任务:" + mDLTask.downLoadUrl
-						+ " 现在开始重试下载!");
+				print("任务:" + mDLTask.downLoadUrl + " 现在开始重试下载!");
 				Intent intent = new Intent(context, DownloadService.class);
 				intent.putExtra("d", mDLTask);
 				context.startService(intent);
 			}
 		};
 		localTimer.schedule(timeTask, delayTime);
-		ZWLogger.printLog(Downloader.class, "任务:" + mDLTask.downLoadUrl + "  "
-				+ delayTime + "ms后重试下载!");
+		print("任务:" + mDLTask.downLoadUrl + "  " + delayTime + "ms后重试下载!");
 	}
 
 	/**
@@ -360,9 +350,9 @@ public class Downloader {
 	private void sendTaskProgressBroadCast(String info, DLTask mDLTask) {
 		if (mDLTask.isSendBrocadcast) {
 			Intent intent = new Intent();
-			intent.setAction("BROADCAST_TASK");
-			intent.putExtra("d", mDLTask);
-			intent.putExtra("e", info);
+			intent.setAction(DLConstant.BROADCAST_TASK);
+			intent.putExtra(DLConstant.DL_TASK_OBJ, mDLTask);
+			intent.putExtra(DLConstant.DL_TASK_MSG, info);
 			this.context.sendBroadcast(intent);
 		}
 	}
@@ -478,21 +468,19 @@ public class Downloader {
 
 		Set<DLThreadTask> dtTasks = mDBOperator.getDownloadTaskByPath(mDLTask
 				.hashCode());
-
 		sendTaskProgressBroadCast("从数据库中获取下载信息条数:" + dtTasks.size(), mDLTask);
 
 		//
 		if (dtTasks.size() > 0 && dtTasks.size() != mDLTask.dlThreadNum) {
 			if (mDLHandler != null) {
-				switch (mDLHandler.threadNumConflict(mDLTask, dtTasks.size())) {
+				switch (mDLHandler.threadNumConflictOnOtherThread(mDLTask, dtTasks.size())) {
 				case DLConstant.CONFLICT_LAST:
 					DLTask dbDLTask = mDBOperator
 							.getTaskByPath(mDLTask.downLoadUrl);
 					mDLTask = dbDLTask;
 					break;
 				case DLConstant.CONFLICT_RETURN:
-					ZWLogger.printLog(Downloader.class,
-							"下载线程数目与上一次不符合,用户设置退出下载!");
+					print("下载线程数目与上一次不符合,用户设置退出下载!");
 					return;
 				default:
 					// 以这次为主
@@ -578,7 +566,8 @@ public class Downloader {
 				}
 
 				String fileName = getFileName(conn, mDLTask.downLoadUrl);
-//				File saveFile = new File(mDLTask.savePath, fileName);// 构建保存文件
+				// File saveFile = new File(mDLTask.savePath, fileName);//
+				// 构建保存文件
 				mDLTask.fileName = fileName;
 				mDLTask.totalSize = fileSize;
 				if (isTaskSizeNoMatch) {

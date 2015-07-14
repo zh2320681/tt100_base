@@ -89,6 +89,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="多线程处理" />
+            
+            <Button
+                android:id="@+id/menu_focusBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="控件键盘事件" />
         </LinearLayout>
     </ScrollView>
 

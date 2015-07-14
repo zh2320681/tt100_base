@@ -15,4 +15,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="下载测试(用弹出框处理器)" />
+    
+    <Button
+        android:id="@+id/dl_downNoifyTestBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="下载测试(用状态栏处理器)" />
 </LinearLayout>

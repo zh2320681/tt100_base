@@ -2,9 +2,7 @@ package cn.shrek.base.util.rest;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -60,7 +58,9 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	 * 自带请求的config 在队列时候用
 	 */
 	public ZWRequestConfig config;
-	private Queue<ZWAsyncTask<?>> allTask;
+	// private Queue<ZWAsyncTask<?>> allTask;
+	private ZWAsyncTask<?> nextTask;
+	private QueueTaskHandler qtHandler;
 
 	public ZWAsyncTask(Context ctx, AsyncTaskHandler<PARSEOBJ> handler) {
 		this(ctx, null, handler);
@@ -92,22 +92,49 @@ public class ZWAsyncTask<PARSEOBJ> extends
 	 * @return
 	 */
 	public static void addTaskIntoQueueAndExcute(ZWAsyncTask<?>... tasks) {
-		Queue<ZWAsyncTask<?>> allTask = new LinkedList<ZWAsyncTask<?>>();
-		for (ZWAsyncTask<?> task : tasks) {
+		addTaskIntoQueueAndExcute(null, tasks);
+	}
+
+	/**
+	 * 将任务添加到队列中,并返回队列的第一个任务执行
+	 * 
+	 * @param tasks
+	 * @param qHandler
+	 *            队列的回掉函数
+	 * @return
+	 */
+	public static void addTaskIntoQueueAndExcute(QueueTaskHandler qHandler,
+			ZWAsyncTask<?>... tasks) {
+		if (tasks == null || tasks.length == 0) {
+			return;
+		}
+
+		for (int i = 0; i < tasks.length; i++) {
+			ZWAsyncTask<?> task = tasks[i];
 			if (task.config == null) {
 				throw new NullPointerException("队列里面任务必须提前设置 Config!");
 			}
-			task.allTask = allTask;
-			allTask.add(task);
-		}
-		if (allTask.size() > 0) {
-			ZWAsyncTask<?> task = allTask.poll();
-			if (task != null) {
-				if (task.config != null) {
-					task.taskGuid = task.config.getUniqueKey();
-				}
-				task.execute(task.config);
+
+			if (i > 0) {
+				tasks[i - 1].nextTask = task;
 			}
+
+//			if (i == 0 || i == tasks.length - 1) {
+//			}
+			tasks[i].qtHandler = qHandler;
+			// task.allTask = allTask;
+			// allTask.add(task);
+		}
+
+		if (tasks[0].qtHandler != null) {
+			tasks[0].qtHandler.preDoing();
+		}
+		ZWAsyncTask<?> task = tasks[0];
+		if (task != null) {
+			if (task.config != null) {
+				task.taskGuid = task.config.getUniqueKey();
+			}
+			task.execute(task.config);
 		}
 	}
 
@@ -242,8 +269,14 @@ public class ZWAsyncTask<PARSEOBJ> extends
 				}
 
 			}
+			
 			if (handler != null) {
 				handler.preDoing();
+			}
+			
+			if(qtHandler != null){
+				qtHandler.setTask(this);
+				qtHandler.singleTaskPreDoing();
 			}
 		}
 
@@ -268,13 +301,13 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 		ZWResult<PARSEOBJ> r = new ZWResult<PARSEOBJ>();
 		Context context = ctx.get();
-		
-		//检测网络是否连接
-		if(!BaseUtil.isNetworkAvailable(context)){
+
+		// 检测网络是否连接
+		if (!BaseUtil.isNetworkAvailable(context)) {
 			r.errorException = new NetworkAvailableException("网络未连接!");
 			return r;
 		}
-		
+
 		// 判断是否开启缓存
 		if (isOpenCache()) {
 			ZWCache cache = getRestCache(context);
@@ -295,19 +328,21 @@ public class ZWAsyncTask<PARSEOBJ> extends
 					.entrySet()) {
 				requestHeaders.add(entry.getKey(), entry.getValue());
 			}
-			
+
 			Object obj = config.getBody();
 			HttpEntity<?> requestEntity = new HttpEntity<Object>(
-					obj == null?obj:JSON.toJSONString(config.getBody()), requestHeaders);
-//			HttpEntity<?> requestEntity = new HttpEntity<Object>(
-//					JSON.toJSON(config.getBody()), requestHeaders);
+					obj == null ? obj : JSON.toJSONString(config.getBody()),
+					requestHeaders);
+			// HttpEntity<?> requestEntity = new HttpEntity<Object>(
+			// JSON.toJSON(config.getBody()), requestHeaders);
 
 			RestTemplate restTemplate = new RestTemplate();
 			// 设置超时
 			ClientHttpRequestFactory requestFactory = restTemplate
 					.getRequestFactory();
 			if (requestFactory instanceof HttpComponentsClientHttpRequestFactory) {
-				ZWLogger.printLog(TAG, "设置HttpComponentsClientHttpRequestFactory 超时时间!");
+				ZWLogger.printLog(TAG,
+						"设置HttpComponentsClientHttpRequestFactory 超时时间!");
 				HttpComponentsClientHttpRequestFactory mComponentsClientHttpRequestFactory = (HttpComponentsClientHttpRequestFactory) requestFactory;
 				mComponentsClientHttpRequestFactory
 						.setConnectTimeout(config.connTimeOut);
@@ -320,12 +355,12 @@ public class ZWAsyncTask<PARSEOBJ> extends
 				((SimpleClientHttpRequestFactory) requestFactory)
 						.setReadTimeout(config.readTimeOut);
 			}
-			
+
 			// requestFactory.
 			restTemplate.getMessageConverters().add(config.converter);
-			
+
 			System.gc();
-			
+
 			ResponseEntity<String> responseEntity = null;
 			if (config.getParas() != null) {
 				responseEntity = restTemplate.exchange(config.url,
@@ -371,6 +406,9 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			if (result.errorException != null) {
 				// 出现错误的时候
 				handler.postError(result, result.errorException);
+				if(qtHandler != null){
+					qtHandler.postError(result.errorException);
+				}
 				return;
 			}
 			// 判断是否开始缓存
@@ -387,19 +425,24 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			if (context instanceof ZWActivity) {
 				((ZWActivity) context).removeTask(this);
 			}
-			if (allTask != null) {
-				if (allTask.size() == 0) {
-					// 队列里面任务允许完毕
 
-				} else {
-					if (config == null) {
-						throw new NullPointerException("队列里面任务必须提前设置 Config!");
-					}
-					ZWLogger.printLog(TAG, "队列有任务,继续执行!");
-					ZWAsyncTask<?> task = allTask.poll();
-					task.execute(task.config);
+			if (qtHandler != null) {
+				qtHandler.singleTaskAfterDoing();
+			}
+			
+			if (nextTask != null) {
+				if (nextTask.config == null) {
+					throw new NullPointerException("队列里面任务必须提前设置 Config!");
 				}
+				ZWLogger.i(TAG, "队列有任务,继续执行!");
+//				ZWAsyncTask<?> task = allTask.poll();
+				nextTask.execute(nextTask.config);
+				nextTask = null;
+				qtHandler = null;
 			} else {
+				if (qtHandler != null) {
+					qtHandler.afterTaskDoing();
+				}
 				cycle();
 			}
 
@@ -499,10 +542,16 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		ctx = null;
 		// 请求处理器
 		handler = null;
-
-		if (allTask != null) {
-			allTask.clear();
-			allTask = null;
+		
+		ZWAsyncTask<?> cycleTask = this;
+		while (cycleTask.nextTask != null) {
+			ZWAsyncTask<?> temp = cycleTask.nextTask;
+			cycleTask.nextTask = null;
+			cycleTask = temp;
 		}
+//		if (allTask != null) {
+//			allTask.clear();
+//			allTask = null;
+//		}
 	}
 }

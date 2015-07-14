@@ -111,7 +111,7 @@ public class ZWAppException implements UncaughtExceptionHandler {
 					}
 					mBuilder.setMessage(sb.toString());
 					
-					ZWLogger.e(this, sb.toString());
+					ZWLogger.p(this, sb.toString());
 				}
 				try {
 					mBuilder.create().show();

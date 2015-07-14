@@ -3,28 +3,39 @@ package cn.shrek.base.download.bo;
 import cn.shrek.base.ZWDatabaseBo;
 import cn.shrek.base.annotation.DatabaseField;
 import cn.shrek.base.annotation.DatabaseTable;
+import cn.shrek.base.event.ZWEventPara;
 
-@DatabaseTable
-public class DLThreadTask extends ZWDatabaseBo{
-	//�ϵ�λ��
+@DatabaseTable(tableName="DLThreadTask")
+public class DLThreadTask extends ZWDatabaseBo implements ZWEventPara{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4641951641064275968L;
+
+	//断点位置
 	@DatabaseField
 	public volatile long breakPointPosition;
-	//����ʱ��
+	
+	//花费的时间
 	@DatabaseField
 	public int costTime;
-	//Ҫ���صĳ���
+	
+	//要下载的长度
 	@DatabaseField
 	public long downloadBlock;
-	//�Ѿ����صĳ���
+	
+	//已经下载的长度
 	@DatabaseField
 	public volatile long hasDownloadLength;
-	//���ݿ������
+	
 	@DatabaseField(id = true)
 	public int idCode;
 
 	@DatabaseField
 	public int taskHashCode;
-	//�̵߳�id
+	
+	//线程id
 	@DatabaseField
 	public int threadId;
 
