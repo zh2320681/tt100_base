@@ -190,8 +190,8 @@ public class Downloader {
 		}
 		DLHandler handler = getTaskHandler(mDLTask);
 		if (localFile.exists()) {
-			if (localFile.length() == mDLTask.totalSize
-					&& sumSize == localFile.length()) { // 如果源文件和新文件大小不一样
+//			if (localFile.length() == mDLTask.totalSize
+//					&& sumSize == localFile.length()) { // 如果源文件和新文件大小不一样
 				if (handler != null && !handler.isDLFileExist(mDLTask)) {
 					localFile.delete();
 					print("检测到文件夹中,有相同的文件名存在,做了删除处理!");
@@ -205,9 +205,9 @@ public class Downloader {
 					print("任务" + mDLTask.downLoadUrl + " 不用下载,上次已经存在!");
 					return;
 				}
-			} else {
-				print("检测到文件夹中,有相同的文件名存在,做了覆盖处理!");
-			}
+			// } else {
+			// print("检测到文件夹中,有相同的文件名存在,做了覆盖处理!");
+			// }
 		}
 
 		try {
@@ -541,6 +541,9 @@ public class Downloader {
 			conn.connect();
 			if (conn.getResponseCode() == 200) {
 				long fileSize = conn.getContentLength();// 根据响应获取文件大小
+				if(fileSize <= 0){
+					fileSize = BaseUtil.parseLong(conn.getHeaderField("File-Length"));
+				}
 				sendTaskProgressBroadCast("请求获得文件大小:" + fileSize, mDLTask);
 				mDLTask.totalSize = fileSize;
 				if (fileSize <= 0) {
@@ -564,11 +567,16 @@ public class Downloader {
 					sendTaskProgressBroadCast("第" + (i + 1) + "线程需要下载的大小为"
 							+ block.get(i), mDLTask);
 				}
-
-				String fileName = getFileName(conn, mDLTask.downLoadUrl);
+				
+		
+				if(mDLTask.fileName == null){
+					mDLTask.fileName = getFileName(conn, mDLTask.downLoadUrl);
+				} else {
+					print("下载文件名 : " + mDLTask.fileName);
+				}
+				
 				// File saveFile = new File(mDLTask.savePath, fileName);//
 				// 构建保存文件
-				mDLTask.fileName = fileName;
 				mDLTask.totalSize = fileSize;
 				if (isTaskSizeNoMatch) {
 					/*
@@ -591,7 +599,7 @@ public class Downloader {
 						dtTask.downloadBlock = block.get(dtTask.threadId);
 						dtTask.taskHashCode = mDLTask.hashCode();
 
-						sendTaskProgressBroadCast("下载名称：" + fileName
+						sendTaskProgressBroadCast("下载名称：" + mDLTask.fileName
 								+ "  下载线程===>" + dtTask.threadId
 								+ "  已经下载长度====>" + dtTask.hasDownloadLength,
 								mDLTask);

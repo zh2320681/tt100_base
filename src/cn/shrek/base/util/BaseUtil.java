@@ -2,6 +2,7 @@ package cn.shrek.base.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
@@ -119,7 +120,7 @@ public class BaseUtil {
 			return;
 		}
 		/* 获取文件的后缀名 */
-//		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
+		// String end = fName.substring(dotIndex, fName.length()).toLowerCase();
 		// if (end.indexOf("txt") != -1 || end.indexOf("htm") != -1) {
 		// intent.setClass(context, ShowTxtAndWeb.class);
 		// intent.putExtra("url", file.getPath());
@@ -238,8 +239,7 @@ public class BaseUtil {
 	public static int parseInt(String str) {
 		return parseInt(str, 0);
 	}
-	
-	
+
 	public static long parseLong(String str, long defaultValue) {
 		long i = defaultValue;
 		if (str != null && !str.equals("")) {
@@ -252,12 +252,12 @@ public class BaseUtil {
 		}
 		return i;
 	}
-	
+
 	public static boolean parseBoolean(String str) {
-		return parseBoolean(str,false);
+		return parseBoolean(str, false);
 	}
 
-	public static boolean parseBoolean(String str,boolean defaultValue) {
+	public static boolean parseBoolean(String str, boolean defaultValue) {
 		boolean i = defaultValue;
 		if (str != null && !str.equals("")) {
 			try {
@@ -269,12 +269,12 @@ public class BaseUtil {
 		}
 		return i;
 	}
-	
+
 	public static long parseLong(String str) {
-		return parseLong(str,0);
+		return parseLong(str, 0);
 	}
 
-	public static double parseDouble(String str,double defaultValue) {
+	public static double parseDouble(String str, double defaultValue) {
 		double i = defaultValue;
 		if (str != null && !str.equals("")) {
 			try {
@@ -287,11 +287,11 @@ public class BaseUtil {
 		return i;
 	}
 
-	public static double parseDouble(String str){
+	public static double parseDouble(String str) {
 		return parseDouble(str, 0);
 	}
-	
-	public static Float parseFloat(String str,float defaultValue) {
+
+	public static Float parseFloat(String str, float defaultValue) {
 		float i = defaultValue;
 		if (str != null && !str.equals("")) {
 			try {
@@ -303,20 +303,21 @@ public class BaseUtil {
 		}
 		return i;
 	}
-	
-	public static Float parseFloat(String str){
+
+	public static Float parseFloat(String str) {
 		return parseFloat(str, 0);
 	}
-	
+
 	/**
 	 * 判断 字符串 是否有效
+	 * 
 	 * @param string
 	 * @return
 	 */
-	public static boolean isStringValid(String string){
+	public static boolean isStringValid(String string) {
 		return string != null && !"".equals(string);
 	}
-	
+
 	/**
 	 * 判断 是不是这个Activity
 	 */
@@ -326,7 +327,7 @@ public class BaseUtil {
 		if (obj != null) {
 			Class<?> ctxClass = obj.getClass();
 			if (ctxClass.hashCode() == activityClass.hashCode()) {
-				
+
 				T futureObj = (T) obj;
 				return futureObj;
 			}
@@ -334,13 +335,12 @@ public class BaseUtil {
 		return null;
 	}
 
-	
 	/**
 	 * #########################################################################
 	 * ############################ 图片处理类 ###################################
 	 * #########################################################################
 	 */
-	
+
 	/**
 	 * 通过用户指定的 大小 加载图片
 	 * 
@@ -395,7 +395,6 @@ public class BaseUtil {
 		return bitmap;
 	}
 
-	
 	/**
 	 * Bitmap → Drawable
 	 */
@@ -404,11 +403,11 @@ public class BaseUtil {
 		if (bm == null) {
 			return null;
 		}
-		BitmapDrawable bd=new BitmapDrawable(bm);
+		BitmapDrawable bd = new BitmapDrawable(bm);
 		bd.setTargetDensity(bm.getDensity());
 		return new BitmapDrawable(bm);
 	}
-	
+
 	/**
 	 * Drawable → Bitmap
 	 */
@@ -421,7 +420,8 @@ public class BaseUtil {
 		int w = drawable.getIntrinsicWidth();
 		int h = drawable.getIntrinsicHeight();
 		// 取 drawable 的颜色格式
-		Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
+		Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+				: Bitmap.Config.RGB_565;
 		// 建立对应 bitmap
 		Bitmap bitmap = Bitmap.createBitmap(w, h, config);
 		// 建立对应 bitmap 的画布
@@ -431,7 +431,7 @@ public class BaseUtil {
 		drawable.draw(canvas);
 		return bitmap;
 	}
-	
+
 	/**
 	 * byte[] → Bitmap
 	 */
@@ -441,8 +441,7 @@ public class BaseUtil {
 		}
 		return BitmapFactory.decodeByteArray(b, 0, b.length);
 	}
-	
-	
+
 	/**
 	 * Bitmap → byte[]
 	 */
@@ -454,7 +453,7 @@ public class BaseUtil {
 		bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
 		return baos.toByteArray();
 	}
-	
+
 	// public static void downloadFile(Context context, DLTask mDLTask,
 	// DLHandler handler){
 	// if (handler != null ){
@@ -516,32 +515,51 @@ public class BaseUtil {
 		return isExist;
 	}
 
-	
 	/**
 	 * 判断坐标 是不是在这个区域内
+	 * 
 	 * @param pointX
 	 * @param pointY
 	 * @param keyboardFocusViews
 	 * @return
 	 */
-	public static boolean isViewInArea(float pointX,float pointY, View... keyboardFocusViews){
-//		boolean isInArea = false;
-		for(View view : keyboardFocusViews){
+	public static boolean isViewInArea(float pointX, float pointY,
+			View... keyboardFocusViews) {
+		// boolean isInArea = false;
+		for (View view : keyboardFocusViews) {
 			int[] location = { 0, 0 };
 			view.getLocationInWindow(location);
-			
-			int left = location[0], top = location[1], bottom = top + view.getHeight(), right = left
-					+ view.getWidth();
-			if (pointX > left && pointX < right
-					&& pointY > top && pointY < bottom) {
+
+			int left = location[0], top = location[1], bottom = top
+					+ view.getHeight(), right = left + view.getWidth();
+			if (pointX > left && pointX < right && pointY > top
+					&& pointY < bottom) {
 				return true;
 			}
-			
+
 		}
 		return false;
 	}
-	
-	
+
+	/**
+	 * 判断 能否ping通服务器地址
+	 * @param ipAddress
+	 * @return
+	 */
+	public static boolean pingHost(String ipAddress) {
+		try {
+			Process p = Runtime.getRuntime().exec(
+					"ping -c 1 -w 100 " + ipAddress);
+			int status = p.waitFor();
+			return status == 0;
+		} catch (IOException e) {
+
+		} catch (InterruptedException e) {
+
+		}
+		return false;
+	}
+
 	/**
 	 * 返回打开文件的意图
 	 * 
@@ -558,7 +576,7 @@ public class BaseUtil {
 			return null;
 		}
 		/* 获取文件的后缀名 */
-//		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
+		// String end = fName.substring(dotIndex, fName.length()).toLowerCase();
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		// 设置intent的Action属性
 		intent.setAction(Intent.ACTION_VIEW);
@@ -658,7 +676,7 @@ public class BaseUtil {
 	public static void downloadFile(Context context, DLTask task,
 			DLHandler handler) {
 		if (handler != null) {
-			if (Downloader.allCallbacks == null){
+			if (Downloader.allCallbacks == null) {
 				Downloader.allCallbacks = new ConcurrentHashMap<DLTask, DLHandler>();
 			}
 			Downloader.allCallbacks.put(task, handler);

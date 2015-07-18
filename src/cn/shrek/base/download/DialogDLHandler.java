@@ -168,7 +168,8 @@ public abstract class DialogDLHandler implements DLHandler {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									dialog.cancel();
+//									dialog.cancel();
+									dialog.dismiss();
 									// run.run();
 								}
 							});
@@ -179,7 +180,10 @@ public abstract class DialogDLHandler implements DLHandler {
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
 							// TODO Auto-generated method stub
-							run.run();
+							if(run != null){
+								run.run();
+							}
+							arg0.dismiss();
 						}
 
 					});
