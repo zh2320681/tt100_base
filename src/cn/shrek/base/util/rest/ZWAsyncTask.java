@@ -387,7 +387,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 						break;
 					}
 				} else {
-					result = responseEntity.getBody().toString();
+					result = responseEntity.getBody();
 				}
 			} else {
 				if (config.getParas() != null) {
@@ -402,7 +402,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 					responseEntity = restTemplate.exchange(config.url,
 							config.httpMethod, requestEntity, String.class);
 				}
-				result = responseEntity.getBody().toString();
+				result = responseEntity.getBody();
 			}
 
 			
