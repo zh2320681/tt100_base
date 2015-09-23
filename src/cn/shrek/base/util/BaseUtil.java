@@ -1,14 +1,18 @@
 package cn.shrek.base.util;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,7 +25,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.IBinder;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 import cn.shrek.base.download.DLConstant;
 import cn.shrek.base.download.DLHandler;
@@ -516,6 +524,49 @@ public class BaseUtil {
 	}
 
 	/**
+	 * 隐藏键盘
+	 * @param act
+	 * @param token
+	 */
+	public static void hideSoftInput(Activity act , IBinder token) {
+		if (token != null) {
+			InputMethodManager im = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
+			im.hideSoftInputFromWindow(token,
+					InputMethodManager.HIDE_NOT_ALWAYS);
+		}
+	}
+	
+	/**
+	 * 根据EditText所在坐标和用户点击的坐标相对比，来判断是否隐藏键盘，因为当用户点击EditText时没必要隐藏
+	 * 
+	 * @param v
+	 * @param event
+	 * @return
+	 */
+	public static boolean isShouldHideInput(View v, MotionEvent event,Collection<View> keyboardFocusViews) {
+		if (v != null && v instanceof EditText) {
+			View[] views;
+			if(keyboardFocusViews != null){
+				views = new View[keyboardFocusViews.size()+1];
+				views[0] = v;
+				
+				int temp = 1;
+				for(View focusView : keyboardFocusViews){
+					views[temp] =  focusView;
+					temp++;
+				}
+			} else {
+				views = new View[1];
+				views[0] = v;
+			}
+			
+			return !isViewInArea(event.getX(), event.getY(), views);
+		}
+		// 如果焦点不是EditText则忽略，这个发生在视图刚绘制完，第一个焦点不在EditView上，和用户用轨迹球选择其他的焦点
+		return false;
+	}
+	
+	/**
 	 * 判断坐标 是不是在这个区域内
 	 * 
 	 * @param pointX
@@ -543,19 +594,71 @@ public class BaseUtil {
 
 	/**
 	 * 判断 能否ping通服务器地址
+	 * 
 	 * @param ipAddress
 	 * @return
 	 */
 	public static boolean pingHost(String ipAddress) {
 		try {
 			Process p = Runtime.getRuntime().exec(
-					"ping -c 1 -w 100 " + ipAddress);
+					"ping -c 1 -t 5 -W 100 " + ipAddress);			
+			// 获取进程的标准输入流
+			final InputStream is1 = p.getInputStream();
+			// 获取进城的错误流
+			final InputStream is2 = p.getErrorStream();
+			// 启动两个线程，一个线程负责读标准输出流，另一个负责读标准错误流
+			new Thread() {
+				public void run() {
+					BufferedReader br1 = new BufferedReader(
+							new InputStreamReader(is1));
+					try {
+						String line1 = null;
+						while ((line1 = br1.readLine()) != null) {
+							if (line1 != null) {
+								System.out.println("success=============>"+line1);
+							}
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						try {
+							is1.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}.start();
+
+			new Thread() {
+				public void run() {
+					BufferedReader br2 = new BufferedReader(
+							new InputStreamReader(is2));
+					try {
+						String line2 = null;
+						while ((line2 = br2.readLine()) != null) {
+							if (line2 != null) {
+								System.out.println("error=============>"+line2);
+							}
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						try {
+							is2.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}.start();
 			int status = p.waitFor();
+			p.destroy();
 			return status == 0;
 		} catch (IOException e) {
-
+			e.printStackTrace();
 		} catch (InterruptedException e) {
-
+			e.printStackTrace();
 		}
 		return false;
 	}

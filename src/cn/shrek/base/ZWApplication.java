@@ -97,6 +97,7 @@ public class ZWApplication extends Application {
 	
 	private ZWNetChangeObserver zwNetChangeObserver;
 
+	private File cacheDir = null;
 	
 //	static { 
 //		System.loadLibrary("ZWTool");
@@ -198,7 +199,6 @@ public class ZWApplication extends Application {
 
 //		ImageLoader.getLoader(this);
 		if(isInitImageLoader){
-			File cacheDir = null;
 			if(imageDiscCacheDir == null || "".equals(imageDiscCacheDir)){
 				cacheDir = StorageUtils.getCacheDirectory(this);
 			}else{
@@ -322,6 +322,14 @@ public class ZWApplication extends Application {
 		ImageLoader.getInstance().init(imageLoaderConfigBuilder.build());
 	}
 
+	/**
+	 * 得到图片缓存路径
+	 * @return
+	 */
+	public File getImgCache(){
+		return cacheDir;
+	}
+	
 	@Override
 	public void onTerminate() {
 		// TODO Auto-generated method stub

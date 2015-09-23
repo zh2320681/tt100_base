@@ -30,10 +30,14 @@ public interface ZWThreadEnforcer {
 
 	void enforceMainThreadDelay(Runnable run, long millisecond);
 	
+	void removeMainThread(Runnable run);
+	
 	void enforceBackgroud(Runnable run);
 	
 	void enforceBackgroudDelay(Runnable run, long millisecond);
 
+	void removeBackgroud(Runnable run);
+	
 	void enforce(ThreadMode tMode,Runnable run);
 	
 	void enforceDelay(ThreadMode tMode, Runnable run, long millisecond);

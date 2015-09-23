@@ -12,7 +12,7 @@ public abstract class DialogTaskHandler<T> implements AsyncTaskHandler<T> {
 	public boolean isTaskSuccess = true;
 	protected String title;
 	protected String content;
-	private ZWAsyncTask<T> task;
+	private ZWAsyncTask<?> task;
 	
 	public DialogTaskHandler(String title, String content) {
 		// TODO Auto-generated constructor stub
@@ -82,14 +82,14 @@ public abstract class DialogTaskHandler<T> implements AsyncTaskHandler<T> {
 
 
 	@Override
-	public void setTask(ZWAsyncTask<T> task) {
+	public void setTask(ZWAsyncTask<?> task) {
 		// TODO Auto-generated method stub
 		this.task = task;
 	}
 
 
 	@Override
-	public ZWAsyncTask<T> getTask() {
+	public ZWAsyncTask<?> getTask() {
 		// TODO Auto-generated method stub
 		return task;
 	}

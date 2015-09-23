@@ -20,7 +20,7 @@ import cn.shrek.base.util.ZWLogger;
 public class DLDatabaseHelper extends ZWDBHelper {
 
 	public DLDatabaseHelper(Context context) {
-		super(context);
+		super(context,"download");
 		// TODO Auto-generated constructor stub
 	}
 
@@ -29,7 +29,7 @@ public class DLDatabaseHelper extends ZWDBHelper {
 		// TODO Auto-generated method stub
 		@SuppressWarnings("unchecked")
 		Class<? extends ZWDatabaseBo>[] clazz = new Class[] { DLTask.class,
-				DLThreadTask.class, };
+				DLThreadTask.class};
 		return clazz;
 	}
 

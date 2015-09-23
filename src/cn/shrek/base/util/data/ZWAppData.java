@@ -27,13 +27,14 @@ public abstract class ZWAppData {
 	// public boolean isSave;
 	// public String appName;
 
-	Context ctx;
+	protected Context ctx;
 	// 是否存在公开的数据 和秘密的数据
 	// protected boolean isExistSecretData,isExistOpenData;
 	protected List<Field> secretDatas, openDatas;
 	private Charset gb2312Charset;
-	
+
 	public ZWAppData(Context ctx) {
+		super();
 		this.ctx = ctx;
 		gb2312Charset = Charset.forName(ZWRequestConfig.GB2312_CHARSET);
 		initExistFlag();
@@ -110,9 +111,9 @@ public abstract class ZWAppData {
 			if (transfor != null) {
 				return transfor.toString(value);
 			} else {
-				if(Enum.class.isAssignableFrom(clazz)){
+				if (Enum.class.isAssignableFrom(clazz)) {
 					@SuppressWarnings("rawtypes")
-					Enum enumInstatnc = (Enum)value;
+					Enum enumInstatnc = (Enum) value;
 					return enumInstatnc.name();
 				}
 				return value.toString();
@@ -140,9 +141,9 @@ public abstract class ZWAppData {
 		if (transfor != null) {
 			return transfor.parse2Obj(string);
 		} else {
-			if(Enum.class.isAssignableFrom(clazz)){
+			if (Enum.class.isAssignableFrom(clazz)) {
 				@SuppressWarnings({ "rawtypes", "unchecked" })
-				Class<? extends Enum> enumClazz = (Class<? extends Enum>)clazz;
+				Class<? extends Enum> enumClazz = (Class<? extends Enum>) clazz;
 				return Enum.valueOf(enumClazz, string);
 			}
 			return string;
@@ -224,8 +225,9 @@ public abstract class ZWAppData {
 		// 密文保存 都是string
 		if (isSercet) {
 			String objStr = sharedPreferences.getString(fieldName, null);
-//			System.out.println("objStr密文===============>" + objStr + "  name:"
-//					+ fieldName);
+			// System.out.println("objStr密文===============>" + objStr +
+			// "  name:"
+			// + fieldName);
 			if (objStr != null) {
 				obj = tranforString2Value(field, decode(objStr));
 			}
@@ -249,15 +251,15 @@ public abstract class ZWAppData {
 			} else if (String.class.isAssignableFrom(clazz)) {
 				obj = sharedPreferences.getString(fieldName,
 						mDataSave.defaultString());
-			}  else if (Enum.class.isAssignableFrom(clazz)) {
+			} else if (Enum.class.isAssignableFrom(clazz)) {
 				String enumStr = sharedPreferences.getString(fieldName,
 						mDataSave.defaultString());
-				Class<? extends Enum> enumClazz = (Class<? extends Enum>)clazz;
+				Class<? extends Enum> enumClazz = (Class<? extends Enum>) clazz;
 				obj = Enum.valueOf(enumClazz, enumStr);
 			}
 		}
 
-		if(obj == null){
+		if (obj == null) {
 			// 如果 obj没有获取到 设置默认值
 			Log.e("AppData", "属性:" + field.getName() + "获取值失败!设置缺省值~~~");
 			if (Boolean.class.isAssignableFrom(clazz)
@@ -274,13 +276,12 @@ public abstract class ZWAppData {
 				obj = mDataSave.defaultLong();
 			} else if (String.class.isAssignableFrom(clazz)) {
 				obj = mDataSave.defaultString();
-			} else if(Enum.class.isAssignableFrom(clazz)){
+			} else if (Enum.class.isAssignableFrom(clazz)) {
 				String enumStr = mDataSave.defaultString();
-				Class<? extends Enum> enumClazz = (Class<? extends Enum>)clazz;
+				Class<? extends Enum> enumClazz = (Class<? extends Enum>) clazz;
 				obj = Enum.valueOf(enumClazz, enumStr);
 			}
 		}
-		
 
 		field.setAccessible(true);
 		try {
@@ -320,8 +321,8 @@ public abstract class ZWAppData {
 					editor.putLong(fieldName, (Long) value);
 				} else if (String.class.isAssignableFrom(clazz)) {
 					editor.putString(fieldName, value.toString());
-				} else if (Enum.class.isAssignableFrom(clazz)){
-					Enum enumInstatnc = (Enum)value;
+				} else if (Enum.class.isAssignableFrom(clazz)) {
+					Enum enumInstatnc = (Enum) value;
 					editor.putString(fieldName, enumInstatnc.name());
 				}
 			} catch (IllegalArgumentException e) {
@@ -343,8 +344,7 @@ public abstract class ZWAppData {
 		for (int i = 0; i < bytes.length; i++) {
 			newBytes[i] = (byte) (bytes[i] ^ sercetChars[i % sercetChars.length]);
 		}
-//		System.out.println("编码后===============>" + new String(newBytes));
-		return new String(newBytes,gb2312Charset);
+		return new String(newBytes, gb2312Charset);
 	}
 
 	private String decode(String value) {
@@ -354,7 +354,6 @@ public abstract class ZWAppData {
 		for (int i = 0; i < bytes.length; i++) {
 			newBytes[i] = (byte) (bytes[i] ^ sercetChars[i % sercetChars.length]);
 		}
-//		System.out.println("转码后===============>" + new String(newBytes));
-		return new String(newBytes,gb2312Charset);
+		return new String(newBytes, gb2312Charset);
 	}
 }

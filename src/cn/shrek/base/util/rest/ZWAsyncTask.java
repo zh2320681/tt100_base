@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import android.app.Activity;
@@ -23,6 +24,7 @@ import cn.shrek.base.ui.ZWActivity;
 import cn.shrek.base.util.BaseUtil;
 import cn.shrek.base.util.ZWCache;
 import cn.shrek.base.util.ZWLogger;
+import cn.shrek.base.util.rest.converter.FormJsonConverter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -119,8 +121,8 @@ public class ZWAsyncTask<PARSEOBJ> extends
 				tasks[i - 1].nextTask = task;
 			}
 
-//			if (i == 0 || i == tasks.length - 1) {
-//			}
+			// if (i == 0 || i == tasks.length - 1) {
+			// }
 			tasks[i].qtHandler = qHandler;
 			// task.allTask = allTask;
 			// allTask.add(task);
@@ -269,12 +271,12 @@ public class ZWAsyncTask<PARSEOBJ> extends
 				}
 
 			}
-			
+
 			if (handler != null) {
 				handler.preDoing();
 			}
-			
-			if(qtHandler != null){
+
+			if (qtHandler != null) {
 				qtHandler.setTask(this);
 				qtHandler.singleTaskPreDoing();
 			}
@@ -361,24 +363,51 @@ public class ZWAsyncTask<PARSEOBJ> extends
 
 			System.gc();
 
+			String result = "";
 			ResponseEntity<String> responseEntity = null;
-			if (config.getParas() != null) {
-				responseEntity = restTemplate.exchange(config.url,
-						config.httpMethod, requestEntity, String.class,
-						config.getParas());
-			} else if (config.getMaps().size() != 0) {
-				responseEntity = restTemplate.exchange(config.url,
-						config.httpMethod, requestEntity, String.class,
-						config.getMaps());
+
+			if (config.converter instanceof FormJsonConverter) {		
+				if (config.getParas() != null) {
+					responseEntity = restTemplate.postForEntity(config.url,
+							config.getMultiFormParts(), String.class,config.getParas());
+				} else if (config.getMaps().size() != 0) {
+					responseEntity = restTemplate.postForEntity(config.url,
+							config.getMultiFormParts(), String.class,config.getMaps());
+				} else {
+					responseEntity = restTemplate.postForEntity(config.url,
+							config.getMultiFormParts(), String.class);
+				}
+				
+				Object object = responseEntity.getBody();
+				if(object instanceof MultiValueMap){
+					MultiValueMap<String,String> map = (MultiValueMap<String,String>)object;
+					for(String str : map.keySet()){
+						ZWLogger.printLog(this, "接收到的JSON数据:"+str);
+						result = str;
+						break;
+					}
+				} else {
+					result = responseEntity.getBody().toString();
+				}
 			} else {
-				responseEntity = restTemplate.exchange(config.url,
-						config.httpMethod, requestEntity, String.class);
+				if (config.getParas() != null) {
+					responseEntity = restTemplate.exchange(config.url,
+							config.httpMethod, requestEntity, String.class,
+							config.getParas());
+				} else if (config.getMaps().size() != 0) {
+					responseEntity = restTemplate.exchange(config.url,
+							config.httpMethod, requestEntity, String.class,
+							config.getMaps());
+				} else {
+					responseEntity = restTemplate.exchange(config.url,
+							config.httpMethod, requestEntity, String.class);
+				}
+				result = responseEntity.getBody().toString();
 			}
 
-			String result = responseEntity.getBody();
+			
 			r.headers = responseEntity.getHeaders();
 			r.requestCode = responseEntity.getStatusCode();
-
 			// if(reference.getType().getClass().isAssignableFrom(String.class)){
 			// r.bodyObj = (PARSEOBJ) result;
 			// }else{
@@ -406,7 +435,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			if (result.errorException != null) {
 				// 出现错误的时候
 				handler.postError(result, result.errorException);
-				if(qtHandler != null){
+				if (qtHandler != null) {
 					qtHandler.postError(result.errorException);
 				}
 				return;
@@ -429,13 +458,13 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			if (qtHandler != null) {
 				qtHandler.singleTaskAfterDoing();
 			}
-			
+
 			if (nextTask != null) {
 				if (nextTask.config == null) {
 					throw new NullPointerException("队列里面任务必须提前设置 Config!");
 				}
 				ZWLogger.i(TAG, "队列有任务,继续执行!");
-//				ZWAsyncTask<?> task = allTask.poll();
+				// ZWAsyncTask<?> task = allTask.poll();
 				nextTask.execute(nextTask.config);
 				nextTask = null;
 				qtHandler = null;
@@ -542,16 +571,16 @@ public class ZWAsyncTask<PARSEOBJ> extends
 		ctx = null;
 		// 请求处理器
 		handler = null;
-		
+
 		ZWAsyncTask<?> cycleTask = this;
 		while (cycleTask.nextTask != null) {
 			ZWAsyncTask<?> temp = cycleTask.nextTask;
 			cycleTask.nextTask = null;
 			cycleTask = temp;
 		}
-//		if (allTask != null) {
-//			allTask.clear();
-//			allTask = null;
-//		}
+		// if (allTask != null) {
+		// allTask.clear();
+		// allTask = null;
+		// }
 	}
 }

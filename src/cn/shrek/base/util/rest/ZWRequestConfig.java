@@ -2,13 +2,17 @@ package cn.shrek.base.util.rest;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import cn.shrek.base.util.ZWLogger;
 import cn.shrek.base.util.rest.converter.StringJSONConverter;
@@ -42,6 +46,9 @@ public class ZWRequestConfig implements Serializable{
 	private String urlCharset; //编码
 	private Map<String,String> headers;
 	private Map<String,Object> maps;  //参数列表
+	
+	private MultiValueMap<String, Object> multiFormParts;
+	
 	private Object body;
 	public int connTimeOut,readTimeOut;
 	
@@ -171,6 +178,33 @@ public class ZWRequestConfig implements Serializable{
 	public Map<String, Object> getMaps() {
 		return maps;
 	}
+	
+	/**
+	 * Form提交用这个
+	 * @param key
+	 * @param value
+	 */
+	public void putMultiValue(String key,Object value){
+		if( multiFormParts == null){
+			multiFormParts = new LinkedMultiValueMap<String, Object>();
+		}
+		multiFormParts.add(key, value);
+	}
+	
+	/**
+	 * Form提交文件用这个
+	 * @param key
+	 * @param value
+	 * @throws MalformedURLException 
+	 */
+	public void putLocalFile(String key,String filePath) throws MalformedURLException{
+		putMultiValue(key,new UrlResource("file://"+filePath));
+	}
+
+	public MultiValueMap<String, Object> getMultiFormParts() {
+		return multiFormParts;
+	}
+
 
 	public Object getBody() {
 		return body;

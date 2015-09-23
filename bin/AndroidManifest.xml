@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.tt100.base"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="v1.0" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -46,6 +46,10 @@
             android:screenOrientation="portrait" />
         
         <activity
+            android:name="cn.shrek.base.example.LogTestActivity"
+            android:screenOrientation="portrait" />
+        
+        <activity
             android:name="cn.shrek.base.example.DLTestActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -56,6 +60,34 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="cn.shrek.base.example.AppDataActivity"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="cn.shrek.base.example.AutoInjectActivity"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="cn.shrek.base.example.EventActivity"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="cn.shrek.base.example.ThreadActivity"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="cn.shrek.base.example.ListImgActivity"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="cn.shrek.base.example.FocusActivity"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="cn.shrek.base.download.ui.BaseDownLoadActivity"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="cn.shrek.base.download.ui.BaseDownLoadInfo"
             android:screenOrientation="portrait" />
         
         <!-- 一定要加  -->

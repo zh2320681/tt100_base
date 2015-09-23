@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -49,8 +50,8 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 	
 	private Class<? extends ZWDatabaseBo>[] loadDbBos;
 
-	public ZWDBHelper(Context context) {
-		super(context, ZWApplication.dbName, null, ZWApplication.dbVersion);
+	public ZWDBHelper(Context context,String dbName) {
+		super(context, dbName, null, ZWApplication.dbVersion);
 		// TODO Auto-generated constructor stub
 		if (mHandler == null) {
 			mHandler = new Handler(Looper.getMainLooper(),new Handler.Callback() {
@@ -80,12 +81,17 @@ public abstract class ZWDBHelper extends SQLiteOpenHelper {
 			// Looper.prepare();
 		}
 	}
+	
+	public ZWDBHelper(Context context) {
+		this(context, ZWApplication.dbName);
+	}
 
 	@Override
 	public void onCreate(SQLiteDatabase arg0){
 		if(loadDbBos == null){
 			loadDbBos = loadDatabaseClazz(); 
 		}
+		arg0.setLocale(Locale.CHINA);
 		createTables(arg0, loadDbBos);
 	}
 

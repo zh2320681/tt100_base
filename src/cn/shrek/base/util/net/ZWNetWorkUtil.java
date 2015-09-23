@@ -6,7 +6,7 @@ import android.net.NetworkInfo;
 
 public class ZWNetWorkUtil {
 	public static enum NetType {
-		WIFI, CMNET, CMWAP, NONENET
+		WIFI, CMNET, CMWAP, NONENET,ETHERNET;
 	}
 
 	/**
@@ -131,6 +131,8 @@ public class ZWNetWorkUtil {
 			}
 		} else if (nType == ConnectivityManager.TYPE_WIFI) {
 			return NetType.WIFI;
+		} else if (nType == ConnectivityManager.TYPE_ETHERNET){
+			return NetType.ETHERNET;
 		}
 		return NetType.NONENET;
 

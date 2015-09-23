@@ -2,7 +2,7 @@ package cn.shrek.base.util.rest;
 
 public class DoNothingHandler<T> implements AsyncTaskHandler<T> {
 
-	private ZWAsyncTask<T> task;
+	private ZWAsyncTask<?> task;
 	
 	@Override
 	public void preDoing() {
@@ -29,13 +29,13 @@ public class DoNothingHandler<T> implements AsyncTaskHandler<T> {
 	}
 
 	@Override
-	public void setTask(ZWAsyncTask<T> task) {
+	public void setTask(ZWAsyncTask<?> task) {
 		// TODO Auto-generated method stub
 		this.task = task;
 	}
 
 	@Override
-	public ZWAsyncTask<T> getTask() {
+	public ZWAsyncTask<?> getTask() {
 		// TODO Auto-generated method stub
 		return task;
 	}

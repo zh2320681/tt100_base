@@ -56,6 +56,11 @@ public class HandlerEnforcer implements ZWThreadEnforcer,Identity {
 	}
 
 	@Override
+	public void removeMainThread(Runnable run) {
+		getmHandler().removeCallbacks(run);
+	}
+	
+	@Override
 	public void enforceBackgroud(Runnable run) {
 		// TODO Auto-generated method stub
 		enforceBackgroudDelay(run, 0);
@@ -65,6 +70,11 @@ public class HandlerEnforcer implements ZWThreadEnforcer,Identity {
 	public void enforceBackgroudDelay(Runnable run, long millisecond) {
 		// TODO Auto-generated method stub
 		enforceDelay(ThreadMode.BackgroundThread, run, millisecond);
+	}
+	
+	@Override
+	public void removeBackgroud(Runnable run) {
+		getBackgroudHandler().removeCallbacks(run);
 	}
 
 	@Override

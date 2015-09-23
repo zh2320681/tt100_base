@@ -15,8 +15,8 @@ public interface AsyncTaskHandler<T> {
 	
 	public void postError(ZWResult<T> result,Exception ex);
 	
-	public void setTask(ZWAsyncTask<T> task);
+	public void setTask(ZWAsyncTask<?> task);
 	
-	public ZWAsyncTask<T> getTask();
+	public ZWAsyncTask<?> getTask();
 	
 }

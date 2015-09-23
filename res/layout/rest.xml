@@ -78,6 +78,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="带body参数的测试" />
+            
+            <Button
+                android:id="@+id/rest_formTestBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="form的测试" />
 
             <TextView
                 android:id="@+id/rest_infoView"

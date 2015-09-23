@@ -1,15 +1,27 @@
 package cn.shrek.base.example;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -33,23 +45,24 @@ import cn.shrek.base.util.rest.DoNothingHandler;
 import cn.shrek.base.util.rest.ZWAsyncTask;
 import cn.shrek.base.util.rest.ZWRequestConfig;
 import cn.shrek.base.util.rest.ZWResult;
+import cn.shrek.base.util.rest.converter.FormJsonConverter;
 import cn.shrek.base.util.rest.converter.StringJSONConverter;
 import cn.tt100.base.R;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
-@Controller(layoutId=R.layout.rest)
+@Controller(layoutId = R.layout.rest)
 public class RestActivity extends ZWActivity {
 	@AutoInject(clickSelector = "mClick")
 	private Button testBtn, jsonTestBtn, custonTestBtn, asyncTestBtn,
 			queneTestBtn, mineTestBtn, mine1TestBtn, cacheTestBtn,
-			cacheTestBtn11,sameTestBtn,bodyTestBtn;
+			cacheTestBtn11, sameTestBtn, bodyTestBtn, formTestBtn;
 
 	@AutoInject
 	private TextView infoView;
 
-	private int pageNo;//测试1
+	private int pageNo;// 测试1
 
 	private OnClickListener mClick = new OnClickListener() {
 
@@ -246,7 +259,7 @@ public class RestActivity extends ZWActivity {
 										infoView.setText(result.bodyObj);
 									}
 								}, map);
-			}else if(arg0 == sameTestBtn){
+			} else if (arg0 == sameTestBtn) {
 				Map<String, String> map = new HashMap<String, String>();
 				pageNo++;
 				map.put("pageNo", pageNo + "");
@@ -273,13 +286,43 @@ public class RestActivity extends ZWActivity {
 										infoView.setText(result.bodyObj);
 									}
 								}, map);
-				
+
 				ZWAsyncTask
-				.excuteTaskWithMap(
-						RestActivity.this,
-						"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
-						HttpMethod.GET, new TypeReference<String>() {
-						}, new DialogTaskHandler<String>("请求",
+						.excuteTaskWithMap(
+								RestActivity.this,
+								"http://119.15.137.138:80/rs/showrooms?pageNo={pageNo}&pageSize={pageSize}",
+								HttpMethod.GET, new TypeReference<String>() {
+								}, new DialogTaskHandler<String>("请求",
+										"请求测试中...") {
+									@Override
+									public void preDoing() {
+										// TODO Auto-generated method stub
+										super.preDoing();
+										getTask().cacheSaveTime = 60;
+									}
+
+									@Override
+									public void postResult(
+											ZWResult<String> result) {
+										// TODO Auto-generated method stub
+										infoView.setText(result.bodyObj);
+									}
+								}, map);
+			} else if (arg0 == bodyTestBtn) {
+				ZWRequestConfig config = ZWRequestConfig.copyDefault();
+				config.putHeaderValue("accept", "application/json");
+				config.putHeaderValue("Content-Type",
+						"application/json;charset=UTF-8");
+
+				config.url = "http://192.168.1.4:8080/api/v2/consumptions";
+				config.httpMethod = HttpMethod.POST;
+				Map<String, Object> bodyMap = new HashMap<String, Object>();
+				bodyMap.put("people", 8);
+				bodyMap.put("tables", null);
+				config.setBody(bodyMap);
+
+				ZWAsyncTask<Void> task = new ZWAsyncTask<Void>(
+						RestActivity.this, new DialogTaskHandler<Void>("请求",
 								"请求测试中...") {
 							@Override
 							public void preDoing() {
@@ -289,42 +332,40 @@ public class RestActivity extends ZWActivity {
 							}
 
 							@Override
-							public void postResult(
-									ZWResult<String> result) {
+							public void postResult(ZWResult<Void> result) {
+								// TODO Auto-generated method stub
+								infoView.setText("请求成功了!!!!!!");
+							}
+						});
+				task.execute(config);
+			} else if (arg0 == formTestBtn) {
+				ZWRequestConfig config = new ZWRequestConfig(HttpMethod.POST,
+						new FormJsonConverter());
+				config.putHeaderValue("accept", "application/json");
+				// config.url = "http://dcai100.com/web/upload/headIcon";
+				config.url = "http://dcai100.com/mobile/register";
+				// try {
+				// config.putMultiValue("file", new
+				// UrlResource("file:///storage/emulated/0/UploadImageTemp/head.jpg"));
+				config.putMultiValue("phone", "13915422557");
+				config.putMultiValue("username", "shrek");
+				config.putMultiValue("password", "zh2201593");
+				// } catch (MalformedURLException e) {
+				// e.printStackTrace();
+				// }
+
+				ZWAsyncTask<String> task = new ZWAsyncTask<String>(
+						RestActivity.this, new TypeReference<String>() {
+						}, new DialogTaskHandler<String>("请求", "请求测试中...") {
+
+							@Override
+							public void postResult(ZWResult<String> result) {
 								// TODO Auto-generated method stub
 								infoView.setText(result.bodyObj);
 							}
-						}, map);
-			}else if(arg0 == bodyTestBtn){
-				ZWRequestConfig config = ZWRequestConfig.copyDefault();
-				config.putHeaderValue("accept", "application/json");
-				config.putHeaderValue("Content-Type", "application/json;charset=UTF-8");
-				
-				config.url = "http://192.168.1.4:8080/api/v2/consumptions";
-				config.httpMethod = HttpMethod.POST;
-				Map<String, Object> bodyMap = new HashMap<String, Object>();
-				bodyMap.put("people", 8);
-				bodyMap.put("tables", null);
-				config.setBody(bodyMap);
-
-				ZWAsyncTask<Void> task = new ZWAsyncTask<Void>(RestActivity.this,new DialogTaskHandler<Void>("请求",
-						"请求测试中...") {
-					@Override
-					public void preDoing() {
-						// TODO Auto-generated method stub
-						super.preDoing();
-						getTask().cacheSaveTime = 60;
-					}
-
-					@Override
-					public void postResult(
-							ZWResult<Void> result) {
-						// TODO Auto-generated method stub
-						infoView.setText("请求成功了!!!!!!");
-					}
-				});
+						});
 				task.execute(config);
-			}	
+			}
 
 		}
 	};
@@ -429,4 +470,5 @@ public class RestActivity extends ZWActivity {
 			infoView.setText("请求结果：\n" + result);
 		}
 	}
+
 }
