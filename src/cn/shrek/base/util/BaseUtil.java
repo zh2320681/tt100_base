@@ -9,8 +9,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import android.app.Activity;
 import android.content.Context;
@@ -525,17 +532,19 @@ public class BaseUtil {
 
 	/**
 	 * 隐藏键盘
+	 * 
 	 * @param act
 	 * @param token
 	 */
-	public static void hideSoftInput(Activity act , IBinder token) {
+	public static void hideSoftInput(Activity act, IBinder token) {
 		if (token != null) {
-			InputMethodManager im = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
+			InputMethodManager im = (InputMethodManager) act
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
 			im.hideSoftInputFromWindow(token,
 					InputMethodManager.HIDE_NOT_ALWAYS);
 		}
 	}
-	
+
 	/**
 	 * 根据EditText所在坐标和用户点击的坐标相对比，来判断是否隐藏键盘，因为当用户点击EditText时没必要隐藏
 	 * 
@@ -543,29 +552,30 @@ public class BaseUtil {
 	 * @param event
 	 * @return
 	 */
-	public static boolean isShouldHideInput(View v, MotionEvent event,Collection<View> keyboardFocusViews) {
+	public static boolean isShouldHideInput(View v, MotionEvent event,
+			Collection<View> keyboardFocusViews) {
 		if (v != null && v instanceof EditText) {
 			View[] views;
-			if(keyboardFocusViews != null){
-				views = new View[keyboardFocusViews.size()+1];
+			if (keyboardFocusViews != null) {
+				views = new View[keyboardFocusViews.size() + 1];
 				views[0] = v;
-				
+
 				int temp = 1;
-				for(View focusView : keyboardFocusViews){
-					views[temp] =  focusView;
+				for (View focusView : keyboardFocusViews) {
+					views[temp] = focusView;
 					temp++;
 				}
 			} else {
 				views = new View[1];
 				views[0] = v;
 			}
-			
+
 			return !isViewInArea(event.getX(), event.getY(), views);
 		}
 		// 如果焦点不是EditText则忽略，这个发生在视图刚绘制完，第一个焦点不在EditView上，和用户用轨迹球选择其他的焦点
 		return false;
 	}
-	
+
 	/**
 	 * 判断坐标 是不是在这个区域内
 	 * 
@@ -598,69 +608,103 @@ public class BaseUtil {
 	 * @param ipAddress
 	 * @return
 	 */
-	public static boolean pingHost(String ipAddress) {
-		try {
-			Process p = Runtime.getRuntime().exec(
-					"ping -c 1 -t 5 -W 100 " + ipAddress);			
-			// 获取进程的标准输入流
-			final InputStream is1 = p.getInputStream();
-			// 获取进城的错误流
-			final InputStream is2 = p.getErrorStream();
-			// 启动两个线程，一个线程负责读标准输出流，另一个负责读标准错误流
-			new Thread() {
-				public void run() {
-					BufferedReader br1 = new BufferedReader(
-							new InputStreamReader(is1));
-					try {
-						String line1 = null;
-						while ((line1 = br1.readLine()) != null) {
-							if (line1 != null) {
-								System.out.println("success=============>"+line1);
-							}
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						try {
-							is1.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}.start();
+	public static boolean pingHost(final String ipAddress) {
+		FutureTask<Boolean> task = new FutureTask<Boolean>(new Callable<Boolean>() {
 
-			new Thread() {
-				public void run() {
-					BufferedReader br2 = new BufferedReader(
-							new InputStreamReader(is2));
-					try {
-						String line2 = null;
-						while ((line2 = br2.readLine()) != null) {
-							if (line2 != null) {
-								System.out.println("error=============>"+line2);
-							}
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						try {
-							is2.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}.start();
-			int status = p.waitFor();
-			p.destroy();
-			return status == 0;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			@Override
+			public Boolean call() throws Exception {
+				// TODO Auto-generated method stub
+				Process p = Runtime.getRuntime().exec(
+						"ping -c 1 -t 5 -W 100 " + ipAddress);
+				ThreadUtil stdoutUtil = new ThreadUtil(p.getInputStream());
+				ThreadUtil erroroutUtil = new ThreadUtil(p.getErrorStream());
+				// 启动线程读取缓冲区数据
+				stdoutUtil.start();
+				erroroutUtil.start();
+				
+				int status = p.waitFor();
+				p.destroy();
+				return status == 0;
+			}
+		}) ;
+		
+		new Thread(task).start();
+		
+		try {
+			boolean result = task.get(2, TimeUnit.SECONDS);
+			return result;
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (TimeoutException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		return false;
+		
+//		try {
+//			Process p = Runtime.getRuntime().exec(
+//					"ping -c 1 -t 5 -W 100 " + ipAddress);
+//			// 创建2个线程，分别读取输入流缓冲区和错误流缓冲区
+//			ThreadUtil stdoutUtil = new ThreadUtil(p.getInputStream());
+//			ThreadUtil erroroutUtil = new ThreadUtil(p.getErrorStream());
+//			// 启动线程读取缓冲区数据
+//			stdoutUtil.start();
+//			erroroutUtil.start();
+//			int status = p.waitFor();
+//			p.destroy();
+//			return status == 0;
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		return false;
+	}
+
+	static class ThreadUtil implements Runnable {
+		// 设置读取的字符编码
+		private String character = "GB2312";
+		private List<String> list;
+		private InputStream inputStream;
+
+		public ThreadUtil(InputStream inputStream) {
+			this.inputStream = inputStream;
+			this.list = new ArrayList<String>();
+		}
+
+		public void start() {
+			Thread thread = new Thread(this);
+			thread.setDaemon(true);// 将其设置为守护线程
+			thread.start();
+		}
+
+		public void run() {
+			BufferedReader br = null;
+			try {
+				br = new BufferedReader(new InputStreamReader(inputStream,
+						character));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					if (line != null) {
+						list.add(line);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					// 释放资源
+					inputStream.close();
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/**

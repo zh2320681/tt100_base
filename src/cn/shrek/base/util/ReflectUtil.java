@@ -6,8 +6,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.ContentValues;
-
 /**
  * 反射的工具类
  * 

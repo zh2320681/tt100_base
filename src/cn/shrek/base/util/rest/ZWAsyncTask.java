@@ -282,8 +282,7 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			}
 		}
 
-		ZWLogger.printLog(TAG, "任务开始,任务ID为:" + taskGuid + "  任务UUID为:"
-				+ taskUUID);
+		ZWLogger.i(TAG, "任务开始,任务ID为:" + taskGuid + "  任务UUID为:" + taskUUID);
 		timeingMap.put(taskUUID, System.currentTimeMillis());
 	}
 
@@ -343,15 +342,16 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			ClientHttpRequestFactory requestFactory = restTemplate
 					.getRequestFactory();
 			if (requestFactory instanceof HttpComponentsClientHttpRequestFactory) {
-				ZWLogger.printLog(TAG,
-						"设置HttpComponentsClientHttpRequestFactory 超时时间!");
+				// ZWLogger.printLog(TAG,
+				// "设置HttpComponentsClientHttpRequestFactory 超时时间!");
 				HttpComponentsClientHttpRequestFactory mComponentsClientHttpRequestFactory = (HttpComponentsClientHttpRequestFactory) requestFactory;
 				mComponentsClientHttpRequestFactory
 						.setConnectTimeout(config.connTimeOut);
 				mComponentsClientHttpRequestFactory
 						.setReadTimeout(config.readTimeOut);
 			} else if (requestFactory instanceof SimpleClientHttpRequestFactory) {
-				ZWLogger.printLog(TAG, "设置SimpleClientHttpRequestFactory 超时时间!");
+				// ZWLogger.printLog(TAG,
+				// "设置SimpleClientHttpRequestFactory 超时时间!");
 				((SimpleClientHttpRequestFactory) requestFactory)
 						.setConnectTimeout(config.connTimeOut);
 				((SimpleClientHttpRequestFactory) requestFactory)
@@ -366,23 +366,25 @@ public class ZWAsyncTask<PARSEOBJ> extends
 			String result = "";
 			ResponseEntity<String> responseEntity = null;
 
-			if (config.converter instanceof FormJsonConverter) {		
+			if (config.converter instanceof FormJsonConverter) {
 				if (config.getParas() != null) {
 					responseEntity = restTemplate.postForEntity(config.url,
-							config.getMultiFormParts(), String.class,config.getParas());
+							config.getMultiFormParts(), String.class,
+							config.getParas());
 				} else if (config.getMaps().size() != 0) {
 					responseEntity = restTemplate.postForEntity(config.url,
-							config.getMultiFormParts(), String.class,config.getMaps());
+							config.getMultiFormParts(), String.class,
+							config.getMaps());
 				} else {
 					responseEntity = restTemplate.postForEntity(config.url,
 							config.getMultiFormParts(), String.class);
 				}
-				
+
 				Object object = responseEntity.getBody();
-				if(object instanceof MultiValueMap){
-					MultiValueMap<String,String> map = (MultiValueMap<String,String>)object;
-					for(String str : map.keySet()){
-						ZWLogger.printLog(this, "接收到的JSON数据:"+str);
+				if (object instanceof MultiValueMap) {
+					MultiValueMap<String, String> map = (MultiValueMap<String, String>) object;
+					for (String str : map.keySet()) {
+						ZWLogger.printLog(this, "接收到的JSON数据:" + str);
 						result = str;
 						break;
 					}
@@ -405,7 +407,6 @@ public class ZWAsyncTask<PARSEOBJ> extends
 				result = responseEntity.getBody();
 			}
 
-			
 			r.headers = responseEntity.getHeaders();
 			r.requestCode = responseEntity.getStatusCode();
 			// if(reference.getType().getClass().isAssignableFrom(String.class)){
@@ -479,6 +480,8 @@ public class ZWAsyncTask<PARSEOBJ> extends
 					TAG,
 					"任务Over,任务ID为:"
 							+ taskGuid
+							+ "  任务的URL:"
+							+ config.url
 							+ "  耗时:"
 							+ (System.currentTimeMillis() - timeingMap
 									.remove(taskUUID)) + "毫秒!");

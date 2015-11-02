@@ -2,14 +2,12 @@ package cn.shrek.base.example.bean;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.widget.Toast;
 import cn.shrek.base.ZWApplication;
 import cn.shrek.base.annotation.Subscribe;
 import cn.shrek.base.event.ZWEvent;
-import cn.shrek.base.event.ZWEventBus;
 import cn.shrek.base.event.ZWEventInterceptor;
 import cn.shrek.base.example.fragment.EventFragment1;
 

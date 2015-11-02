@@ -148,7 +148,7 @@ public class ListTestActivity extends ZWActivity {
 				holder.infoView.setText(data.name);
 				holder.ageView.setText("年龄:"+data.age);
 				holder.checkBox.setChecked(!data.isCheck);
-				for(int i = 0;i<100000000;i++){}
+//				for(int i = 0;i<100000000;i++){}
 			}
 			
 			class Holder extends ZWHolderBo{

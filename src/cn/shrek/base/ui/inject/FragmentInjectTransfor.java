@@ -1,9 +1,7 @@
 package cn.shrek.base.ui.inject;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import cn.shrek.base.ZWConstants;

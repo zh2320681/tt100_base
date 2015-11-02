@@ -15,7 +15,12 @@ import android.view.View;
 import cn.shrek.base.ZWConstants;
 import cn.shrek.base.annotation.AutoInject;
 import cn.shrek.base.annotation.Controller;
+import cn.shrek.base.event.ZWEventBus;
+import cn.shrek.base.util.ReflectUtil;
+import cn.shrek.base.util.ReflectUtil.FieldCondition;
 import cn.shrek.base.util.ZWLogger;
+import cn.shrek.base.util.thread.HandlerEnforcer;
+import cn.shrek.base.util.thread.ZWThreadEnforcer;
 
 /**
  * 注入器
@@ -61,40 +66,48 @@ public class Injector {
 	}
 	
 	public void injectValue(Context atc, Object objIntance){
-//		Class<?> clazz = field.getClass();
-		
 		Class<?> clazz = objIntance.getClass();
-		//得到所有属性(不包括子类)
-		Field[] declaredFields = clazz.getDeclaredFields();
-		Field[] publicFields = clazz.getFields();
-		List<Field> allFields = new ArrayList<Field>();
-		for(Field f : declaredFields){
-			if(f.isAnnotationPresent(AutoInject.class)){
-				allFields.add(f);
-			}
-		}
-		
-		for(Field f : publicFields){
-			if(!f.isAnnotationPresent(AutoInject.class)){
-				continue;
-			}
-			boolean isExist = false;
-			for(int i = 0;i<declaredFields.length;i++){
-				if(declaredFields[i].getName().equals(f.getName())){
-					isExist = true;
-					break;
-				}
-			}
+		List<Field> allFields = ReflectUtil.getAllClassField(clazz, new FieldCondition() {
 			
-			if(!isExist){
-				allFields.add(f);
+			@Override
+			public boolean isFieldValid(Field field) {
+				// TODO Auto-generated method stub
+				return field.isAnnotationPresent(AutoInject.class);
 			}
-		}
+		});
+		
+		//得到所有属性(不包括子类)
+//		Field[] declaredFields = clazz.getDeclaredFields();
+//		Field[] publicFields = clazz.getFields();
+//		List<Field> allFields = new ArrayList<Field>();
+//		for(Field f : declaredFields){
+//			if(f.isAnnotationPresent(AutoInject.class)){
+//				allFields.add(f);
+//			}
+//		}	
+//		for(Field f : publicFields){
+//			if(!f.isAnnotationPresent(AutoInject.class)){
+//				continue;
+//			}
+//			boolean isExist = false;
+//			for(int i = 0;i<declaredFields.length;i++){
+//				if(declaredFields[i].getName().equals(f.getName())){
+//					isExist = true;
+//					break;
+//				}
+//			}
+//			
+//			if(!isExist){
+//				allFields.add(f);
+//			}
+//		}
 		
 		
 		//初始化 默认的实例
 		if(defaultInstances.size() == 0 && mFactory != null){
 			defaultInstances.putAll(mFactory.getDefaultInstance());
+			defaultInstances.put(ZWEventBus.class, ZWEventBus.newInstance());
+			defaultInstances.put(ZWThreadEnforcer.class, HandlerEnforcer.newInstance());
 		}
 	
 		
